@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "223394458549",
+    "project_id": "museum-code",
+    "storage_bucket": "museum-code.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223394458549:android:10155c87199c843ad347fc",
+        "android_client_info": {
+          "package_name": "com.example.museumcode"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGieYxuZpq_Pu1se_uFCNrTDsKkO2I-R4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
