@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:museumcode/features/home/tabs/expedition_tab.dart';
 import 'package:museumcode/features/home/tabs/moderator_tab.dart';
 import 'package:museumcode/features/home/tabs/scan_qr_tab.dart';
 import 'package:provider/provider.dart';
@@ -46,45 +47,54 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
       ];
 
       items = [
-        _NavItemData(Icons.home_outlined, "Главная"),
-        _NavItemData(Icons.qr_code_scanner, "Сканировать"),
-        _NavItemData(Icons.person_outline, "Профиль"),
+        _NavItemData(Icons.home_filled, "Главная"),
+        _NavItemData(Icons.qr_code_scanner, "Сканер"),
+        _NavItemData(Icons.person, "Профиль"),
       ];
     } else if (isAdmin) {
       // ----------- АДМИН -----------
-      screens = const [
-        HomeTab(),
-        ModeratorTab(),
-        ProfileTab(),
+      screens = [
+        const HomeTab(),
+        const ModeratorTab(),
+        const ProfileTab(),
+        const ExpeditionTab(),
       ];
 
       items = [
-        _NavItemData(Icons.home_outlined, "Главная"),
-        _NavItemData(Icons.admin_panel_settings, "Модерация"),
-        _NavItemData(Icons.person_outline, "Профиль"),
+        _NavItemData(Icons.home_filled, "Главная"),
+        _NavItemData(Icons.admin_panel_settings, "Админ"),
+        _NavItemData(Icons.person, "Профиль"),
+        _NavItemData(Icons.explore, "Экспедиции"),
       ];
     } else {
       // ----------- ОБЫЧНЫЙ ПОЛЬЗОВАТЕЛЬ -----------
-      screens = const [
-        HomeTab(),
-        AddArtifactTab(),
-        MyArtifactsTab(),
-        ProfileTab(),
+      screens = [
+        const HomeTab(),
+        const AddArtifactTab(),
+        const MyArtifactsTab(),
+        const ProfileTab(),
+        const ExpeditionTab(),
       ];
 
       items = [
-        _NavItemData(Icons.home_outlined, "Главная"),
-        _NavItemData(Icons.add_circle_outline, "Добавить"),
-        _NavItemData(Icons.inventory_2_outlined, "Мои"),
-        _NavItemData(Icons.person_outline, "Профиль"),
+        _NavItemData(Icons.home_filled, "Главная"),
+        _NavItemData(Icons.add_circle, "Добавить"),
+        _NavItemData(Icons.inventory_2, "Мои"),
+        _NavItemData(Icons.person, "Профиль"),
+        _NavItemData(Icons.explore, "Экспедиции"),
       ];
+    }
+
+    // 🔥 FIX: Ensure index is within bounds if role changes (e.g. logout)
+    if (_index >= screens.length) {
+      _index = screens.length - 1;
     }
 
     return Scaffold(
       extendBody: true,
       body: Stack(
         children: [
-          // 🌌 Новый фон с градиентом
+          // 🌌 Фон с градиентом
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -107,25 +117,32 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
 
   Widget _buildBottomNavBar(List<_NavItemData> items) {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.fromLTRB(12, 0, 12, 24),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.4),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          )
+        ]
       ),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          height: 75,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
+            color: Colors.white.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.white.withOpacity(0.12)),
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: List.generate(items.length, (i) {
               final item = items[i];
-              return _navItem(item.icon, i, item.label);
+              return Expanded(child: _navItem(item.icon, i, item.label));
             }),
           ),
         ),
@@ -137,41 +154,41 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
     final bool selected = _index == index;
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () => setState(() => _index = index),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected ? Colors.white.withOpacity(0.2) : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 24,
-              color: selected ? Colors.white : Colors.white70,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: selected ? Colors.orange.withOpacity(0.15) : Colors.transparent,
+              borderRadius: BorderRadius.circular(20),
             ),
-            const SizedBox(height: 4),
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 200),
-              style: TextStyle(
-                fontSize: 12,
-                color: selected ? Colors.white : Colors.white60,
-                fontWeight: selected ? FontWeight.bold : FontWeight.w500,
-              ),
-              child: Text(label),
-            )
-          ],
-        ),
+            child: Icon(
+              icon,
+              size: 26,
+              color: selected ? Colors.orangeAccent : Colors.white60,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 10,
+              color: selected ? Colors.orangeAccent : Colors.white38,
+              fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+            ),
+          )
+        ],
       ),
     );
   }
 }
 
-/// Helper class for tab items
 class _NavItemData {
   final IconData icon;
   final String label;

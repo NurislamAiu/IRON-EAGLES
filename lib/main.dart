@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:intl/date_symbol_data_local.dart'; // <-- 1. ИМПОРТ
+import 'package:museumcode/features/artifacts/provider/favorite_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:museumcode/router/app_router.dart';
 import 'firebase_options.dart';
@@ -9,6 +10,9 @@ import 'firebase_options.dart';
 // 🔹 Импортируем провайдеры
 import 'features/auth/provider/auth_provider.dart';
 import 'features/artifacts/provider/artifact_provider.dart';
+
+import 'features/artifacts/provider/achievement_provider.dart';
+import 'features/artifacts/provider/expedition_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,12 +37,18 @@ class MuseumApp extends StatelessWidget {
       providers: [
         // 🧍 Авторизация (должен быть первым)
         ChangeNotifierProvider(create: (_) => AuthProviders()),
+        ChangeNotifierProvider(create: (_) => FavoriteProvider()),
+        // Add this to your MultiProvider list:
+        ChangeNotifierProvider(create: (_) => ExpeditionProvider()),
 
         // 🏺 Артефакты (зависит от AuthProviders)
         ChangeNotifierProxyProvider<AuthProviders, ArtifactProvider>(
           create: (context) => ArtifactProvider(context.read<AuthProviders>()),
           update: (context, auth, previous) => ArtifactProvider(auth),
         ),
+
+        // 🏆 Достижения
+        ChangeNotifierProvider(create: (_) => AchievementProvider()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

@@ -77,7 +77,7 @@ class _AddArtifactTabState extends State<AddArtifactTab> {
       setState(() {});
     }
   }
-  
+
   void _resetForm() {
     _title.clear();
     _description.clear();

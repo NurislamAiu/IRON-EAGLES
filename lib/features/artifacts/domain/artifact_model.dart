@@ -8,6 +8,11 @@ class Artifact {
   final String qrCodeUrl;
   final String addedBy;
   final DateTime createdAt;
+  final double? originLat;
+  final double? originLng;
+  final String originName;
+  final String? ancientImageUrl; // 👈 Новое поле для Time Traveler
+  final String? expeditionId;
 
   // ➕ Новые поля (все НЕ обязательные, чтобы не ломать код)
   final String category;            // тип: Керамика, Металл и т.д.
@@ -38,6 +43,11 @@ class Artifact {
     required this.qrCodeUrl,
     required this.addedBy,
     required this.createdAt,
+    this.originLat,
+    this.originLng,
+    this.originName = 'Неизвестно',
+    this.ancientImageUrl, // 👈
+    this.expeditionId, // 👈
 
     this.category = 'Не указана',
     this.period = '',
@@ -69,6 +79,11 @@ class Artifact {
       'qrCodeUrl': qrCodeUrl,
       'addedBy': addedBy,
       'createdAt': createdAt.toIso8601String(),
+      'originLat': originLat,
+      'originLng': originLng,
+      'originName': originName,
+      'ancientImageUrl': ancientImageUrl, // 👈
+      'expeditionId': expeditionId, // 👈
 
       'category': category,
       'period': period,
@@ -101,6 +116,11 @@ class Artifact {
       qrCodeUrl: data['qrCodeUrl'] ?? '',
       addedBy: data['addedBy'] ?? '',
       createdAt: DateTime.tryParse(data['createdAt'] ?? '') ?? DateTime.now(),
+      originLat: (data['originLat'] is num) ? (data['originLat'] as num).toDouble() : null,
+      originLng: (data['originLng'] is num) ? (data['originLng'] as num).toDouble() : null,
+      originName: data['originName'] ?? 'Неизвестно',
+      ancientImageUrl: data['ancientImageUrl'], // 👈
+      expeditionId: data['expeditionId'], // 👈
 
       category: data['category'] ?? 'Не указана',
       period: data['period'] ?? '',

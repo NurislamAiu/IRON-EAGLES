@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:provider/provider.dart';
+import '../../artifacts/provider/achievement_provider.dart';
 
 class ScanQRTab extends StatefulWidget {
   const ScanQRTab({super.key});
@@ -24,6 +26,12 @@ class _ScanQRTabState extends State<ScanQRTab> {
             _scanned = true;
 
             final code = capture.barcodes.first.rawValue;
+
+            // Trigger Achievement
+            if (mounted) {
+              context.read<AchievementProvider>().updateProgress(context, 'first_scan');
+              context.read<AchievementProvider>().updateProgress(context, 'scholar');
+            }
 
             Navigator.pushNamed(
               context,

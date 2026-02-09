@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../features/artifacts/domain/artifact_model.dart';
+import '../features/artifacts/presentation/achievements_screen.dart';
 import '../features/artifacts/presentation/artifact_detail_screen.dart';
+import '../features/artifacts/presentation/favorites_screen.dart';
 import '../features/artifacts/presentation/artifact_list_screen.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/register_screen.dart';
@@ -116,6 +118,16 @@ class AppRouter {
             ArtifactDetailScreen(artifact: artifact),
           );
         },
+      ),
+
+      GoRoute(
+        path: '/achievements',
+        pageBuilder: (_, __) => _buildFadeTransition(const AchievementsScreen()),
+      ),
+
+      GoRoute(
+        path: '/favorites',
+        pageBuilder: (_, __) => _buildFadeTransition(const FavoritesScreen()),
       ),
     ],
   );

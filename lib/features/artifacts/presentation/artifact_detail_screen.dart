@@ -3,14 +3,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
+import 'package:museumcode/features/artifacts/domain/expedition_model.dart';
+import 'package:museumcode/features/artifacts/provider/expedition_provider.dart';
+import 'package:museumcode/features/artifacts/presentation/widget_detial_screen/artifact_journey_map.dart';
 import 'package:museumcode/features/artifacts/presentation/widget_detial_screen/artifact_location_map.dart';
+import 'package:museumcode/features/artifacts/presentation/widget_detial_screen/time_traveler_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/widgets/flash_message.dart';
 import '../../auth/provider/auth_provider.dart';
 import '../data/comment_service.dart';
 import '../domain/artifact_model.dart';
+import '../provider/achievement_provider.dart';
 import '../provider/artifact_provider.dart';
+import '../provider/favorite_provider.dart';
 import 'widget_detial_screen/comment_input_bar.dart';
 import 'widget_detial_screen/comments_section.dart';
 
@@ -30,6 +36,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
 
   bool get _showMapTab => widget.artifact.foundLocation.isNotEmpty;
   bool get _show3dTab => widget.artifact.modelUrl.isNotEmpty; // 👈 Проверяем наличие модели
+  bool get _showErasTab => widget.artifact.ancientImageUrl != null && widget.artifact.ancientImageUrl!.isNotEmpty;
 
   @override
   void initState() {
@@ -37,6 +44,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
     int tabCount = 2; // Описание, Детали
     if (_showMapTab) tabCount++;
     if (_show3dTab) tabCount++;
+    if (_showErasTab) tabCount++;
     tabCount++; // Комментарии
 
     _tabController = TabController(length: tabCount, vsync: this);
@@ -66,9 +74,8 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
-    int commentTabIndex = 1; // Start with base tabs (Desc, Details)
-    if (_showMapTab) commentTabIndex++;
-    if (_show3dTab) commentTabIndex++;
+    // The comments tab is always the last one
+    int commentTabIndex = _tabController.length - 1;
 
 
     return Scaffold(
@@ -78,7 +85,23 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
-        actions: [_buildDeleteButton(context)],
+        actions: [
+          Consumer<FavoriteProvider>(
+            builder: (context, favProvider, child) {
+              final isFav = favProvider.isFavorite(widget.artifact);
+              return IconButton(
+                icon: Icon(
+                  isFav ? Icons.favorite : Icons.favorite_border,
+                  color: isFav ? Colors.red : Colors.white,
+                ),
+                onPressed: () {
+                  favProvider.toggleFavorite(widget.artifact);
+                },
+              );
+            },
+          ),
+          _buildDeleteButton(context),
+        ],
       ),
       body: Stack(
         children: [
@@ -233,6 +256,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
       const Tab(text: 'Детали'),
       if (_showMapTab) const Tab(text: 'Карта'),
       if (_show3dTab) const Tab(text: '3D'),
+      if (_showErasTab) const Tab(text: 'Эпохи'),
       const Tab(text: 'Комментарии'),
     ];
 
@@ -256,6 +280,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
       _buildDetailsTab(scrollController),
       if (_showMapTab) _buildMapTab(),
       if (_show3dTab) _build3dTab(),
+      if (_showErasTab) _buildErasTab(scrollController),
       _buildCommentsTab(scrollController),
     ];
     return Expanded(
@@ -291,6 +316,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
           if (a.material.isNotEmpty) _buildInfoRow(Icons.handyman_outlined, "Материал", a.material),
           
           _buildSectionTitle("Обнаружение"),
+          _buildExpeditionRow(),
           if (a.finderId.isNotEmpty) _buildInfoRow(Icons.person_search_outlined, "Нашёл", a.finderId),
           if (a.foundDate != null) _buildInfoRow(Icons.calendar_month_outlined, "Дата находки", _formatDate(a.foundDate)),
           if (a.foundLocation.isNotEmpty) _buildInfoRow(Icons.place_outlined, "Место находки", a.foundLocation),
@@ -305,8 +331,52 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
       ),
     );
   }
+
+  Widget _buildExpeditionRow() {
+    final expId = widget.artifact.expeditionId;
+    if (expId == null) return const SizedBox.shrink();
+
+    final expeditions = context.read<ExpeditionProvider>().myExpeditions;
+    final expedition = expeditions.firstWhere((e) => e.id == expId, orElse: () => Expedition(
+      id: '', name: 'Неизвестная экспедиция', description: '', leaderEmail: '', memberEmails: [], startDate: DateTime.now()
+    ));
+
+    return Column(
+      children: [
+        _buildInfoRow(Icons.verified_outlined, "Кредит (Экспедиция)", expedition.name),
+        const SizedBox(height: 4),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.orange.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.orangeAccent.withOpacity(0.3)),
+          ),
+          child: const Text(
+            "Официальная находка экспедиции",
+            style: TextStyle(color: Colors.orangeAccent, fontSize: 11, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
   
    Widget _buildMapTab() {
+    final a = widget.artifact;
+    if (a.originLat != null && a.gpsLat != null) {
+      return Padding(
+        padding: const EdgeInsets.all(20),
+        child: ArtifactJourneyMap(
+          startLat: a.originLat!,
+          startLng: a.originLng!,
+          startName: a.originName,
+          endLat: a.gpsLat!,
+          endLng: a.gpsLng!,
+          endName: a.foundLocation,
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.all(20),
       child: ArtifactLocationMap(location: widget.artifact.foundLocation),
@@ -331,6 +401,21 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
         ar: true,
         autoRotate: true,
         cameraControls: true,
+        onWebViewCreated: (controller) {
+          // Simple trigger when 3D model is loaded
+          context.read<AchievementProvider>().updateProgress(context, '3d_master');
+        },
+      ),
+    );
+  }
+
+  Widget _buildErasTab(ScrollController sc) {
+    return SingleChildScrollView(
+      controller: sc,
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+      child: TimeTravelerView(
+        ancientUrl: widget.artifact.ancientImageUrl!,
+        modernUrl: widget.artifact.imageUrl,
       ),
     );
   }
@@ -406,6 +491,12 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
     final text = _commentController.text.trim();
     if (text.isEmpty) return;
     await _commentService.addComment(widget.artifact.id, user.email ?? "Неизвестный", text);
+    
+    // Trigger Achievement
+    if (mounted) {
+      context.read<AchievementProvider>().updateProgress(context, 'critic');
+    }
+
     _commentController.clear();
     FocusScope.of(context).unfocus();
   }

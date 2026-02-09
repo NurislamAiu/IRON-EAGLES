@@ -27,6 +27,10 @@ final List<Artifact> mockArtifacts = [
     depth: 28.4,
     gpsLat: 31.4036,
     gpsLng: 30.4164,
+    originLat: 24.0889,
+    originLng: 32.8998,
+    originName: 'Асуан, Египет',
+    ancientImageUrl: 'assets/images/museum_bg_1.jpeg', // Using another mock image as "Ancient"
   ),
   Artifact(
     id: generateArtifactId(),
@@ -55,6 +59,10 @@ final List<Artifact> mockArtifacts = [
     depth: 45,
     gpsLat: 34.3853,
     gpsLng: 109.279,
+    originLat: 34.384,
+    originLng: 109.273,
+    originName: 'Мастерские горы Лишань, Китай',
+    ancientImageUrl: 'assets/images/museum_bg_2.jpeg', // Another mock image
   ),
 
   Artifact(

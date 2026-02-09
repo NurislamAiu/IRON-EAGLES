@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../auth/provider/auth_provider.dart';
 import '../../artifacts/provider/artifact_provider.dart';
+import '../../artifacts/provider/favorite_provider.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -249,6 +250,52 @@ class _ProfileTabState extends State<ProfileTab>
                   ),
 
                   const SizedBox(height: 24),
+
+                  Consumer<FavoriteProvider>(
+                    builder: (context, favProvider, child) {
+                      return GestureDetector(
+                        onTap: () => context.push('/favorites'),
+                        child: _glassCard(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Избранное",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 19,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "Сохранено: ${favProvider.favorites.length}",
+                                      style: const TextStyle(color: Colors.white70, fontSize: 15),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 18),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  _glassButton(
+                    icon: Icons.emoji_events_outlined,
+                    text: "Достижения",
+                    onTap: () => context.push('/achievements'),
+                    color: Colors.orange.shade800.withOpacity(0.6),
+                  ),
+
+                  const SizedBox(height: 16),
 
                   _glassCard(
                     child: Column(
