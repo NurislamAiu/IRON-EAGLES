@@ -8,7 +8,10 @@ import '../../../core/widgets/glass_text_field.dart';
 import '../provider/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final String? email;
+  final String? password;
+
+  const LoginScreen({super.key, this.email, this.password});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -26,6 +29,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
+
+    _email.text = widget.email ?? '';
+    _password.text = widget.password ?? '';
+
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),

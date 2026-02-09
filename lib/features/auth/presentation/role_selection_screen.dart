@@ -51,7 +51,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> with SingleTi
     await auth.setRole(role);
 
     if (role == 'archaeologist') {
-      context.go('/login');
+      context.go('/login?email=user1@gmail.com&password=44585939');
     } else if (role == 'visitor') {
       context.go('/home');
     }

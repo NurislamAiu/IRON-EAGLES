@@ -53,14 +53,14 @@ class AppRouter {
       if (role == 'archaeologist') {
         // Если не авторизован → пускаем только login/register
         if (!logged) {
-          if (goingTo == '/login' || goingTo == '/register' || goingTo == '/') {
+          if (goingTo.startsWith('/login') || goingTo == '/register' || goingTo == '/') {
             return null;
           }
           return '/login';
         }
 
         // Авторизован — не пускаем назад на login/register
-        if (logged && (goingTo == '/login' || goingTo == '/register')) {
+        if (logged && (goingTo.startsWith('/login') || goingTo == '/register')) {
           return '/home';
         }
 
@@ -78,7 +78,13 @@ class AppRouter {
 
       GoRoute(
         path: '/login',
-        pageBuilder: (_, __) => _buildSlideUpTransition(const LoginScreen()),
+        pageBuilder: (context, state) {
+          final email = state.uri.queryParameters['email'];
+          final password = state.uri.queryParameters['password'];
+          return _buildSlideUpTransition(
+            LoginScreen(email: email, password: password),
+          );
+        },
       ),
 
       GoRoute(
