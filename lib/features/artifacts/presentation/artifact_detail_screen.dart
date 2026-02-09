@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:museumcode/features/artifacts/presentation/widget_detial_screen/artifact_location_map.dart';
 import 'package:provider/provider.dart';
 
@@ -26,13 +27,19 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
   final TextEditingController _commentController = TextEditingController();
   final CommentService _commentService = CommentService();
   late final TabController _tabController;
-  
+
   bool get _showMapTab => widget.artifact.foundLocation.isNotEmpty;
+  bool get _show3dTab => widget.artifact.modelUrl.isNotEmpty; // 👈 Проверяем наличие модели
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: _showMapTab ? 4 : 3, vsync: this);
+    int tabCount = 2; // Описание, Детали
+    if (_showMapTab) tabCount++;
+    if (_show3dTab) tabCount++;
+    tabCount++; // Комментарии
+
+    _tabController = TabController(length: tabCount, vsync: this);
     _tabController.addListener(() {
       if (mounted) {
         setState(() {});
@@ -58,9 +65,11 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
-    
-    // Индекс вкладки комментариев зависит от наличия карты
-    final commentTabIndex = _showMapTab ? 3 : 2;
+
+    int commentTabIndex = 1; // Start with base tabs (Desc, Details)
+    if (_showMapTab) commentTabIndex++;
+    if (_show3dTab) commentTabIndex++;
+
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -105,7 +114,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
           color: Colors.grey.shade900,
           image: hasImage
               ? DecorationImage(
-                  image: NetworkImage(widget.artifact.imageUrl),
+                  image: AssetImage(widget.artifact.imageUrl),
                   fit: BoxFit.cover,
                 )
               : null,
@@ -143,7 +152,6 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
     );
   }
 
-  // ============== ИСПРАВЛЕННЫЙ ДИЗАЙН ПАНЕЛИ ==============
   Widget _buildDraggableInfoSheet() {
     return DraggableScrollableSheet(
       initialChildSize: 0.55,
@@ -181,7 +189,6 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
       },
     );
   }
-  // ==========================================================
 
   Widget _buildGrabber() {
     return Container(
@@ -221,8 +228,17 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
   }
 
   Widget _buildTabBar() {
+    final tabs = [
+      const Tab(text: 'Описание'),
+      const Tab(text: 'Детали'),
+      if (_showMapTab) const Tab(text: 'Карта'),
+      if (_show3dTab) const Tab(text: '3D'),
+      const Tab(text: 'Комментарии'),
+    ];
+
     return TabBar(
       controller: _tabController,
+      isScrollable: true,
       labelColor: Colors.white,
       unselectedLabelColor: Colors.white70,
       indicator: BoxDecoration(
@@ -230,25 +246,22 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
         color: Colors.white.withOpacity(0.2),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      tabs: [
-        const Tab(text: 'Описание'),
-        const Tab(text: 'Детали'),
-        if(_showMapTab) const Tab(text: 'Карта'),
-        const Tab(text: 'Комментарии'),
-      ],
+      tabs: tabs,
     );
   }
 
   Widget _buildTabBarView(ScrollController scrollController) {
+    final children = [
+      _buildDescriptionTab(scrollController),
+      _buildDetailsTab(scrollController),
+      if (_showMapTab) _buildMapTab(),
+      if (_show3dTab) _build3dTab(),
+      _buildCommentsTab(scrollController),
+    ];
     return Expanded(
       child: TabBarView(
         controller: _tabController,
-        children: [
-          _buildDescriptionTab(scrollController),
-          _buildDetailsTab(scrollController),
-          if(_showMapTab) _buildMapTab(),
-          _buildCommentsTab(scrollController),
-        ],
+        children: children,
       ),
     );
   }
@@ -299,6 +312,28 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
       child: ArtifactLocationMap(location: widget.artifact.foundLocation),
     );
   }
+
+  Widget _build3dTab() {
+    if (widget.artifact.modelUrl.isEmpty) {
+      return Center(
+        child: Text(
+          "3D модель пока не доступна",
+          style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16),
+        ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ModelViewer(
+        backgroundColor: Colors.transparent,
+        src: widget.artifact.modelUrl, // 👈 Используем путь из модели
+        alt: "A 3D model of the artifact",
+        ar: true,
+        autoRotate: true,
+        cameraControls: true,
+      ),
+    );
+  }
   
   Widget _buildCommentsTab(ScrollController sc) {
      return ListView(
@@ -325,7 +360,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
         children: [
           Icon(icon, color: Colors.white70, size: 16),
           const SizedBox(width: 6),
-          Text(text, style: const TextStyle(color: Colors.white, fontSize: 13)),
+          Flexible(child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 13))),
         ],
       ),
     );
@@ -353,7 +388,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
             flex: 2,
             child: Text("$label:", style: const TextStyle(color: Colors.white70, fontSize: 15)),
           ),
-          Expanded(
+          Flexible(
             flex: 3,
             child: Text(value, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500)),
           ),

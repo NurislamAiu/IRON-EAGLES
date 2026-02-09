@@ -130,12 +130,13 @@ class ArtifactService {
   // 🔍 4. GET ALL
   // =====================================================================
   Future<List<Artifact>> getAllArtifacts() async {
-    final snapshot = await _firestore
-        .collection('artifacts')
-        .orderBy('createdAt', descending: true)
-        .get();
+    // final snapshot = await _firestore
+    //     .collection('artifacts')
+    //     .orderBy('createdAt', descending: true)
+    //     .get();
 
-    return snapshot.docs.map((doc) => Artifact.fromMap(doc.data())).toList();
+    // return snapshot.docs.map((doc) => Artifact.fromMap(doc.data())).toList();
+    return Future.value(mockArtifacts);
   }
 
   // =====================================================================

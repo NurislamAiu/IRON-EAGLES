@@ -4,6 +4,7 @@ class Artifact {
   final String description;
   final String foundLocation;
   final String imageUrl;
+  final String modelUrl; // 👈 Новое поле для 3D модели
   final String qrCodeUrl;
   final String addedBy;
   final DateTime createdAt;
@@ -33,6 +34,7 @@ class Artifact {
     required this.description,
     required this.foundLocation,
     required this.imageUrl,
+    this.modelUrl = '', // 👈 Значение по умолчанию
     required this.qrCodeUrl,
     required this.addedBy,
     required this.createdAt,
@@ -63,6 +65,7 @@ class Artifact {
       'description': description,
       'foundLocation': foundLocation,
       'imageUrl': imageUrl,
+      'modelUrl': modelUrl, // 👈 Добавлено в toMap
       'qrCodeUrl': qrCodeUrl,
       'addedBy': addedBy,
       'createdAt': createdAt.toIso8601String(),
@@ -94,6 +97,7 @@ class Artifact {
       description: data['description'] ?? '',
       foundLocation: data['foundLocation'] ?? '',
       imageUrl: data['imageUrl'] ?? '',
+      modelUrl: data['modelUrl'] ?? '', // 👈 Добавлено в fromMap
       qrCodeUrl: data['qrCodeUrl'] ?? '',
       addedBy: data['addedBy'] ?? '',
       createdAt: DateTime.tryParse(data['createdAt'] ?? '') ?? DateTime.now(),

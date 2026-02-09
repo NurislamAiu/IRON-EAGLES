@@ -5,9 +5,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Розеттский камень',
-    description: 'Древнеегипетская стела из гранодиорита, на которой выбиты три идентичных по смыслу текста на двух языках (древнеегипетском и древнегреческом), что послужило ключом к расшифровке египетских иероглифов.',
+    description:
+        'Древнеегипетская стела из гранодиорита, на которой выбиты три идентичных по смыслу текста на двух языках (древнеегипетском и древнегреческом), что послужило ключом к расшифровке египетских иероглифов.',
     foundLocation: 'Розетта, Египет',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Rosetta_Stone.JPG/800px-Rosetta_Stone.JPG',
+    imageUrl: 'assets/images/museum_bg_0.jpeg',
+    modelUrl: 'assets/3d/museum_3d_0.glb',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -29,9 +31,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Терракотовая армия',
-    description: 'Коллекция из более чем 8000 полноразмерных терракотовых статуй китайских воинов и их лошадей, обнаруженная у гробницы императора Цинь Шихуанди.',
+    description:
+        'Коллекция из более чем 8000 полноразмерных терракотовых статуй китайских воинов и их лошадей, обнаруженная у гробницы императора Цинь Шихуанди.',
     foundLocation: 'Сиань, провинция Шэньси, Китай',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Terracotta_army_xian.jpg/1280px-Terracotta_army_xian.jpg',
+    imageUrl: 'assets/images/museum_bg_1.jpeg',
+    modelUrl: 'assets/3d/museum_3d_1.glb',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -43,19 +47,24 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1974, 3, 29),
     material: 'Терракота (обожженная глина)',
     restorationStatus: 'Продолжается',
-    contextNotes: 'Армия была похоронена вместе с первым императором Китая для его защиты в загробной жизни.',
-    height: 185, // Средняя высота воина
+    contextNotes:
+        'Армия была похоронена вместе с первым императором Китая для его защиты в загробной жизни.',
+    height: 185,
+
     width: 50,
     depth: 45,
     gpsLat: 34.3853,
     gpsLng: 109.279,
   ),
+
   Artifact(
     id: generateArtifactId(),
     title: 'Шлем из Саттон-Ху',
-    description: 'Богато украшенный англосаксонский шлем, найденный в корабельном погребении. Является одним из самых важных археологических находок в Британии.',
+    description:
+        'Богато украшенный англосаксонский шлем, найденный в корабельном погребении. Является одним из самых важных археологических находок в Британии.',
     foundLocation: 'Саттон-Ху, Саффолк, Англия',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Sutton_Hoo_helmet_repl_new.jpg/1024px-Sutton_Hoo_helmet_repl_new.jpg',
+    imageUrl: 'assets/images/museum_bg_2.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -67,7 +76,8 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1939, 5),
     material: 'Железо, луженая бронза, серебро, гранаты',
     restorationStatus: 'Завершена',
-    contextNotes: 'Шлем был найден в сотнях фрагментов и был тщательно собран реставраторами.',
+    contextNotes:
+        'Шлем был найден в сотнях фрагментов и был тщательно собран реставраторами.',
     height: 31.8,
     width: 21.5,
     depth: 25,
@@ -77,9 +87,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Венера Милосская',
-    description: 'Знаменитая древнегреческая статуя богини Афродиты. Считается одним из лучших образцов эллинистического искусства.',
+    description:
+        'Знаменитая древнегреческая статуя богини Афродиты. Считается одним из лучших образцов эллинистического искусства.',
     foundLocation: 'Остров Милос, Греция',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Venus_de_Milo_Louvre_Ma399_n2.jpg/800px-Venus_de_Milo_Louvre_Ma399_n2.jpg',
+    imageUrl: 'assets/images/museum_bg_3.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -91,7 +103,8 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1820, 4, 8),
     material: 'Паросский мрамор',
     restorationStatus: 'Не требуется',
-    contextNotes: 'Обстоятельства утери рук статуи до сих пор являются предметом споров.',
+    contextNotes:
+        'Обстоятельства утери рук статуи до сих пор являются предметом споров.',
     height: 203,
     width: 60,
     depth: 55,
@@ -101,9 +114,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Диск из Небры',
-    description: 'Бронзовый диск с инкрустацией из золота, представляющий собой древнейшее известное изображение космоса. Считается важным астрономическим артефактом.',
+    description:
+        'Бронзовый диск с инкрустацией из золота, представляющий собой древнейшее известное изображение космоса. Считается важным астрономическим артефактом.',
     foundLocation: 'Небра, Саксония-Анхальт, Германия',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Nebra_Scheibe.jpg/1024px-Nebra_Scheibe.jpg',
+    imageUrl: 'assets/images/museum_bg_4.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -115,8 +130,10 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1999, 7, 4),
     material: 'Бронза, золото',
     restorationStatus: 'Завершена',
-    contextNotes: 'Изначально был найден "черными копателями" и позже конфискован полицией.',
-    height: 32, // Диаметр
+    contextNotes:
+        'Изначально был найден "черными копателями" и позже конфискован полицией.',
+    height: 32,
+
     width: 32,
     depth: 0.45,
     gpsLat: 51.2708,
@@ -125,9 +142,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Золотая маска Тутанхамона',
-    description: 'Погребальная маска египетского фараона Тутанхамона. Один из самых известных и узнаваемых артефактов в мире.',
+    description:
+        'Погребальная маска египетского фараона Тутанхамона. Один из самых известных и узнаваемых артефактов в мире.',
     foundLocation: 'Долина Царей, Луксор, Египет',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Tutankhamun_Golden_Mask.jpeg/800px-Tutankhamun_Golden_Mask.jpeg',
+    imageUrl: 'assets/images/museum_bg_5.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -139,7 +158,8 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1925, 10, 28),
     material: 'Золото, лазурит, сердолик, бирюза',
     restorationStatus: 'Незначительная реставрация бороды в 2015',
-    contextNotes: 'Маска весит около 10 килограммов и была найдена непосредственно на мумии фараона.',
+    contextNotes:
+        'Маска весит около 10 килограммов и была найдена непосредственно на мумии фараона.',
     height: 54,
     width: 39.3,
     depth: 49,
@@ -149,9 +169,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Антикитерский механизм',
-    description: 'Древний аналоговый "компьютер", предназначенный для расчета астрономических положений и предсказания затмений. Уровень сложности механизма не имел аналогов вплоть до XIV века.',
+    description:
+        'Древний аналоговый "компьютер", предназначенный для расчета астрономических положений и предсказания затмений. Уровень сложности механизма не имел аналогов вплоть до XIV века.',
     foundLocation: 'Около острова Антикитера, Греция',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/NAMA_Machine_d%27Anticyth%C3%A8re_1.jpg/1024px-NAMA_Machine_d%27Anticyth%C3%A8re_1.jpg',
+    imageUrl: 'assets/images/museum_bg_6.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -163,7 +185,8 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1901),
     material: 'Бронза',
     restorationStatus: 'Исследуется с помощью современных технологий',
-    contextNotes: 'Найден на затонувшем римском корабле. Состоит из более чем 30 бронзовых шестерёнок.',
+    contextNotes:
+        'Найден на затонувшем римском корабле. Состоит из более чем 30 бронзовых шестерёнок.',
     height: 34,
     width: 18,
     depth: 9,
@@ -173,9 +196,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Чаша Уоррена',
-    description: 'Древнеримская серебряная чаша для питья, богато украшенная двумя рельефными изображениями однополых мужских актов.',
+    description:
+        'Древнеримская серебряная чаша для питья, богато украшенная двумя рельефными изображениями однополых мужских актов.',
     foundLocation: 'Предположительно, Биттир (Палестина)',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Warren_Cup_BM_GR_1999.4-26.1.jpg/1024px-Warren_Cup_BM_GR_1999.4-26.1.jpg',
+    imageUrl: 'assets/images/museum_bg_7.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -187,9 +212,11 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1911),
     material: 'Серебро',
     restorationStatus: 'Не требуется',
-    contextNotes: 'Из-за откровенного содержания долгое время не выставлялась публично.',
+    contextNotes:
+        'Из-за откровенного содержания долгое время не выставлялась публично.',
     height: 11,
-    width: 19.8, // Диаметр
+    width: 19.8,
+
     depth: 19.8,
     gpsLat: 31.7161,
     gpsLng: 35.1503,
@@ -197,9 +224,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Статуэтка "Танцующая девушка" из Мохенджо-Даро',
-    description: 'Небольшая бронзовая статуэтка, найденная в руинах города Мохенджо-Даро. Является ярким примером искусства Индской цивилизации.',
+    description:
+        'Небольшая бронзовая статуэтка, найденная в руинах города Мохенджо-Даро. Является ярким примером искусства Индской цивилизации.',
     foundLocation: 'Мохенджо-Даро, Синд, Пакистан',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Dancing_Girl_of_Mohenjo-daro.jpg/800px-Dancing_Girl_of_Mohenjo-daro.jpg',
+    imageUrl: 'assets/images/museum_bg_8.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -211,7 +240,8 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1926),
     material: 'Бронза',
     restorationStatus: 'Не требуется',
-    contextNotes: 'Высота статуэтки всего 10.5 сантиметров, но она поражает своей детализацией и динамичной позой.',
+    contextNotes:
+        'Высота статуэтки всего 10.5 сантиметров, но она поражает своей детализацией и динамичной позой.',
     height: 10.5,
     width: 5,
     depth: 2.5,
@@ -221,9 +251,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Кодекс Хаммурапи',
-    description: 'Хорошо сохранившийся вавилонский свод законов, один из древнейших письменных памятников права в мире.',
+    description:
+        'Хорошо сохранившийся вавилонский свод законов, один из древнейших письменных памятников права в мире.',
     foundLocation: 'Сузы, Иран',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Code-de-Hammurabi-1.jpg/800px-Code-de-Hammurabi-1.jpg',
+    imageUrl: 'assets/images/museum_bg_9.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -235,20 +267,22 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1901),
     material: 'Диорит',
     restorationStatus: 'Не требуется',
-    contextNotes: 'На вершине стелы изображен царь Хаммурапи, получающий законы от бога солнца Шамаша.',
+    contextNotes:
+        'На вершине стелы изображен царь Хаммурапи, получающий законы от бога солнца Шамаша.',
     height: 225,
     width: 65,
     depth: 45,
     gpsLat: 32.189,
     gpsLng: 48.267,
   ),
-  // ==================== +20 НОВЫХ АРТЕФАКТОВ ====================
   Artifact(
     id: generateArtifactId(),
     title: 'Бюст Нефертити',
-    description: 'Известняковый бюст, покрытый раскрашенным стукко. Изображает Нефертити, супругу древнеегипетского фараона Эхнатона. Является одним из самых известных произведений искусства Древнего Египта.',
+    description:
+        'Известняковый бюст, покрытый раскрашенным стукко. Изображает Нефертити, супругу древнеегипетского фараона Эхнатона. Является одним из самых известных произведений искусства Древнего Египта.',
     foundLocation: 'Амарна, Египет',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Nofretete_Neues_Museum.jpg/800px-Nofretete_Neues_Museum.jpg',
+    imageUrl: 'assets/images/museum_bg_10.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -270,9 +304,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Свитки Мёртвого моря',
-    description: 'Коллекция из 972 древних манускриптов, найденных в пещерах Кумрана. Содержат одни из самых древних известных библейских текстов.',
+    description:
+        'Коллекция из 972 древних манускриптов, найденных в пещерах Кумрана. Содержат одни из самых древних известных библейских текстов.',
     foundLocation: 'Кумран, Западный берег реки Иордан',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/The_Great_Isaiah_Scroll.jpg/1024px-The_Great_Isaiah_Scroll.jpg',
+    imageUrl: 'assets/images/museum_bg_11.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -285,8 +321,10 @@ final List<Artifact> mockArtifacts = [
     material: 'Папирус, пергамент, медный лист',
     restorationStatus: 'Продолжается',
     contextNotes: 'Тексты написаны на иврите, арамейском и греческом языках.',
-    height: 24, // Примерная высота свитка Исайи
-    width: 734, // Длина
+    height: 24,
+
+    width: 734,
+
     depth: 0.1,
     gpsLat: 31.743,
     gpsLng: 35.459,
@@ -294,9 +332,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Кубок Ликурга',
-    description: 'Уникальная римская стеклянная чаша, которая меняет цвет в зависимости от освещения: она выглядит зеленой в отраженном свете и красной в проходящем. Этот эффект достигается за счет наночастиц золота и серебра в стекле.',
+    description:
+        'Уникальная римская стеклянная чаша, которая меняет цвет в зависимости от освещения: она выглядит зеленой в отраженном свете и красной в проходящем. Этот эффект достигается за счет наночастиц золота и серебра в стекле.',
     foundLocation: 'Предположительно, Рим или его окрестности',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Lycurgus_Cup_trans_and_refl.jpg/1024px-Lycurgus_Cup_trans_and_refl.jpg',
+    imageUrl: 'assets/images/museum_bg_12.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -308,7 +348,8 @@ final List<Artifact> mockArtifacts = [
     foundDate: null,
     material: 'Дихроичное стекло',
     restorationStatus: 'Не требуется',
-    contextNotes: 'Единственный полностью сохранившийся римский объект из этого типа стекла.',
+    contextNotes:
+        'Единственный полностью сохранившийся римский объект из этого типа стекла.',
     height: 16.5,
     width: 13.2,
     depth: 13.2,
@@ -318,9 +359,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Воины из Риаче',
-    description: 'Две полноразмерные греческие бронзовые статуи обнаженных бородатых воинов. Считаются выдающимися образцами древнегреческой скульптуры.',
+    description:
+        'Две полноразмерные греческие бронзовые статуи обнаженных бородатых воинов. Считаются выдающимися образцами древнегреческой скульптуры.',
     foundLocation: 'Побережье Риаче, Италия',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Bronzi_di_Riace_Museo_Reggio_Calabria.jpg/1024px-Bronzi_di_Riace_Museo_Reggio_Calabria.jpg',
+    imageUrl: 'assets/images/museum_bg_13.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -332,7 +375,8 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1972, 8, 16),
     material: 'Бронза, серебро, медь, слоновая кость',
     restorationStatus: 'Завершена',
-    contextNotes: 'Найдены на дне Ионического моря. Вероятно, перевозились на корабле.',
+    contextNotes:
+        'Найдены на дне Ионического моря. Вероятно, перевозились на корабле.',
     height: 205,
     width: 70,
     depth: 60,
@@ -342,9 +386,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Цилиндр Кира',
-    description: 'Глиняный цилиндр, на котором на аккадском языке клинописью записана декларация персидского царя Кира Великого. Считается одной из первых деклараций прав человека.',
+    description:
+        'Глиняный цилиндр, на котором на аккадском языке клинописью записана декларация персидского царя Кира Великого. Считается одной из первых деклараций прав человека.',
     foundLocation: 'Руины Вавилона, Месопотамия (современный Ирак)',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3j/Cyrus_Cylinder_in_its_case.jpg/1280px-Cyrus_Cylinder_in_its_case.jpg',
+    imageUrl: 'assets/images/museum_bg_14.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -356,9 +402,11 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1879, 3),
     material: 'Глина',
     restorationStatus: 'Не требуется',
-    contextNotes: 'Декларация разрешала депортированным народам, включая евреев, вернуться на родину.',
+    contextNotes:
+        'Декларация разрешала депортированным народам, включая евреев, вернуться на родину.',
     height: 10,
-    width: 22.5, // Длина
+    width: 22.5,
+
     depth: 10,
     gpsLat: 32.542,
     gpsLng: 44.420,
@@ -366,9 +414,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Штандарт из Ура',
-    description: 'Артефакт шумерской цивилизации, представляющий собой деревянный ящик, инкрустированный перламутром, раковинами и лазуритом. Изображает сцены войны и мира.',
+    description:
+        'Артефакт шумерской цивилизации, представляющий собой деревянный ящик, инкрустированный перламутром, раковинами и лазуритом. Изображает сцены войны и мира.',
     foundLocation: 'Царское кладбище в Уре, Месопотамия',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Standard_of_Ur_-_War_side.jpg/1280px-Standard_of_Ur_-_War_side.jpg',
+    imageUrl: 'assets/images/museum_bg_15.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -380,7 +430,8 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1920),
     material: 'Дерево, перламутр, раковины, лазурит, битум',
     restorationStatus: 'Завершена',
-    contextNotes: 'Назначение объекта до сих пор неясно; возможно, это был музыкальный инструмент или казна.',
+    contextNotes:
+        'Назначение объекта до сих пор неясно; возможно, это был музыкальный инструмент или казна.',
     height: 21.5,
     width: 49.5,
     depth: 12,
@@ -390,9 +441,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Ворота Иштар',
-    description: 'Восьмые ворота внутреннего города Вавилона, построенные по приказу царя Навуходоносора II. Покрыты глазурованным кирпичом с изображениями животных.',
+    description:
+        'Восьмые ворота внутреннего города Вавилона, построенные по приказу царя Навуходоносора II. Покрыты глазурованным кирпичом с изображениями животных.',
     foundLocation: 'Вавилон, Месопотамия',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Pergamonmuseum_Ischtar-Tor_01.jpg/1024px-Pergamonmuseum_Ischtar-Tor_01.jpg',
+    imageUrl: 'assets/images/museum_bg_16.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -405,7 +458,8 @@ final List<Artifact> mockArtifacts = [
     material: 'Глазурованный кирпич',
     restorationStatus: 'Реконструкция завершена (в Пергамском музее)',
     contextNotes: 'Ворота были частью монументальной Дороги процессий.',
-    height: 1400, // 14 метров
+    height: 1400,
+
     width: 1500,
     depth: 450,
     gpsLat: 32.542,
@@ -414,9 +468,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Фестский диск',
-    description: 'Диск из обожженной глины, покрытый с обеих сторон иероглифами, нанесенными по спирали. Письменность до сих пор не расшифрована.',
+    description:
+        'Диск из обожженной глины, покрытый с обеих сторон иероглифами, нанесенными по спирали. Письменность до сих пор не расшифрована.',
     foundLocation: 'Фестский дворец, Крит, Греция',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Phaistos_disc_-_side_A.jpg/1024px-Phaistos_disc_-_side_A.jpg',
+    imageUrl: 'assets/images/museum_bg_29.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -428,8 +484,10 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1908, 7, 3),
     material: 'Глина',
     restorationStatus: 'Не требуется',
-    contextNotes: 'Уникален тем, что символы были оттиснуты на глине с помощью штампов, что делает его ранним примером печати.',
-    height: 16, // Диаметр
+    contextNotes:
+        'Уникален тем, что символы были оттиснуты на глине с помощью штампов, что делает его ранним примером печати.',
+    height: 16,
+
     width: 16,
     depth: 2.1,
     gpsLat: 35.051,
@@ -438,9 +496,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Влюбленные из Айн-Сахри',
-    description: 'Небольшая кальцитовая статуэтка, изображающая обнимающуюся пару. Считается древнейшим известным изображением людей, занимающихся любовью.',
+    description:
+        'Небольшая кальцитовая статуэтка, изображающая обнимающуюся пару. Считается древнейшим известным изображением людей, занимающихся любовью.',
     foundLocation: 'Пещера Айн-Сахри, Иудейская пустыня',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Ain_Sakhri_lovers_figurine.jpg/800px-Ain_Sakhri_lovers_figurine.jpg',
+    imageUrl: 'assets/images/museum_bg_19.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -459,12 +519,14 @@ final List<Artifact> mockArtifacts = [
     gpsLat: 31.816,
     gpsLng: 35.333,
   ),
-   Artifact(
+  Artifact(
     id: generateArtifactId(),
     title: 'Золотая пектораль из Толстой Могилы',
-    description: 'Нагрудное украшение скифского царя, шедевр греко-скифского искусства. Состоит из трех ярусов, изображающих мифологические и бытовые сцены.',
+    description:
+        'Нагрудное украшение скифского царя, шедевр греко-скифского искусства. Состоит из трех ярусов, изображающих мифологические и бытовые сцены.',
     foundLocation: 'Курган Толстая Могила, Украина',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Scythian_pectoral_from_Tovsta_Mohyla.JPG/1280px-Scythian_pectoral_from_Tovsta_Mohyla.JPG',
+    imageUrl: 'assets/images/museum_bg_20.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -477,7 +539,8 @@ final List<Artifact> mockArtifacts = [
     material: 'Золото',
     restorationStatus: 'Не требуется',
     contextNotes: 'Весит 1150 граммов и состоит из чистого золота 958 пробы.',
-    height: 30.6, // Диаметр
+    height: 30.6,
+
     width: 30.6,
     depth: 1,
     gpsLat: 47.609,
@@ -486,9 +549,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Дама из Эльче',
-    description: 'Полихромный каменный бюст, предположительно изображающий иберийскую богиню или жрицу. Отличается сложной прической и богатыми украшениями.',
+    description:
+        'Полихромный каменный бюст, предположительно изображающий иберийскую богиню или жрицу. Отличается сложной прической и богатыми украшениями.',
     foundLocation: 'Эльче, Испания',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Dama_de_Elche_MAN.jpg/800px-Dama_de_Elche_MAN.jpg',
+    imageUrl: 'assets/images/museum_bg_21.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -500,19 +565,22 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1897, 8, 4),
     material: 'Известняк',
     restorationStatus: 'Не требуется',
-    contextNotes: 'В задней части бюста есть отверстие, что может указывать на его использование в качестве погребальной урны.',
+    contextNotes:
+        'В задней части бюста есть отверстие, что может указывать на его использование в качестве погребальной урны.',
     height: 56,
     width: 45,
     depth: 37,
     gpsLat: 38.269,
     gpsLng: -0.698,
   ),
-   Artifact(
+  Artifact(
     id: generateArtifactId(),
     title: 'Большая камея Франции',
-    description: 'Пятислойная камея из сардоникса, одна из крупнейших сохранившихся камей античности. Изображает прославление династии Юлиев-Клавдиев.',
+    description:
+        'Пятислойная камея из сардоникса, одна из крупнейших сохранившихся камей античности. Изображает прославление династии Юлиев-Клавдиев.',
     foundLocation: 'Предположительно, Рим',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Grand_Cam%C3%A9e_de_France_-_Cabinet_des_m%C3%A9dailles_-_Paris.jpg/800px-Grand_Cam%C3%A9e_de_France_-_Cabinet_des_m%C3%A9dailles_-_Paris.jpg',
+    imageUrl: 'assets/images/museum_bg_22.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -531,12 +599,14 @@ final List<Artifact> mockArtifacts = [
     gpsLat: null,
     gpsLng: null,
   ),
-   Artifact(
+  Artifact(
     id: generateArtifactId(),
     title: 'Саркофаг супругов',
-    description: 'Этрусский терракотовый саркофаг, изображающий супружескую пару, возлежащую на пиршественном ложе в загробном мире.',
+    description:
+        'Этрусский терракотовый саркофаг, изображающий супружескую пару, возлежащую на пиршественном ложе в загробном мире.',
     foundLocation: 'Некрополь Бандитачча, Черветери, Италия',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Sarcophage_%C3%A9poux_de_Cerveteri_Louvre.jpg/1024px-Sarcophage_%C3%A9poux_de_Cerveteri_Louvre.jpg',
+    imageUrl: 'assets/images/museum_bg_23.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -548,19 +618,22 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1845),
     material: 'Терракота',
     restorationStatus: 'Завершена',
-    contextNotes: 'Яркий пример этрусского искусства, демонстрирующий более равный статус женщин по сравнению с Грецией.',
+    contextNotes:
+        'Яркий пример этрусского искусства, демонстрирующий более равный статус женщин по сравнению с Грецией.',
     height: 114,
     width: 190,
     depth: 69,
     gpsLat: 42.008,
     gpsLng: 12.102,
   ),
-   Artifact(
+  Artifact(
     id: generateArtifactId(),
     title: 'Ольмекская голова',
-    description: 'Одна из 17 монументальных каменных голов, вырезанных из крупных валунов вулканического базальта. Предположительно, портреты могущественных ольмекских правителей.',
+    description:
+        'Одна из 17 монументальных каменных голов, вырезанных из крупных валунов вулканического базальта. Предположительно, портреты могущественных ольмекских правителей.',
     foundLocation: 'Сан-Лоренсо-Теночтитлан, Мексика',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Olmec_Head_La_Venta_1.jpg/800px-Olmec_Head_La_Venta_1.jpg',
+    imageUrl: 'assets/images/museum_bg_24.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -579,12 +652,14 @@ final List<Artifact> mockArtifacts = [
     gpsLat: 17.755,
     gpsLng: -94.675,
   ),
-   Artifact(
+  Artifact(
     id: generateArtifactId(),
     title: 'Манускрипт Войнича',
-    description: 'Загадочная иллюстрированная рукопись, написанная на неизвестном языке с использованием неизвестного алфавита. Содержит изображения растений, астрономических диаграмм и людей.',
+    description:
+        'Загадочная иллюстрированная рукопись, написанная на неизвестном языке с использованием неизвестного алфавита. Содержит изображения растений, астрономических диаграмм и людей.',
     foundLocation: 'Неизвестно, приобретен в Италии',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Voynich_manuscript_-_folio_81_recto.jpg/800px-Voynich_manuscript_-_folio_81_recto.jpg',
+    imageUrl: 'assets/images/museum_bg_25.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -596,19 +671,22 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1912),
     material: 'Пергамент, чернила',
     restorationStatus: 'Не требуется',
-    contextNotes: 'Несмотря на многочисленные попытки, манускрипт до сих пор не расшифрован.',
+    contextNotes:
+        'Несмотря на многочисленные попытки, манускрипт до сих пор не расшифрован.',
     height: 23.5,
     width: 16.2,
     depth: 5,
     gpsLat: null,
     gpsLng: null,
   ),
-   Artifact(
+  Artifact(
     id: generateArtifactId(),
     title: 'Карта Пири-реиса',
-    description: 'Карта мира, составленная османским адмиралом и картографом Пири-реисом. Уникальна тем, что на ней изображена часть побережья Антарктиды, свободной ото льда.',
+    description:
+        'Карта мира, составленная османским адмиралом и картографом Пири-реисом. Уникальна тем, что на ней изображена часть побережья Антарктиды, свободной ото льда.',
     foundLocation: 'Дворец Топкапы, Стамбул, Турция',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Piri_reis_world_map_01.jpg/1280px-Piri_reis_world_map_01.jpg',
+    imageUrl: 'assets/images/museum_bg_26.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -620,19 +698,22 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1929, 10, 9),
     material: 'Кожа газели',
     restorationStatus: 'Не требуется',
-    contextNotes: 'Источник знаний для изображения Антарктиды является предметом споров.',
+    contextNotes:
+        'Источник знаний для изображения Антарктиды является предметом споров.',
     height: 90,
     width: 63,
     depth: 0.1,
     gpsLat: 41.011,
     gpsLng: 28.983,
   ),
-   Artifact(
+  Artifact(
     id: generateArtifactId(),
     title: 'Багдадская батарейка',
-    description: 'Глиняный сосуд с медным цилиндром и железным стержнем. Считается, что это мог быть древний гальванический элемент, способный создавать небольшое электрическое напряжение.',
+    description:
+        'Глиняный сосуд с медным цилиндром и железным стержнем. Считается, что это мог быть древний гальванический элемент, способный создавать небольшое электрическое напряжение.',
     foundLocation: 'Худжут-Рабу, недалеко от Багдада, Ирак',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Baghdad_battery.jpg/800px-Baghdad_battery.jpg',
+    imageUrl: 'assets/images/museum_bg_27.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -644,19 +725,22 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1938),
     material: 'Глина, медь, железо, битум',
     restorationStatus: 'Не требуется',
-    contextNotes: 'Назначение до сих пор оспаривается; альтернативные гипотезы включают хранение свитков.',
+    contextNotes:
+        'Назначение до сих пор оспаривается; альтернативные гипотезы включают хранение свитков.',
     height: 14,
     width: 8,
     depth: 8,
     gpsLat: 33.315,
     gpsLng: 44.366,
   ),
-   Artifact(
+  Artifact(
     id: generateArtifactId(),
     title: 'Столпы Гёбекли-Тепе',
-    description: 'Монументальные Т-образные колонны из известняка, украшенные рельефами животных. Являются частью древнейшего в мире известного храмового комплекса.',
+    description:
+        'Монументальные Т-образные колонны из известняка, украшенные рельефами животных. Являются частью древнейшего в мире известного храмового комплекса.',
     foundLocation: 'Гёбекли-Тепе, Турция',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/G%C3%B6bekli_Tepe%2C_Urfa.jpg/1024px-G%C3%B6bekli_Tepe%2C_Urfa.jpg',
+    imageUrl: 'assets/images/museum_bg_28.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -668,19 +752,23 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1994),
     material: 'Известняк',
     restorationStatus: 'Раскопки и консервация продолжаются',
-    contextNotes: 'Комплекс был построен до изобретения земледелия и гончарного дела, что переворачивает представления о развитии цивилизации.',
-    height: 600, // до 6 метров
+    contextNotes:
+        'Комплекс был построен до изобретения земледелия и гончарного дела, что переворачивает представления о развитии цивилизации.',
+    height: 600,
+
     width: 150,
     depth: 100,
     gpsLat: 37.223,
     gpsLng: 38.922,
   ),
-   Artifact(
+  Artifact(
     id: generateArtifactId(),
     title: 'Венера Виллендорфская',
-    description: 'Статуэтка женской фигуры, вырезанная из оолитового известняка. Является одним из самых известных образцов палеолитического искусства. Подчеркивает плодородие.',
+    description:
+        'Статуэтка женской фигуры, вырезанная из оолитового известняка. Является одним из самых известных образцов палеолитического искусства. Подчеркивает плодородие.',
     foundLocation: 'Виллендорф, Австрия',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Venus_von_Willendorf_01.jpg/800px-Venus_von_Willendorf_01.jpg',
+    imageUrl: 'assets/images/museum_bg_27.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -692,7 +780,8 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1908, 8, 7),
     material: 'Оолитовый известняк',
     restorationStatus: 'Не требуется',
-    contextNotes: 'Фигурка не имеет лица, голова покрыта орнаментом, возможно изображающим волосы или головной убор.',
+    contextNotes:
+        'Фигурка не имеет лица, голова покрыта орнаментом, возможно изображающим волосы или головной убор.',
     height: 11.1,
     width: 5.7,
     depth: 4.5,
@@ -702,9 +791,11 @@ final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),
     title: 'Календарь из Колиньи',
-    description: 'Крупная бронзовая табличка с выгравированным на ней галльским лунно-солнечным календарем. Важнейший источник для изучения галльского языка и представлений о времени.',
+    description:
+        'Крупная бронзовая табличка с выгравированным на ней галльским лунно-солнечным календарем. Важнейший источник для изучения галльского языка и представлений о времени.',
     foundLocation: 'Колиньи, Франция',
-    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Coligny_calendar_2.jpg/1024px-Coligny_calendar_2.jpg',
+    imageUrl: 'assets/images/museum_bg_29.jpeg',
+    modelUrl: '',
     qrCodeUrl: '',
     addedBy: 'system-seed',
     createdAt: DateTime.now(),
@@ -716,11 +807,12 @@ final List<Artifact> mockArtifacts = [
     foundDate: DateTime(1897),
     material: 'Бронза',
     restorationStatus: 'Завершена',
-    contextNotes: 'Календарь охватывает пятилетний цикл и написан на галльском языке латинским алфавитом.',
+    contextNotes:
+        'Календарь охватывает пятилетний цикл и написан на галльском языке латинским алфавитом.',
     height: 90,
     width: 148,
     depth: 0.2,
     gpsLat: 46.383,
     gpsLng: 5.35,
-  )
+  ),
 ];

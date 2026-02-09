@@ -145,14 +145,14 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             ),
           ),
           const Text(
-            "MuseumCode",
+            "Safety Box",
             style: TextStyle(
               color: Colors.white,
               fontSize: 32,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
             ),
-          ),
+          )
         ],
       ),
     );
@@ -227,7 +227,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           image: DecorationImage(
-            image: NetworkImage(a.imageUrl),
+            image: AssetImage(a.imageUrl),
             fit: BoxFit.cover,
           ),
           boxShadow: [
@@ -313,7 +313,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                     borderRadius: const BorderRadius.horizontal(
                       left: Radius.circular(20),
                     ),
-                    child: Image.network(
+                    child: Image.asset(
                       a.imageUrl,
                       width: 120,
                       height: 130,
