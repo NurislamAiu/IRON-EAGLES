@@ -1,7 +1,6 @@
 import 'package:museumcode/features/artifacts/domain/artifact_model.dart';
 import 'package:museumcode/core/utils/generate_random_id.dart';
 
-// Список из 30 реальных артефактов для тестирования и наполнения БД
 final List<Artifact> mockArtifacts = [
   Artifact(
     id: generateArtifactId(),

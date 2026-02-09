@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:museumcode/features/artifacts/presentation/widget_detial_screen/artifact_location_map.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/widgets/flash_message.dart';
@@ -25,11 +26,13 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
   final TextEditingController _commentController = TextEditingController();
   final CommentService _commentService = CommentService();
   late final TabController _tabController;
+  
+  bool get _showMapTab => widget.artifact.foundLocation.isNotEmpty;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: _showMapTab ? 4 : 3, vsync: this);
     _tabController.addListener(() {
       if (mounted) {
         setState(() {});
@@ -55,6 +58,9 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+    
+    // Индекс вкладки комментариев зависит от наличия карты
+    final commentTabIndex = _showMapTab ? 3 : 2;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -69,7 +75,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
         children: [
           _buildImageHeader(),
           _buildDraggableInfoSheet(),
-          if (_tabController.index == 2)
+          if (_tabController.index == commentTabIndex)
             Positioned(
               left: 0,
               right: 0,
@@ -224,10 +230,11 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
         color: Colors.white.withOpacity(0.2),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      tabs: const [
-        Tab(text: 'Описание'),
-        Tab(text: 'Детали'),
-        Tab(text: 'Комментарии'),
+      tabs: [
+        const Tab(text: 'Описание'),
+        const Tab(text: 'Детали'),
+        if(_showMapTab) const Tab(text: 'Карта'),
+        const Tab(text: 'Комментарии'),
       ],
     );
   }
@@ -239,6 +246,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
         children: [
           _buildDescriptionTab(scrollController),
           _buildDetailsTab(scrollController),
+          if(_showMapTab) _buildMapTab(),
           _buildCommentsTab(scrollController),
         ],
       ),
@@ -282,6 +290,13 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
           ],
         ],
       ),
+    );
+  }
+  
+   Widget _buildMapTab() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: ArtifactLocationMap(location: widget.artifact.foundLocation),
     );
   }
   

@@ -127,17 +127,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _uploadMockData,
-        backgroundColor: Colors.white.withOpacity(0.2),
-        foregroundColor: Colors.white,
-        elevation: 0,
-        shape: const CircleBorder(
-          side: BorderSide(color: Colors.white30, width: 1.5),
-        ),
-        child: const Icon(Icons.upload),
-        tooltip: 'Загрузить мок-данные',
-      ),
     );
   }
 
@@ -213,7 +202,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
               backgroundColor: Colors.white.withOpacity(0.1),
               selectedColor: Colors.white.withOpacity(0.8),
               labelStyle: TextStyle(
-                color: selected ? Colors.black : Colors.white,
+                color: selected ? Colors.black : Colors.grey,
                 fontWeight: FontWeight.w600,
               ),
               shape: RoundedRectangleBorder(
