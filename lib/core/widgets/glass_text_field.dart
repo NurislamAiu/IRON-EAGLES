@@ -7,6 +7,7 @@ class GlassTextField extends StatelessWidget {
   final bool obscure;
   final TextInputType keyboardType;
   final ValueChanged<String>? onChanged;
+  final int maxLines; // <-- ДОБАВЛЕНО
 
   const GlassTextField({
     super.key,
@@ -16,6 +17,7 @@ class GlassTextField extends StatelessWidget {
     this.obscure = false,
     this.keyboardType = TextInputType.text,
     this.onChanged,
+    this.maxLines = 1, // <-- ДОБАВЛЕНО
   });
 
   @override
@@ -25,6 +27,7 @@ class GlassTextField extends StatelessWidget {
       obscureText: obscure,
       onChanged: onChanged,
       keyboardType: keyboardType,
+      maxLines: maxLines, // <-- ДОБАВЛЕНО
       style: const TextStyle(color: Colors.white, fontSize: 16),
       decoration: InputDecoration(
         filled: true,

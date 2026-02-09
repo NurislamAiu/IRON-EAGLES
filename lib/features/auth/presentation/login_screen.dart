@@ -14,8 +14,7 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
-    with SingleTickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _loading = false;
@@ -33,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen>
     );
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
     _slide = Tween<Offset>(
-      begin: const Offset(0, 0.15),
+      begin: const Offset(0, 0.2),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
     _controller.forward();
@@ -72,10 +71,8 @@ class _LoginScreenState extends State<LoginScreen>
           message = 'Неверный формат email.';
           break;
         case 'user-not-found':
-          message = 'Пользователь с таким email не найден.';
-          break;
         case 'wrong-password':
-          message = 'Неверный пароль. Попробуйте ещё раз.';
+          message = 'Неверный email или пароль.';
           break;
         case 'user-disabled':
           message = 'Этот аккаунт был отключён.';
@@ -83,17 +80,14 @@ class _LoginScreenState extends State<LoginScreen>
         case 'too-many-requests':
           message = 'Слишком много попыток входа. Попробуйте позже.';
           break;
-        case 'network-request-failed':
-          message = 'Нет соединения с интернетом.';
-          break;
         default:
-          message = 'Неверный логин или пароль. Попробуйте ещё раз.';
+          message = 'Произошла ошибка. Попробуйте ещё раз.';
       }
-      FlashMessage.error(context, message);
+      if(mounted) FlashMessage.error(context, message);
     } catch (e) {
-      FlashMessage.error(context, 'Ошибка входа: ${e.toString()}');
+      if(mounted) FlashMessage.error(context, 'Ошибка входа: ${e.toString()}');
     } finally {
-      setState(() => _loading = false);
+      if(mounted) setState(() => _loading = false);
     }
   }
 
@@ -101,24 +95,29 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        fit: StackFit.expand,
         children: [
-          Image.asset('assets/images/museum_bg.jpg', fit: BoxFit.cover),
-
-          Container(color: Colors.black.withOpacity(0.6)),
-
-          Positioned(
-            top: 50,
-            left: 30,
-            child: IconButton(
-              onPressed: () => context.push('/'),
-              icon: Icon(
-                Icons.arrow_back_ios,
-                color: Colors.white.withOpacity(0.8),
+          // Новый фон с градиентом
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xff2c1e19), Color(0xff0f0c0a)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
+          
+          // Кнопка "Назад"
+          Positioned(
+            top: 50,
+            left: 20,
+            child: IconButton(
+              onPressed: () => context.go('/role-selection'),
+              icon: Icon(Icons.arrow_back_ios, color: Colors.white.withOpacity(0.8)),
+            ),
+          ),
 
+          // Анимированная форма входа
           FadeTransition(
             opacity: _fade,
             child: SlideTransition(
@@ -126,99 +125,36 @@ class _LoginScreenState extends State<LoginScreen>
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(25),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                      child: Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.12),
-                          borderRadius: BorderRadius.circular(25),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.25),
-                            width: 1.2,
+                  child: _buildGlassContainer(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Вход для археолога',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.25),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              'Вход для археолога',
-                              style: TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black45,
-                                    offset: Offset(1, 2),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 30),
-
-                            GlassTextField(
-                              controller: _email,
-                              hint: 'Email',
-                              icon: Icons.email_outlined,
-                            ),
-                            const SizedBox(height: 16),
-
-                            GlassTextField(
-                              controller: _password,
-                              hint: 'Пароль',
-                              icon: Icons.lock_outline,
-                              obscure: true,
-                            ),
-                            const SizedBox(height: 30),
-
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: ElevatedButton(
-                                onPressed: _loading ? null : _login,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.brown.shade600,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  elevation: 6,
-                                ),
-                                child: Text(
-                                  'Войти',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(height: 12),
-
-                            TextButton(
-                              onPressed: () => context.push('/register'),
-                              child: const Text(
-                                'Создать аккаунт',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
-                            ),
-                          ],
+                        const SizedBox(height: 30),
+                        GlassTextField(
+                          controller: _email,
+                          hint: 'Email',
+                          icon: Icons.email_outlined,
                         ),
-                      ),
+                        const SizedBox(height: 16),
+                        GlassTextField(
+                          controller: _password,
+                          hint: 'Пароль',
+                          icon: Icons.lock_outline,
+                          obscure: true,
+                        ),
+                        const SizedBox(height: 30),
+                        _buildLoginButton(),
+                        const SizedBox(height: 12),
+                        _buildRegisterButton(),
+                      ],
                     ),
                   ),
                 ),
@@ -226,12 +162,77 @@ class _LoginScreenState extends State<LoginScreen>
             ),
           ),
 
-          if (_loading)
-            Container(
-              color: Colors.black.withOpacity(0.4),
-              child: Center(child: RotatingLoader()),
-            ),
+          // Оверлей загрузки
+          if (_loading) _buildLoadingOverlay(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildGlassContainer({required Widget child}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(25),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.2),
+              width: 1.2,
+            ),
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoginButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: _loading ? null : _login,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white.withOpacity(0.8),
+          foregroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          elevation: 0,
+        ),
+        child: const Text(
+          'Войти',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRegisterButton() {
+    return TextButton(
+      onPressed: () => context.push('/register'),
+      child: const Text(
+        'Создать аккаунт',
+        style: TextStyle(
+          color: Colors.white70,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingOverlay() {
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          color: Colors.black.withOpacity(0.4),
+          child: const Center(child: RotatingLoader()),
+        ),
       ),
     );
   }
@@ -244,8 +245,7 @@ class RotatingLoader extends StatefulWidget {
   State<RotatingLoader> createState() => _RotatingLoaderState();
 }
 
-class _RotatingLoaderState extends State<RotatingLoader>
-    with SingleTickerProviderStateMixin {
+class _RotatingLoaderState extends State<RotatingLoader> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override

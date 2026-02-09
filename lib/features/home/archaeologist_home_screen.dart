@@ -82,73 +82,51 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
 
     return Scaffold(
       extendBody: true,
-
       body: Stack(
         children: [
-          // 🌌 Background
+          // 🌌 Новый фон с градиентом
           Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/museum_bg.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-
-          // Dark overlay
-          Container(
-            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Colors.black.withOpacity(0.3),
-                  Colors.black.withOpacity(0.6),
-                  Colors.black.withOpacity(0.3),
-                ],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
+                colors: [Color(0xff2c1e19), Color(0xff0f0c0a), Color(0xff2c1e19)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
-
+          
+          // Контент экрана
           SafeArea(child: screens[_index]),
         ],
       ),
 
-      // 🧭 Bottom Navigation — dynamic by ROLE
-      bottomNavigationBar: SafeArea(
+      // 🧭 Bottom Navigation
+      bottomNavigationBar: _buildBottomNavBar(items),
+    );
+  }
+
+  Widget _buildBottomNavBar(List<_NavItemData> items) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            border: Border.all(color: Colors.white.withOpacity(0.15)),
-            gradient: LinearGradient(
-              colors: [
-                Colors.white.withOpacity(0.10),
-                Colors.white.withOpacity(0.05),
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 30,
-                offset: const Offset(0, -4),
-              ),
-            ],
+            color: Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white.withOpacity(0.2)),
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(26),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List.generate(items.length, (i) {
-                  final item = items[i];
-                  return _navItem(item.icon, i, item.label);
-                }),
-              ),
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(items.length, (i) {
+              final item = items[i];
+              return _navItem(item.icon, i, item.label);
+            }),
           ),
         ),
       ),
@@ -161,38 +139,31 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
     return GestureDetector(
       onTap: () => setState(() => _index = index),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? Colors.white.withOpacity(0.18) : Colors.transparent,
+          color: selected ? Colors.white.withOpacity(0.2) : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: selected
-              ? [
-            BoxShadow(
-              color: Colors.brown.withOpacity(0.35),
-              blurRadius: 20,
-              offset: const Offset(0, 4),
-            )
-          ]
-              : [],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
-              size: selected ? 28 : 24,
-              color: selected ? Colors.brown.shade300 : Colors.white70,
+              size: 24,
+              color: selected ? Colors.white : Colors.white70,
             ),
             const SizedBox(height: 4),
-            Text(
-              label,
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
               style: TextStyle(
                 fontSize: 12,
-                color: selected ? Colors.brown.shade200 : Colors.white60,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                color: selected ? Colors.white : Colors.white60,
+                fontWeight: selected ? FontWeight.bold : FontWeight.w500,
               ),
-            ),
+              child: Text(label),
+            )
           ],
         ),
       ),

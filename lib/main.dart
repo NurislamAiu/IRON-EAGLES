@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:intl/date_symbol_data_local.dart'; // <-- 1. ИМПОРТ
 import 'package:provider/provider.dart';
 import 'package:museumcode/router/app_router.dart';
 import 'firebase_options.dart';
@@ -15,11 +16,13 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // 2. ИНИЦИАЛИЗАЦИЯ ЛОКАЛИ ДЛЯ ДАТ
+  await initializeDateFormatting('ru', null);
+
   print("INIT USER: ${FirebaseAuth.instance.currentUser?.email}");
 
   runApp(const MuseumApp());
 }
-
 
 class MuseumApp extends StatelessWidget {
   const MuseumApp({super.key});
@@ -28,10 +31,14 @@ class MuseumApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // 🧍 Авторизация
+        // 🧍 Авторизация (должен быть первым)
         ChangeNotifierProvider(create: (_) => AuthProviders()),
-        // 🏺 Артефакты
-        ChangeNotifierProvider(create: (_) => ArtifactProvider()),
+
+        // 🏺 Артефакты (зависит от AuthProviders)
+        ChangeNotifierProxyProvider<AuthProviders, ArtifactProvider>(
+          create: (context) => ArtifactProvider(context.read<AuthProviders>()),
+          update: (context, auth, previous) => ArtifactProvider(auth),
+        ),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

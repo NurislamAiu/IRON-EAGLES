@@ -19,22 +19,8 @@ class CommentInputBar extends StatelessWidget {
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 6, 16, 16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.black.withOpacity(0.92),
-              Colors.black.withOpacity(0.55),
-              Colors.transparent,
-            ],
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-          ),
-        ),
         child: Row(
           children: [
-            // --------------------------
-            //  TEXT FIELD
-            // --------------------------
             Expanded(
               child: Container(
                 padding: const EdgeInsets.all(12),

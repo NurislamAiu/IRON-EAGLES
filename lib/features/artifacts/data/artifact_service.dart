@@ -4,6 +4,7 @@ import 'dart:io' show File;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:museumcode/core/utils/mock_artifacts.dart';
 
 import '../domain/artifact_model.dart';
 
@@ -61,9 +62,6 @@ class ArtifactService {
   // =====================================================================
   // 🟡 2. UPDATE ARTIFACT (НОВАЯ ФУНКЦИЯ)
   // =====================================================================
-  /// -----------------------------------------------------
-  /// 🟦 UPDATE ARTIFACT
-  /// -----------------------------------------------------
   Future<void> updateArtifact({
     required Artifact artifact,
     File? newImageFile,
@@ -71,7 +69,6 @@ class ArtifactService {
   }) async {
     String imageUrl = artifact.imageUrl;
 
-    // Если есть новое изображение — перезаливаем
     if (newImageFile != null || newImageBytes != null) {
       final ref = _storage
           .ref()
@@ -105,9 +102,32 @@ class ArtifactService {
         .update(data);
   }
 
+  // =====================================================================
+  // 🔴 3. DELETE ARTIFACT (НОВЫЙ МЕТОД)
+  // =====================================================================
+  Future<void> deleteArtifact(String id) async {
+    // Удаляем документ артефакта
+    await _firestore.collection('artifacts').doc(id).delete();
+    
+    // Удаляем связанные комментарии
+    final commentsSnapshot = await _firestore.collection('comments').where('artifactId', isEqualTo: id).get();
+    for (final doc in commentsSnapshot.docs) {
+      await doc.reference.delete();
+    }
+
+    // Опционально: Удаляем изображение из Storage
+    // final ref = _storage.ref().child('artifacts/$id.jpg'); // Предполагая, что вы знаете имя файла
+    // try {
+    //   await ref.delete();
+    // } catch (e) {
+    //   // Игнорируем ошибку, если файл не найден
+    //   print("Could not delete image from storage: $e");
+    // }
+  }
+
 
   // =====================================================================
-  // 🔍 3. GET ALL
+  // 🔍 4. GET ALL
   // =====================================================================
   Future<List<Artifact>> getAllArtifacts() async {
     final snapshot = await _firestore
@@ -119,7 +139,7 @@ class ArtifactService {
   }
 
   // =====================================================================
-  // 🔍 4. Search keywords
+  // 🔍 5. Search keywords
   // =====================================================================
   List<String> _generateKeywords(
       String title,
@@ -141,5 +161,21 @@ class ArtifactService {
     }
 
     return set.toList();
+  }
+
+  // =====================================================================
+  // 🚀 6. UPLOAD MOCKS
+  // =====================================================================
+  Future<void> _addMockArtifact(Artifact artifact) async {
+    await _firestore
+        .collection('artifacts')
+        .doc(artifact.id)
+        .set(artifact.toMap());
+  }
+
+  Future<void> uploadMockArtifacts() async {
+    for (final artifact in mockArtifacts) {
+      await _addMockArtifact(artifact);
+    }
   }
 }

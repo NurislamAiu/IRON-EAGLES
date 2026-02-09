@@ -2,11 +2,15 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import '../../auth/provider/auth_provider.dart';
 import '../data/artifact_service.dart';
 import '../domain/artifact_model.dart';
 
 class ArtifactProvider extends ChangeNotifier {
   final ArtifactService _service = ArtifactService();
+  final AuthProviders authProvider;
+
+  ArtifactProvider(this.authProvider);
 
   List<Artifact> _artifacts = [];
   bool _loading = false;
@@ -33,8 +37,8 @@ class ArtifactProvider extends ChangeNotifier {
 
   Future<void> addArtifact({
     required Artifact artifact,
-    required dynamic imageFile,
-    required dynamic imageBytes,
+    File? imageFile,
+    Uint8List? imageBytes,
   }) async {
     try {
       await _service.addArtifact(
@@ -42,7 +46,6 @@ class ArtifactProvider extends ChangeNotifier {
         imageFile: imageFile,
         imageBytes: imageBytes,
       );
-
       await fetchArtifacts();
     } catch (e) {
       debugPrint("❌ Error adding artifact: $e");
@@ -50,12 +53,6 @@ class ArtifactProvider extends ChangeNotifier {
     }
   }
 
-  /// --------------------------------------------------
-  /// 🟩 ОБНОВЛЕНИЕ АРТЕФАКТА
-  /// --------------------------------------------------
-  /// =============================
-  /// Обновление артефакта
-  /// =============================
   Future<void> updateArtifact({
     required Artifact artifact,
     File? newImageFile,
@@ -67,7 +64,6 @@ class ArtifactProvider extends ChangeNotifier {
         newImageFile: newImageFile,
         newImageBytes: newImageBytes,
       );
-
       await fetchArtifacts();
     } catch (e) {
       debugPrint("❌ Error updating artifact: $e");
@@ -75,4 +71,17 @@ class ArtifactProvider extends ChangeNotifier {
     }
   }
 
+  // =============================
+  // 🟩 УДАЛЕНИЕ АРТЕФАКТА (ВОССТАНОВЛЕНО)
+  // =============================
+  Future<void> deleteArtifact(String id) async {
+    try {
+      await _service.deleteArtifact(id);
+      _artifacts.removeWhere((a) => a.id == id);
+      notifyListeners();
+    } catch (e) {
+      debugPrint("❌ Error deleting artifact: $e");
+      rethrow;
+    }
+  }
 }

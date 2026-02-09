@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "223394458549",
-    "project_id": "museum-code",
-    "storage_bucket": "museum-code.firebasestorage.app"
+    "project_number": "92887521146",
+    "project_id": "iron-eagle-b81b4",
+    "storage_bucket": "iron-eagle-b81b4.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:223394458549:android:10155c87199c843ad347fc",
+        "mobilesdk_app_id": "1:92887521146:android:3e59cc17cb70e5108b68c3",
         "android_client_info": {
           "package_name": "com.example.museumcode"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCGieYxuZpq_Pu1se_uFCNrTDsKkO2I-R4"
+          "current_key": "AIzaSyBsCWjvyjaZX40149vRFPFBCGL0-tBmT9k"
         }
       ],
       "services": {

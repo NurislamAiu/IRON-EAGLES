@@ -6,59 +6,64 @@ import 'glass_card.dart';
 class CommentsSection extends StatelessWidget {
   final String artifactId;
   final CommentService commentService;
+  final EdgeInsetsGeometry? padding; // <-- ДОБАВЛЕНО
 
   const CommentsSection({
     super.key,
     required this.artifactId,
     required this.commentService,
+    this.padding, // <-- ДОБАВЛЕНО
   });
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: commentService.streamComments(artifactId),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+    return Padding( // <-- ДОБАВЛЕНО
+      padding: padding ?? EdgeInsets.zero, // <-- ДОБАВЛЕНО
+      child: StreamBuilder(
+        stream: commentService.streamComments(artifactId),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return GlassCard(
+              child: const Text("Загрузка комментариев...",
+                  style: TextStyle(color: Colors.white54)),
+            );
+          }
+
+          final comments = snapshot.data!;
+          final hasMore = comments.length > 3;
+          final visible = hasMore ? comments.take(3).toList() : comments;
+
           return GlassCard(
-            child: const Text("Загрузка комментариев...",
-                style: TextStyle(color: Colors.white54)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text("Комментарии",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold)),
+                    const Spacer(),
+                    if (hasMore)
+                      GestureDetector(
+                        onTap: () => _openAll(context, comments),
+                        child: const Icon(Icons.expand_circle_down_rounded,
+                            color: Colors.white70, size: 28),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                visible.isEmpty
+                    ? const Text("Пока нет комментариев",
+                    style: TextStyle(color: Colors.white54))
+                    : Column(children: visible.map((c) => CommentItem(c)).toList())
+              ],
+            ),
           );
-        }
-
-        final comments = snapshot.data!;
-        final hasMore = comments.length > 3;
-        final visible = hasMore ? comments.take(3).toList() : comments;
-
-        return GlassCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Text("Комментарии",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold)),
-                  const Spacer(),
-                  if (hasMore)
-                    GestureDetector(
-                      onTap: () => _openAll(context, comments),
-                      child: const Icon(Icons.expand_circle_down_rounded,
-                          color: Colors.white70, size: 28),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              visible.isEmpty
-                  ? const Text("Пока нет комментариев",
-                  style: TextStyle(color: Colors.white54))
-                  : Column(children: visible.map((c) => CommentItem(c)).toList())
-            ],
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 

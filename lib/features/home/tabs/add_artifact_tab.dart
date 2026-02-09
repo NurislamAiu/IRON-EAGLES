@@ -1,19 +1,16 @@
-import 'dart:typed_data';
 import 'dart:io';
 import 'dart:ui';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart'; // <-- ИСПРАВЛЕНИЕ: Добавлен импорт
+import 'package:museumcode/core/utils/generate_random_id.dart';
+import 'package:museumcode/core/widgets/flash_message.dart';
+import 'package:museumcode/core/widgets/glass_text_field.dart';
+import 'package:museumcode/features/artifacts/domain/artifact_model.dart';
+import 'package:museumcode/features/artifacts/provider/artifact_provider.dart';
+import 'package:museumcode/features/auth/provider/auth_provider.dart'; // <-- ИСПРАВЛЕНИЕ: Добавлен импорт
 import 'package:provider/provider.dart';
-
-import '../../../core/widgets/flash_message.dart';
-import '../../auth/provider/auth_provider.dart';
-import '../../artifacts/domain/artifact_model.dart';
-import '../../artifacts/provider/artifact_provider.dart';
-import 'ai_recognition_screen.dart';
 
 class AddArtifactTab extends StatefulWidget {
   const AddArtifactTab({super.key});
@@ -22,494 +19,401 @@ class AddArtifactTab extends StatefulWidget {
   State<AddArtifactTab> createState() => _AddArtifactTabState();
 }
 
-class _AddArtifactTabState extends State<AddArtifactTab>
-    with SingleTickerProviderStateMixin {
+class _AddArtifactTabState extends State<AddArtifactTab> {
+  // --- STATE ---
+  int _currentStep = 0;
+  bool _isLoading = false;
 
-  // -----------------------------
-  // Controllers
-  // -----------------------------
-  final _formKey = GlobalKey<FormState>();
+  // --- IMAGE DATA ---
+  File? _imageFile;
+  Uint8List? _imageBytes;
+  final _picker = ImagePicker();
 
+  // --- CONTROLLERS ---
   final _title = TextEditingController();
   final _description = TextEditingController();
-  final _location = TextEditingController();
   final _category = TextEditingController();
+  final _period = TextEditingController();
   final _material = TextEditingController();
-  final _contextNotes = TextEditingController();
-
-  final _gpsLat = TextEditingController();
-  final _gpsLng = TextEditingController();
-
+  final _condition = TextEditingController();
+  final _foundLocation = TextEditingController();
+  final _finderId = TextEditingController();
+  DateTime? _foundDate;
   final _height = TextEditingController();
   final _width = TextEditingController();
   final _depth = TextEditingController();
-
-  // Dropdowns
-  String _condition = "Хорошее состояние";
-  String _period = "Не указано";
-
-  XFile? _picked;
-  Uint8List? _bytes;
-
-  late AnimationController _fadeController;
-  late Animation<double> _fade;
-
-  bool _loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _fadeController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 700),
-    )..forward();
-
-    _fade = CurvedAnimation(parent: _fadeController, curve: Curves.easeOut);
-  }
+  final _contextNotes = TextEditingController();
+  final _museumSection = TextEditingController();
+  final _restorationStatus = TextEditingController();
 
   @override
   void dispose() {
     _title.dispose();
     _description.dispose();
-    _location.dispose();
     _category.dispose();
+    _period.dispose();
     _material.dispose();
-    _contextNotes.dispose();
-    _gpsLat.dispose();
-    _gpsLng.dispose();
+    _condition.dispose();
+    _foundLocation.dispose();
+    _finderId.dispose();
     _height.dispose();
     _width.dispose();
     _depth.dispose();
-    _fadeController.dispose();
+    _contextNotes.dispose();
+    _museumSection.dispose();
+    _restorationStatus.dispose();
     super.dispose();
   }
 
-  // ---------------------------------------------------------
-  // Pick image
-  // ---------------------------------------------------------
+  // --- LOGIC ---
   Future<void> _pickImage() async {
-    final file = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (file == null) return;
-
-    _picked = file;
-
-    if (kIsWeb) {
-      _bytes = await file.readAsBytes();
-    }
-
-    setState(() {});
-  }
-
-  // ---------------------------------------------------------
-  // Save artifact
-  // ---------------------------------------------------------
-  Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (_picked == null) {
-      FlashMessage.error(context, "Добавьте фото");
-      return;
-    }
-
-    setState(() => _loading = true);
-
-    final provider = context.read<ArtifactProvider>();
-    final user = context.read<AuthProviders>().user;
-
-    double? toNum(String v) {
-      if (v.trim().isEmpty) return null;
-      return double.tryParse(v.replaceAll(",", "."));
-    }
-
-    final id = DateTime.now().millisecondsSinceEpoch.toString();
-
-    final artifact = Artifact(
-      id: id,
-      title: _title.text.trim(),
-      description: _description.text.trim(),
-      foundLocation: _location.text.trim(),
-      imageUrl: "",
-      qrCodeUrl: "",
-      addedBy: user?.email ?? "unknown",
-      createdAt: DateTime.now(),
-
-      category: _category.text.trim(),
-      period: _period,
-      museumSection: "Общий зал",
-      condition: _condition,
-      finderId: user?.email ?? "",
-      foundDate: DateTime.now(),
-      material: _material.text.trim(),
-      restorationStatus: "Не требуется",
-      contextNotes: _contextNotes.text.trim(),
-
-      height: toNum(_height.text),
-      width: toNum(_width.text),
-      depth: toNum(_depth.text),
-
-      gpsLat: toNum(_gpsLat.text),
-      gpsLng: toNum(_gpsLng.text),
-    );
-
-    try {
-      await FirebaseFirestore.instance
-          .collection("pending_artifacts")
-          .doc(artifact.id)
-          .set({
-        ...artifact.toMap(),
-        "imagePending": true,
-        "createdAt": DateTime.now(),
-        "status": "pending",      // ожидает проверки
-      });
-
-// загрузим файл
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child("pending_artifacts/${artifact.id}.jpg");
-
-      if (!kIsWeb) {
-        await ref.putFile(File(_picked!.path));
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+    if (pickedFile != null) {
+      if (kIsWeb) {
+        _imageBytes = await pickedFile.readAsBytes();
       } else {
-        await ref.putData(_bytes!);
+        _imageFile = File(pickedFile.path);
       }
-
-      final imageUrl = await ref.getDownloadURL();
-
-      await FirebaseFirestore.instance
-          .collection("pending_artifacts")
-          .doc(artifact.id)
-          .update({"imageUrl": imageUrl});
-
-
-      FlashMessage.success(context,
-          "Артефакт отправлен на модерацию! После одобрения он появится в публикациях.");
-      _clearInputs();
-
-    } catch (e) {
-      FlashMessage.error(context, "Ошибка: $e");
+      setState(() {});
     }
-
-    setState(() => _loading = false);
   }
-
-  void _clearInputs() {
+  
+  void _resetForm() {
     _title.clear();
     _description.clear();
-    _location.clear();
     _category.clear();
+    _period.clear();
     _material.clear();
-    _contextNotes.clear();
-    _gpsLat.clear();
-    _gpsLng.clear();
+    _condition.clear();
+    _foundLocation.clear();
+    _finderId.clear();
     _height.clear();
     _width.clear();
     _depth.clear();
-    _picked = null;
-    _bytes = null;
-    setState(() {});
+    _contextNotes.clear();
+    _museumSection.clear();
+    _restorationStatus.clear();
+    _foundDate = null;
+    _imageFile = null;
+    _imageBytes = null;
+    setState(() => _currentStep = 0);
   }
 
+  Future<void> _saveArtifact() async {
+    if (_imageFile == null && _imageBytes == null) {
+      FlashMessage.error(context, "Фотография артефакта обязательна");
+      return;
+    }
+    if (_title.text.isEmpty || _description.text.isEmpty) {
+      FlashMessage.error(context, "Название и описание обязательны");
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    final artifactProvider = context.read<ArtifactProvider>();
+    // ИСПРАВЛЕНИЕ: Получаем AuthProvider напрямую из контекста
+    final authProvider = context.read<AuthProviders>();
+    final user = authProvider.user;
+
+    final artifact = Artifact(
+      id: generateArtifactId(),
+      title: _title.text.trim(),
+      description: _description.text.trim(),
+      category: _category.text.trim(),
+      period: _period.text.trim(),
+      material: _material.text.trim(),
+      condition: _condition.text.trim(),
+      foundLocation: _foundLocation.text.trim(),
+      finderId: _finderId.text.trim(),
+      foundDate: _foundDate,
+      height: double.tryParse(_height.text),
+      width: double.tryParse(_width.text),
+      depth: double.tryParse(_depth.text),
+      contextNotes: _contextNotes.text.trim(),
+      museumSection: _museumSection.text.trim(),
+      restorationStatus: _restorationStatus.text.trim(),
+      addedBy: user?.email ?? 'unknown',
+      createdAt: DateTime.now(),
+      imageUrl: '',
+      qrCodeUrl: '',
+    );
+
+    try {
+      await artifactProvider.addArtifact(
+        artifact: artifact,
+        imageFile: _imageFile,
+        imageBytes: _imageBytes,
+      );
+      FlashMessage.success(context, "Артефакт успешно добавлен!");
+      _resetForm();
+    } catch (e) {
+      FlashMessage.error(context, "Ошибка: $e");
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  // --- UI ---
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: false,
-
-          body: FadeTransition(
-            opacity: _fade,
-            child: SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(22),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.10),
-                        borderRadius: BorderRadius.circular(22),
-                        border: Border.all(color: Colors.white.withOpacity(0.15)),
-                      ),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            // 🌟 AI BUTTON
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const AIRecognitionScreen()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white.withOpacity(0.15),
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                              ),
-                              icon: const Icon(Icons.auto_awesome, size: 20),
-                              label: const Text("AI"),
-                            ),
-                            const Text(
-                              "Добавление артефакта",
-                              style: TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-
-
-                            const SizedBox(height: 20),
-
-                            _photoPicker(),
-
-                            const SizedBox(height: 20),
-
-                            _input("Название", _title, icon: Icons.title),
-                            _input("Описание", _description,
-                                icon: Icons.description, maxLines: 3),
-                            _input("Место находки", _location,
-                                icon: Icons.location_on),
-
-                            _input("Категория", _category, icon: Icons.category),
-                            _dropdownPeriod(),
-
-                            _input("Материал", _material, icon: Icons.texture),
-                            _input("Контекст", _contextNotes,
-                                maxLines: 2, icon: Icons.note_alt),
-
-                            _dropdownCondition(),
-
-                            const SizedBox(height: 14),
-                            _dimensionsGroup(),
-
-                            const SizedBox(height: 14),
-                            _gpsGroup(),
-
-                            const SizedBox(height: 30),
-
-                            _loading
-                                ? const CircularProgressIndicator(color: Colors.white)
-                                : ElevatedButton(
-                              onPressed: _save,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.brown.shade600,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 40, vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16)),
-                              ),
-                              child: const Text(
-                                "Сохранить",
-                                style: TextStyle(color: Colors.white, fontSize: 18),
-                              ),
-                            ),
-
-                            const SizedBox(height: 40),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 20),
+                  _buildStepperIndicator(),
+                  const SizedBox(height: 30),
+                  _buildStepContent(),
+                  const SizedBox(height: 30),
+                  _buildNavigationButtons(),
+                  const SizedBox(height: 100),
+                ],
               ),
             ),
           ),
-        ),
-      ],
+          if (_isLoading) _buildLoadingOverlay(),
+        ],
+      ),
     );
   }
 
-  // -------------------------
-  // UI PARTS
-  // -------------------------
+  Widget _buildHeader() {
+    return const Text(
+      "Добавить новый\nартефакт",
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
 
-  Widget _photoPicker() {
+  Widget _buildStepperIndicator() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: List.generate(4, (index) {
+        bool isActive = index <= _currentStep;
+        return Expanded(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            height: 6,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: isActive ? Colors.orange.shade300 : Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(3),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+  
+  Widget _buildStepContent() {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 400),
+      transitionBuilder: (child, animation) {
+        final slideAnimation = Tween<Offset>(
+          begin: const Offset(0.5, 0), 
+          end: Offset.zero
+        ).animate(animation);
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(position: slideAnimation, child: child),
+        );
+      },
+      child: Container(
+        key: ValueKey<int>(_currentStep),
+        child: _steps()[_currentStep],
+      ),
+    );
+  }
+
+  List<Widget> _steps() {
+    return [
+      // --- ШАГ 1: Фото и основа ---
+      Column(
+        children: [
+          _buildImagePicker(),
+          const SizedBox(height: 20),
+          GlassTextField(controller: _title, hint: 'Название артефакта*', icon: Icons.title),
+          const SizedBox(height: 16),
+          GlassTextField(
+            controller: _description,
+            hint: 'Подробное описание*',
+            icon: Icons.description_outlined,
+            maxLines: 5,
+          ),
+        ],
+      ),
+      // --- ШАГ 2: Детали ---
+      Column(
+        children: [
+          GlassTextField(controller: _category, hint: 'Категория (напр. Керамика)', icon: Icons.category_outlined),
+          const SizedBox(height: 16),
+          GlassTextField(controller: _period, hint: 'Период / Эпоха', icon: Icons.history_edu_outlined),
+          const SizedBox(height: 16),
+          GlassTextField(controller: _material, hint: 'Материал (напр. Глина)', icon: Icons.handyman_outlined),
+          const SizedBox(height: 16),
+          GlassTextField(controller: _condition, hint: 'Состояние (напр. Отличное)', icon: Icons.verified_outlined),
+        ],
+      ),
+      // --- ШАГ 3: Обнаружение ---
+      Column(
+        children: [
+          GlassTextField(controller: _foundLocation, hint: 'Место находки', icon: Icons.place_outlined),
+          const SizedBox(height: 16),
+          GlassTextField(controller: _finderId, hint: 'Кем найден', icon: Icons.person_search_outlined),
+          const SizedBox(height: 16),
+          _buildDatePicker(),
+          const SizedBox(height: 16),
+           GlassTextField(controller: _museumSection, hint: 'Раздел музея', icon: Icons.maps_home_work_outlined),
+        ],
+      ),
+      // --- ШАГ 4: Размеры и заметки ---
+      Column(
+        children: [
+          Row(
+            children: [
+              Expanded(child: GlassTextField(controller: _height, hint: 'Высота (см)', icon: Icons.straighten_outlined, keyboardType: TextInputType.number)),
+              const SizedBox(width: 16),
+              Expanded(child: GlassTextField(controller: _width, hint: 'Ширина (см)', icon: Icons.swap_horiz_outlined, keyboardType: TextInputType.number)),
+               const SizedBox(width: 16),
+              Expanded(child: GlassTextField(controller: _depth, hint: 'Глубина (см)', icon: Icons.swap_vert_outlined, keyboardType: TextInputType.number)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          GlassTextField(controller: _restorationStatus, hint: 'Статус реставрации', icon: Icons.build_circle_outlined),
+          const SizedBox(height: 16),
+          GlassTextField(controller: _contextNotes, hint: 'Контекст и доп. заметки', icon: Icons.note_alt_outlined, maxLines: 4),
+        ],
+      )
+    ];
+  }
+  
+  Widget _buildImagePicker() {
     return GestureDetector(
       onTap: _pickImage,
-      child: Container(
-        height: 180,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.12),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Colors.white24),
-        ),
-        child: _picked == null
-            ? const Center(
-            child: Text("Добавить фото",
-                style: TextStyle(color: Colors.white70, fontSize: 18)))
-            : ClipRRect(
-          borderRadius: BorderRadius.circular(18),
-          child: kIsWeb
-              ? Image.memory(_bytes!, fit: BoxFit.cover)
-              : Image.file(File(_picked!.path), fit: BoxFit.cover),
-        ),
-      ),
-    );
-  }
-
-  Widget _input(String label, TextEditingController c,
-      {int maxLines = 1, IconData? icon}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextFormField(
-        controller: c,
-        maxLines: maxLines,
-        validator: (v) => v!.trim().isEmpty ? "Заполните поле" : null,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          prefixIcon: icon != null ? Icon(icon, color: Colors.white70) : null,
-          labelText: label,
-          labelStyle: const TextStyle(color: Colors.white70),
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.12),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withOpacity(0.2)),
+            ),
+            child: (_imageBytes != null || _imageFile != null)
+                ? (kIsWeb
+                    ? Image.memory(_imageBytes!, fit: BoxFit.cover)
+                    : Image.file(_imageFile!, fit: BoxFit.cover))
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.add_a_photo_outlined, color: Colors.white70, size: 50),
+                      SizedBox(height: 12),
+                      Text("Нажмите, чтобы\nвыбрать фото*", textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 16)),
+                    ],
+                  ),
           ),
         ),
       ),
     );
   }
 
-  Widget _dropdownPeriod() {
-    const items = [
-      "Не указано",
-      "Каменный век",
-      "Бронзовый век",
-      "Железный век",
-      "Античность",
-      "Средневековье",
-      "Новое время",
-      "Современный период",
-    ];
-
-    return _dropdown("Период / Эпоха", _period, items,
-            (v) => setState(() => _period = v!));
-  }
-
-  Widget _dropdownCondition() {
-    const items = [
-      "Отличное состояние",
-      "Хорошее состояние",
-      "Среднее состояние",
-      "Плохое состояние",
-    ];
-
-    return _dropdown("Состояние", _condition, items,
-            (v) => setState(() => _condition = v!));
-  }
-
-  Widget _dropdown(
-      String label,
-      String value,
-      List<String> items,
-      Function(String?) onChanged,
-      ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: DropdownButtonFormField<String>(
-        value: value,
-        dropdownColor: Colors.black87,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(color: Colors.white70),
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.12),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
-        ),
-        items: items
-            .map((e) => DropdownMenuItem(
-          value: e,
-          child: Text(e, style: const TextStyle(color: Colors.white)),
-        ))
-            .toList(),
-        onChanged: onChanged,
-      ),
-    );
-  }
-
-  // -------------------------
-  // Dimensions block
-  // -------------------------
-  Widget _dimensionsGroup() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text("Размеры (см)",
-            style: TextStyle(color: Colors.white70, fontSize: 15)),
-        const SizedBox(height: 6),
-        Row(
-          children: [
-            Expanded(child: _miniInput("Высота", _height, Icons.height)),
-            const SizedBox(width: 12),
-            Expanded(child: _miniInput("Ширина", _width, Icons.width_full)),
-            const SizedBox(width: 12),
-            Expanded(child: _miniInput("Глубина", _depth, Icons.view_in_ar)),
-          ],
-        )
-      ],
-    );
-  }
-
-  // -------------------------
-  // GPS block
-  // -------------------------
-  Widget _gpsGroup() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text("GPS координаты",
-            style: TextStyle(color: Colors.white70, fontSize: 15)),
-        const SizedBox(height: 6),
-        Row(
-          children: [
-            Expanded(child: _miniInput("Широта", _gpsLat, Icons.map)),
-            const SizedBox(width: 12),
-            Expanded(child: _miniInput("Долгота", _gpsLng, Icons.explore)),
-          ],
-        )
-      ],
-    );
-  }
-
-  Widget _miniInput(String label, TextEditingController c, IconData icon) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(color: Colors.white70, fontSize: 13)),
-        const SizedBox(height: 6),
-        TextFormField(
-          controller: c,
-          validator: (v) => v!.isEmpty ? "!" : null,
-          keyboardType: TextInputType.number,
-          style: const TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: Colors.white70, size: 20),
-            filled: true,
-            fillColor: Colors.white.withOpacity(0.12),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide.none,
+  Widget _buildDatePicker() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: GestureDetector(
+          onTap: () async {
+            final date = await showDatePicker(
+              context: context,
+              initialDate: _foundDate ?? DateTime.now(),
+              firstDate: DateTime(1000),
+              lastDate: DateTime.now(),
+            );
+            if (date != null) setState(() => _foundDate = date);
+          },
+          child: Container(
+            height: 58,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white.withOpacity(0.2)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.calendar_month_outlined, color: Colors.white70),
+                const SizedBox(width: 12),
+                Text(
+                  _foundDate == null ? 'Дата находки' : DateFormat('dd.MM.yyyy').format(_foundDate!),
+                  style: TextStyle(color: _foundDate == null ? Colors.white70 : Colors.white, fontSize: 16),
+                ),
+                const Spacer(),
+              ],
             ),
           ),
         ),
+      ),
+    );
+  }
+  
+  Widget _buildNavigationButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Кнопка "Назад"
+        if (_currentStep > 0)
+          ElevatedButton.icon(
+            onPressed: () => setState(() => _currentStep--),
+            icon: const Icon(Icons.arrow_back),
+            label: const Text("Назад"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white.withOpacity(0.2),
+              foregroundColor: Colors.white,
+            ),
+          )
+        else const SizedBox(), // Пустое место для сохранения разметки
+
+        // Кнопка "Далее" или "Сохранить"
+        ElevatedButton.icon(
+          onPressed: _currentStep == 3 ? _saveArtifact : () => setState(() => _currentStep++),
+          icon: Icon(_currentStep == 3 ? Icons.save_alt_outlined : Icons.arrow_forward),
+          label: Text(_currentStep == 3 ? "Сохранить" : "Далее"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange.shade400,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
       ],
     );
   }
-}
 
+  Widget _buildLoadingOverlay() {
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          color: Colors.black.withOpacity(0.4),
+          child: const Center(
+            child: CircularProgressIndicator(color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+}

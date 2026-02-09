@@ -47,29 +47,29 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCGieYxuZpq_Pu1se_uFCNrTDsKkO2I-R4',
-    appId: '1:223394458549:android:10155c87199c843ad347fc',
-    messagingSenderId: '223394458549',
-    projectId: 'museum-code',
-    storageBucket: 'museum-code.firebasestorage.app',
+    apiKey: 'AIzaSyBsCWjvyjaZX40149vRFPFBCGL0-tBmT9k',
+    appId: '1:92887521146:android:3e59cc17cb70e5108b68c3',
+    messagingSenderId: '92887521146',
+    projectId: 'iron-eagle-b81b4',
+    storageBucket: 'iron-eagle-b81b4.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDYr9D6PnxcSeKRL4JavbDMfKuPkV-0HTw',
-    appId: '1:223394458549:ios:725e31733e6cd504d347fc',
-    messagingSenderId: '223394458549',
-    projectId: 'museum-code',
-    storageBucket: 'museum-code.firebasestorage.app',
+    apiKey: 'AIzaSyDTxikWf8nLXGqSk2tWq4pumTNZDBf0TKQ',
+    appId: '1:92887521146:ios:f79b062a3502f9328b68c3',
+    messagingSenderId: '92887521146',
+    projectId: 'iron-eagle-b81b4',
+    storageBucket: 'iron-eagle-b81b4.firebasestorage.app',
     iosBundleId: 'com.example.museumcode',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDFwUMjEyp-8ORy3ewUyrVVNB2Hpc5iqnM',
-    appId: '1:223394458549:web:a9d242119ead78c3d347fc',
-    messagingSenderId: '223394458549',
-    projectId: 'museum-code',
-    authDomain: 'museum-code.firebaseapp.com',
-    storageBucket: 'museum-code.firebasestorage.app',
+    apiKey: 'AIzaSyBDK_Tl8q9PTTZHFAnn05a0rOaEaBKMTAQ',
+    appId: '1:92887521146:web:3c076fc922fa1ac68b68c3',
+    messagingSenderId: '92887521146',
+    projectId: 'iron-eagle-b81b4',
+    authDomain: 'iron-eagle-b81b4.firebaseapp.com',
+    storageBucket: 'iron-eagle-b81b4.firebasestorage.app',
   );
 
 }
