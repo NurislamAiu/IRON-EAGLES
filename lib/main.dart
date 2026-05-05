@@ -14,6 +14,7 @@ import 'features/artifacts/provider/artifact_provider.dart';
 import 'features/artifacts/provider/achievement_provider.dart';
 import 'features/artifacts/provider/expedition_provider.dart';
 import 'features/blogs/provider/blog_provider.dart';
+import 'features/communities/provider/community_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +52,7 @@ class MuseumApp extends StatelessWidget {
         // 🏆 Достижения
         ChangeNotifierProvider(create: (_) => AchievementProvider()),
         ChangeNotifierProvider(create: (_) => BlogProvider()),
+        ChangeNotifierProvider(create: (_) => CommunityProvider()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

@@ -60,6 +60,8 @@ class BlogPost {
   final String authorEmail;
   final String imageUrl;
   final DateTime createdAt;
+  final bool isEdited;
+  final String? communityId;
   final List<String> likes;
   final List<BlogComment> comments;
 
@@ -70,6 +72,8 @@ class BlogPost {
     required this.authorEmail,
     required this.imageUrl,
     required this.createdAt,
+    this.isEdited = false,
+    this.communityId,
     this.likes = const [],
     this.comments = const [],
   });
@@ -81,6 +85,8 @@ class BlogPost {
     String? authorEmail,
     String? imageUrl,
     DateTime? createdAt,
+    bool? isEdited,
+    String? communityId,
     List<String>? likes,
     List<BlogComment>? comments,
   }) {
@@ -91,6 +97,8 @@ class BlogPost {
       authorEmail: authorEmail ?? this.authorEmail,
       imageUrl: imageUrl ?? this.imageUrl,
       createdAt: createdAt ?? this.createdAt,
+      isEdited: isEdited ?? this.isEdited,
+      communityId: communityId ?? this.communityId,
       likes: likes ?? this.likes,
       comments: comments ?? this.comments,
     );
@@ -104,6 +112,8 @@ class BlogPost {
       'authorEmail': authorEmail,
       'imageUrl': imageUrl,
       'createdAt': createdAt.toIso8601String(),
+      'isEdited': isEdited,
+      'communityId': communityId,
       'likes': likes,
       'comments': comments.map((c) => c.toMap()).toList(),
     };
@@ -117,6 +127,8 @@ class BlogPost {
       authorEmail: map['authorEmail'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
       createdAt: DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
+      isEdited: map['isEdited'] ?? false,
+      communityId: map['communityId'],
       likes: List<String>.from(map['likes'] ?? []),
       comments: (map['comments'] as List<dynamic>?)
               ?.map((c) => BlogComment.fromMap(c as Map<String, dynamic>))

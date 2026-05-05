@@ -7,8 +7,12 @@ class BlogProvider extends ChangeNotifier {
   List<BlogPost> _blogs = [];
   bool _isLoading = true;
 
-  List<BlogPost> get blogs => _blogs;
+  List<BlogPost> get blogs => _blogs.where((b) => b.communityId == null).toList();
   bool get isLoading => _isLoading;
+
+  List<BlogPost> getCommunityPosts(String communityId) {
+    return _blogs.where((b) => b.communityId == communityId).toList();
+  }
 
   BlogProvider() {
     _loadBlogs();
@@ -19,6 +23,7 @@ class BlogProvider extends ChangeNotifier {
     required String content,
     required String authorEmail,
     String imageUrl = '',
+    String? communityId,
   }) async {
     final newPost = BlogPost(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -27,6 +32,7 @@ class BlogProvider extends ChangeNotifier {
       authorEmail: authorEmail,
       imageUrl: imageUrl,
       createdAt: DateTime.now(),
+      communityId: communityId,
       likes: [],
       comments: [],
     );
@@ -34,6 +40,25 @@ class BlogProvider extends ChangeNotifier {
     _blogs.insert(0, newPost);
     notifyListeners();
     await _saveBlogs();
+  }
+
+  void editBlogPost(String id, String newTitle, String newContent) {
+    final index = _blogs.indexWhere((b) => b.id == id);
+    if (index != -1) {
+      _blogs[index] = _blogs[index].copyWith(
+        title: newTitle,
+        content: newContent,
+        isEdited: true,
+      );
+      notifyListeners();
+      _saveBlogs();
+    }
+  }
+
+  void deleteBlogPost(String id) {
+    _blogs.removeWhere((b) => b.id == id);
+    notifyListeners();
+    _saveBlogs();
   }
 
   void toggleLike(String blogId, String userEmail) {

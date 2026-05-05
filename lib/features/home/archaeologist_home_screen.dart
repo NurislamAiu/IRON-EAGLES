@@ -9,12 +9,11 @@ import 'package:provider/provider.dart';
 import '../auth/provider/auth_provider.dart';
 
 // Tabs
-import 'tabs/add_blog_tab.dart';
-import 'tabs/blog_feed_tab.dart';
 import 'tabs/home_tab.dart';
 import 'tabs/add_artifact_tab.dart';
 import 'tabs/my_artifacts_tab.dart';
 import 'tabs/profile_tab.dart';
+import '../communities/presentation/communities_tab.dart';
 
 class ArchaeologistHomeScreen extends StatefulWidget {
   const ArchaeologistHomeScreen({super.key});
@@ -45,14 +44,14 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
       // ----------- ГОСТЬ -----------
       screens = const [
         HomeTab(),
-        BlogFeedTab(),
+        CommunitiesTab(),
         ScanQRTab(),
         ProfileTab(),
       ];
 
       items = [
         _NavItemData(Icons.home_filled, "Главная"),
-        _NavItemData(Icons.article, "Блог"),
+        _NavItemData(Icons.groups, "Клубы"),
         _NavItemData(Icons.qr_code_scanner, "Сканер"),
         _NavItemData(Icons.person, "Профиль"),
       ];
@@ -60,7 +59,7 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
       // ----------- АДМИН -----------
       screens = [
         const HomeTab(),
-        const BlogFeedTab(),
+        const CommunitiesTab(),
         const ModeratorTab(),
         const ExpeditionTab(),
         const ProfileTab(),
@@ -68,7 +67,7 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
 
       items = [
         _NavItemData(Icons.home_filled, "Главная"),
-        _NavItemData(Icons.article, "Блог"),
+        _NavItemData(Icons.groups, "Клубы"),
         _NavItemData(Icons.admin_panel_settings, "Админ"),
         _NavItemData(Icons.explore, "Проекты"),
         _NavItemData(Icons.person, "Профиль"),
@@ -77,18 +76,16 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
       // ----------- ОБЫЧНЫЙ ПОЛЬЗОВАТЕЛЬ -----------
       screens = [
         const HomeTab(),
-        const BlogFeedTab(),
+        const CommunitiesTab(),
         const AddArtifactTab(),
-        const MyArtifactsTab(),
         const ExpeditionTab(),
         const ProfileTab(),
       ];
 
       items = [
         _NavItemData(Icons.home_filled, "Главная"),
-        _NavItemData(Icons.article, "Блог"),
+        _NavItemData(Icons.groups, "Клубы"),
         _NavItemData(Icons.add_circle, "Создать"),
-        _NavItemData(Icons.inventory_2, "Мои"),
         _NavItemData(Icons.explore, "Проекты"),
         _NavItemData(Icons.person, "Профиль"),
       ];
