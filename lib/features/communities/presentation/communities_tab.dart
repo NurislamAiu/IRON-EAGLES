@@ -187,17 +187,24 @@ class _CommunitiesTabState extends State<CommunitiesTab> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (community.imageUrl.isNotEmpty)
                 Image.network(
                   community.imageUrl,
-                  height: 100,
+                  height: 110,
                   width: 100,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: 110,
+                    width: 100,
+                    color: Colors.white.withOpacity(0.05),
+                    child: const Icon(Icons.image_not_supported, color: Colors.white24, size: 40),
+                  ),
                 )
               else
                 Container(
-                  height: 100,
+                  height: 110,
                   width: 100,
                   color: Colors.white.withOpacity(0.05),
                   child: const Icon(Icons.groups, color: Colors.white24, size: 40),
@@ -226,9 +233,13 @@ class _CommunitiesTabState extends State<CommunitiesTab> {
                         children: [
                           const Icon(Icons.people, size: 14, color: Colors.orangeAccent),
                           const SizedBox(width: 4),
-                          Text(
-                            "${community.members.length} участников",
-                            style: const TextStyle(color: Colors.orangeAccent, fontSize: 12, fontWeight: FontWeight.bold),
+                          Expanded(
+                            child: Text(
+                              "${community.members.length} участников",
+                              style: const TextStyle(color: Colors.orangeAccent, fontSize: 12, fontWeight: FontWeight.bold),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       )

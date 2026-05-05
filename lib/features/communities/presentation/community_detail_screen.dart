@@ -6,7 +6,7 @@ import '../../auth/provider/auth_provider.dart';
 import '../provider/community_provider.dart';
 import '../../blogs/provider/blog_provider.dart';
 import '../../blogs/domain/blog_post_model.dart';
-import '../../home/tabs/add_blog_tab.dart'; // We'll adapt it or just let them post
+
 
 class CommunityDetailScreen extends StatefulWidget {
   final String communityId;

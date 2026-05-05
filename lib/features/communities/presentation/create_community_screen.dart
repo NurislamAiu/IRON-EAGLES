@@ -56,7 +56,18 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
 
     if (name.isEmpty || desc.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Заполните название и описание"), backgroundColor: Colors.redAccent),
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.error_outline_rounded, color: Colors.white),
+              SizedBox(width: 12),
+              Expanded(child: Text("Заполните название и описание")),
+            ],
+          ),
+          backgroundColor: Colors.redAccent.shade700,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
       );
       return;
     }
@@ -82,7 +93,18 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     if (mounted) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Сообщество создано!"), backgroundColor: Colors.green),
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.check_circle_rounded, color: Colors.white),
+              SizedBox(width: 12),
+              Text("Сообщество успешно создано!"),
+            ],
+          ),
+          backgroundColor: Colors.green.shade700,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
       );
     }
   }
@@ -90,34 +112,80 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff2c1e19),
+      backgroundColor: const Color(0xff120d0b), // Deep dark theme matching CommunitiesTab
       appBar: AppBar(
-        leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white)),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: IconButton(
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 20),
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              "Создать сообщество",
-              style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+            // Заголовок с иконкой
+            Center(
+              child: Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      Colors.orange.shade800.withOpacity(0.3),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.4, 1.0],
+                  ),
+                ),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.05),
+                      border: Border.all(color: Colors.orange.withOpacity(0.3), width: 1.5),
+                    ),
+                    child: const Icon(Icons.groups_rounded, size: 36, color: Colors.orangeAccent),
+                  ),
+                ),
+              ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
             const Text(
-              "Объедините исследователей по интересам. Делитесь находками и обсуждайте теории.",
-              style: TextStyle(color: Colors.white38, fontSize: 16),
+              "Новое сообщество",
+              style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 8),
+            const Text(
+              "Объедините исследователей по интересам.\nДелитесь находками и обсуждайте теории.",
+              style: TextStyle(color: Colors.white54, fontSize: 14, height: 1.4),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 36),
+
+            // Поля ввода
             _buildTextField(
               controller: _nameController,
               label: "Название сообщества",
               hint: "Например: Египтологи",
               maxLines: 1,
+              prefixIcon: Icons.title_rounded,
             ),
             const SizedBox(height: 20),
             _buildTextField(
@@ -126,53 +194,111 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               hint: "О чем ваше сообщество?",
               maxLines: 4,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
+
+            // Выбор обложки
+            const Text(
+              "Обложка",
+              style: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
             GestureDetector(
               onTap: _pickImage,
               child: Container(
-                height: 150,
+                height: 160,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  color: Colors.white.withOpacity(0.02),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: _selectedImage != null 
+                        ? Colors.orangeAccent.withOpacity(0.5) 
+                        : Colors.white.withOpacity(0.08),
+                    width: 1.5,
+                  ),
                 ),
                 child: _selectedImage != null
                     ? ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Image.file(_selectedImage!, fit: BoxFit.cover),
+                        borderRadius: BorderRadius.circular(22.5),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.file(_selectedImage!, fit: BoxFit.cover),
+                            Container(
+                              color: Colors.black.withOpacity(0.4),
+                              child: const Center(
+                                child: Icon(Icons.edit_rounded, color: Colors.white, size: 36),
+                              ),
+                            ),
+                          ],
+                        ),
                       )
                     : Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.add_photo_alternate, color: Colors.orangeAccent, size: 40),
-                          SizedBox(height: 8),
-                          Text(
-                            "Добавить обложку (опционально)",
-                            style: TextStyle(color: Colors.white54, fontSize: 14),
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.shade800.withOpacity(0.15),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.add_photo_alternate_rounded, color: Colors.orangeAccent, size: 32),
+                          ),
+                          const SizedBox(height: 12),
+                          const Text(
+                            "Добавить обложку",
+                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            "Рекомендуемый размер 800x400 (опционально)",
+                            style: TextStyle(color: Colors.white38, fontSize: 12),
                           ),
                         ],
                       ),
               ),
             ),
-            const SizedBox(height: 32),
-            SizedBox(
+            const SizedBox(height: 40),
+
+            // Кнопка создания
+            Container(
               width: double.infinity,
-              height: 58,
+              height: 60,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  colors: [Colors.orange.shade500, Colors.deepOrange.shade900],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.orange.shade800.withOpacity(0.4),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orangeAccent,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 ),
                 onPressed: _isSubmitting ? null : _submit,
                 child: _isSubmitting
-                    ? const CircularProgressIndicator(color: Colors.black)
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                      )
                     : const Text(
-                        "Создать",
-                        style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                        "Создать сообщество",
+                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.5),
                       ),
               ),
             ),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -184,25 +310,31 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     required String label,
     required String hint,
     required int maxLines,
+    IconData? prefixIcon,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
-      ),
-      child: TextField(
-        controller: controller,
-        maxLines: maxLines,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(color: Colors.orangeAccent, fontSize: 14),
-          hintText: hint,
-          hintStyle: const TextStyle(color: Colors.white24),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.all(20),
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      style: const TextStyle(color: Colors.white, fontSize: 16),
+      cursorColor: Colors.orangeAccent,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.white54),
+        hintText: hint,
+        hintStyle: const TextStyle(color: Colors.white24),
+        alignLabelWithHint: maxLines > 1,
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: Colors.orangeAccent.withOpacity(0.7)) : null,
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.04),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.08)),
         ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: Colors.orangeAccent.withOpacity(0.5)),
+        ),
+        contentPadding: const EdgeInsets.all(20),
       ),
     );
   }
