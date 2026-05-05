@@ -52,6 +52,23 @@ class BlogProvider extends ChangeNotifier {
     }
   }
 
+  void editComment(String blogId, String commentId, String newContent) {
+    final blogIndex = _blogs.indexWhere((b) => b.id == blogId);
+    if (blogIndex != -1) {
+      final blog = _blogs[blogIndex];
+      final comments = List<BlogComment>.from(blog.comments);
+
+      final commentIndex = comments.indexWhere((c) => c.id == commentId);
+      if (commentIndex != -1) {
+        comments[commentIndex] = comments[commentIndex].copyWith(content: newContent);
+
+        _blogs[blogIndex] = blog.copyWith(comments: comments);
+        notifyListeners();
+        _saveBlogs();
+      }
+    }
+  }
+
   void addComment(String blogId, String content, String authorEmail) {
     final index = _blogs.indexWhere((b) => b.id == blogId);
     if (index != -1) {
@@ -66,6 +83,77 @@ class BlogProvider extends ChangeNotifier {
       _blogs[index] = blog.copyWith(comments: comments);
       notifyListeners();
       _saveBlogs();
+    }
+  }
+
+  void deleteComment(String blogId, String commentId) {
+    final blogIndex = _blogs.indexWhere((b) => b.id == blogId);
+    if (blogIndex != -1) {
+      final blog = _blogs[blogIndex];
+      final comments = List<BlogComment>.from(blog.comments);
+      comments.removeWhere((c) => c.id == commentId);
+      _blogs[blogIndex] = blog.copyWith(comments: comments);
+      notifyListeners();
+      _saveBlogs();
+    }
+  }
+
+  void addReply(String blogId, String commentId, String content, String authorEmail) {
+    final blogIndex = _blogs.indexWhere((b) => b.id == blogId);
+    if (blogIndex != -1) {
+      final blog = _blogs[blogIndex];
+      final comments = List<BlogComment>.from(blog.comments);
+      final commentIndex = comments.indexWhere((c) => c.id == commentId);
+      if (commentIndex != -1) {
+        final newReply = BlogComment(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          authorEmail: authorEmail,
+          content: content,
+          createdAt: DateTime.now(),
+        );
+        final replies = List<BlogComment>.from(comments[commentIndex].replies)..add(newReply);
+        comments[commentIndex] = comments[commentIndex].copyWith(replies: replies);
+        _blogs[blogIndex] = blog.copyWith(comments: comments);
+        notifyListeners();
+        _saveBlogs();
+      }
+    }
+  }
+
+  void editReply(String blogId, String commentId, String replyId, String newContent) {
+    final blogIndex = _blogs.indexWhere((b) => b.id == blogId);
+    if (blogIndex != -1) {
+      final blog = _blogs[blogIndex];
+      final comments = List<BlogComment>.from(blog.comments);
+      final commentIndex = comments.indexWhere((c) => c.id == commentId);
+      if (commentIndex != -1) {
+        final replies = List<BlogComment>.from(comments[commentIndex].replies);
+        final replyIndex = replies.indexWhere((r) => r.id == replyId);
+        if (replyIndex != -1) {
+          replies[replyIndex] = replies[replyIndex].copyWith(content: newContent);
+          comments[commentIndex] = comments[commentIndex].copyWith(replies: replies);
+          _blogs[blogIndex] = blog.copyWith(comments: comments);
+          notifyListeners();
+          _saveBlogs();
+        }
+      }
+    }
+  }
+
+  void deleteReply(String blogId, String commentId, String replyId) {
+    final blogIndex = _blogs.indexWhere((b) => b.id == blogId);
+    if (blogIndex != -1) {
+      final blog = _blogs[blogIndex];
+      final comments = List<BlogComment>.from(blog.comments);
+      final commentIndex = comments.indexWhere((c) => c.id == commentId);
+      if (commentIndex != -1) {
+        final replies = List<BlogComment>.from(comments[commentIndex].replies);
+        replies.removeWhere((r) => r.id == replyId);
+        comments[commentIndex] = comments[commentIndex].copyWith(replies: replies);
+        _blogs[blogIndex] = blog.copyWith(comments: comments);
+        notifyListeners();
+        _saveBlogs();
+      }
     }
   }
 

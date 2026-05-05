@@ -3,13 +3,31 @@ class BlogComment {
   final String authorEmail;
   final String content;
   final DateTime createdAt;
+  final List<BlogComment> replies;
 
   BlogComment({
     required this.id,
     required this.authorEmail,
     required this.content,
     required this.createdAt,
+    this.replies = const [],
   });
+
+  BlogComment copyWith({
+    String? id,
+    String? authorEmail,
+    String? content,
+    DateTime? createdAt,
+    List<BlogComment>? replies,
+  }) {
+    return BlogComment(
+      id: id ?? this.id,
+      authorEmail: authorEmail ?? this.authorEmail,
+      content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
+      replies: replies ?? this.replies,
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -17,6 +35,7 @@ class BlogComment {
       'authorEmail': authorEmail,
       'content': content,
       'createdAt': createdAt.toIso8601String(),
+      'replies': replies.map((r) => r.toMap()).toList(),
     };
   }
 
@@ -26,6 +45,10 @@ class BlogComment {
       authorEmail: map['authorEmail'] ?? '',
       content: map['content'] ?? '',
       createdAt: DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
+      replies: (map['replies'] as List<dynamic>?)
+              ?.map((r) => BlogComment.fromMap(r as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 }
