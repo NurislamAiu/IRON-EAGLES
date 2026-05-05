@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:museumcode/core/services/sound_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../domain/achievement_model.dart';
 import '../data/achievement_data.dart';
@@ -30,6 +31,7 @@ class AchievementProvider extends ChangeNotifier {
       );
 
       if (unlocked) {
+        SoundService.playAchievement();
         _showUnlockToast(context, _achievements[index]);
       }
 

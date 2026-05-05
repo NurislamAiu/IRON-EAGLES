@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../features/artifacts/domain/artifact_model.dart';
-import '../features/artifacts/presentation/achievements_screen.dart';
-import '../features/artifacts/presentation/artifact_detail_screen.dart';
-import '../features/artifacts/presentation/favorites_screen.dart';
-import '../features/artifacts/presentation/artifact_list_screen.dart';
-import '../features/auth/presentation/login_screen.dart';
-import '../features/auth/presentation/register_screen.dart';
-import '../features/auth/presentation/role_selection_screen.dart';
-import '../features/auth/provider/auth_provider.dart';
-import '../features/home/archaeologist_home_screen.dart';
-import '../features/home/tabs/add_artifact_tab.dart';
+import 'package:museumcode/features/artifacts/domain/artifact_model.dart';
+import 'package:museumcode/features/artifacts/domain/expedition_model.dart';
+import 'package:museumcode/features/artifacts/presentation/achievements_screen.dart';
+import 'package:museumcode/features/artifacts/presentation/artifact_detail_screen.dart';
+import 'package:museumcode/features/artifacts/presentation/expedition_chat_screen.dart';
+import 'package:museumcode/features/artifacts/presentation/favorites_screen.dart';
+import 'package:museumcode/features/artifacts/presentation/artifact_list_screen.dart';
+import 'package:museumcode/features/auth/presentation/login_screen.dart';
+import 'package:museumcode/features/auth/presentation/register_screen.dart';
+import 'package:museumcode/features/auth/presentation/role_selection_screen.dart';
+import 'package:museumcode/features/auth/provider/auth_provider.dart';
+import 'package:museumcode/features/home/archaeologist_home_screen.dart';
+import 'package:museumcode/features/home/tabs/add_artifact_tab.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -128,6 +130,14 @@ class AppRouter {
       GoRoute(
         path: '/favorites',
         pageBuilder: (_, __) => _buildFadeTransition(const FavoritesScreen()),
+      ),
+
+      GoRoute(
+        path: '/expedition-chat',
+        pageBuilder: (context, state) {
+          final exp = state.extra as Expedition;
+          return _buildFadeTransition(ExpeditionChatScreen(expedition: exp));
+        },
       ),
     ],
   );

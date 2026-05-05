@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:museumcode/core/services/sound_service.dart';
 import 'package:museumcode/features/home/tabs/expedition_tab.dart';
 import 'package:museumcode/features/home/tabs/moderator_tab.dart';
 import 'package:museumcode/features/home/tabs/scan_qr_tab.dart';
@@ -8,6 +9,8 @@ import 'package:provider/provider.dart';
 import '../auth/provider/auth_provider.dart';
 
 // Tabs
+import 'tabs/add_blog_tab.dart';
+import 'tabs/blog_feed_tab.dart';
 import 'tabs/home_tab.dart';
 import 'tabs/add_artifact_tab.dart';
 import 'tabs/my_artifacts_tab.dart';
@@ -42,12 +45,14 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
       // ----------- ГОСТЬ -----------
       screens = const [
         HomeTab(),
+        BlogFeedTab(),
         ScanQRTab(),
         ProfileTab(),
       ];
 
       items = [
         _NavItemData(Icons.home_filled, "Главная"),
+        _NavItemData(Icons.article, "Блог"),
         _NavItemData(Icons.qr_code_scanner, "Сканер"),
         _NavItemData(Icons.person, "Профиль"),
       ];
@@ -55,33 +60,37 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
       // ----------- АДМИН -----------
       screens = [
         const HomeTab(),
+        const BlogFeedTab(),
         const ModeratorTab(),
-        const ProfileTab(),
         const ExpeditionTab(),
+        const ProfileTab(),
       ];
 
       items = [
         _NavItemData(Icons.home_filled, "Главная"),
+        _NavItemData(Icons.article, "Блог"),
         _NavItemData(Icons.admin_panel_settings, "Админ"),
+        _NavItemData(Icons.explore, "Проекты"),
         _NavItemData(Icons.person, "Профиль"),
-        _NavItemData(Icons.explore, "Экспедиции"),
       ];
     } else {
       // ----------- ОБЫЧНЫЙ ПОЛЬЗОВАТЕЛЬ -----------
       screens = [
         const HomeTab(),
+        const BlogFeedTab(),
         const AddArtifactTab(),
         const MyArtifactsTab(),
-        const ProfileTab(),
         const ExpeditionTab(),
+        const ProfileTab(),
       ];
 
       items = [
         _NavItemData(Icons.home_filled, "Главная"),
-        _NavItemData(Icons.add_circle, "Добавить"),
+        _NavItemData(Icons.article, "Блог"),
+        _NavItemData(Icons.add_circle, "Создать"),
         _NavItemData(Icons.inventory_2, "Мои"),
+        _NavItemData(Icons.explore, "Проекты"),
         _NavItemData(Icons.person, "Профиль"),
-        _NavItemData(Icons.explore, "Экспедиции"),
       ];
     }
 
@@ -155,7 +164,10 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => setState(() => _index = index),
+      onTap: () {
+        SoundService.playClick();
+        setState(() => _index = index);
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
