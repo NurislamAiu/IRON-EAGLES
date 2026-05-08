@@ -3,11 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
-import 'package:museumcode/features/artifacts/domain/expedition_model.dart';
-import 'package:museumcode/features/artifacts/provider/expedition_provider.dart';
-import 'package:museumcode/features/artifacts/presentation/widget_detial_screen/artifact_journey_map.dart';
-import 'package:museumcode/features/artifacts/presentation/widget_detial_screen/artifact_location_map.dart';
-import 'package:museumcode/features/artifacts/presentation/widget_detial_screen/time_traveler_view.dart';
+import 'package:ArcheoAI/features/artifacts/domain/expedition_model.dart';
+import 'package:ArcheoAI/features/artifacts/provider/expedition_provider.dart';
+import 'package:ArcheoAI/features/artifacts/presentation/widget_detial_screen/artifact_journey_map.dart';
+import 'package:ArcheoAI/features/artifacts/presentation/widget_detial_screen/artifact_location_map.dart';
+import 'package:ArcheoAI/features/artifacts/presentation/widget_detial_screen/time_traveler_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/widgets/flash_message.dart';
@@ -137,7 +137,9 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
           color: Colors.grey.shade900,
           image: hasImage
               ? DecorationImage(
-                  image: AssetImage(widget.artifact.imageUrl),
+                  image: widget.artifact.imageUrl.startsWith('http')
+                      ? NetworkImage(widget.artifact.imageUrl) as ImageProvider
+                      : AssetImage(widget.artifact.imageUrl.isEmpty ? 'assets/images/museum_bg.jpg' : widget.artifact.imageUrl),
                   fit: BoxFit.cover,
                 )
               : null,

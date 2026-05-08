@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:intl/date_symbol_data_local.dart'; // <-- 1. ИМПОРТ
-import 'package:museumcode/features/artifacts/provider/favorite_provider.dart';
+import 'package:ArcheoAI/features/artifacts/provider/favorite_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:museumcode/router/app_router.dart';
+import 'package:ArcheoAI/router/app_router.dart';
 import 'firebase_options.dart';
 
 // 🔹 Импортируем провайдеры
@@ -69,7 +69,7 @@ class MuseumApp extends StatelessWidget {
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        title: 'MuseumCode',
+        title: 'ArcheoAI',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6B4F3A)),
           useMaterial3: true,

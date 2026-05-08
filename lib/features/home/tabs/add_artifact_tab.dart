@@ -4,12 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart'; // <-- ИСПРАВЛЕНИЕ: Добавлен импорт
-import 'package:museumcode/core/utils/generate_random_id.dart';
-import 'package:museumcode/core/widgets/flash_message.dart';
-import 'package:museumcode/core/widgets/glass_text_field.dart';
-import 'package:museumcode/features/artifacts/domain/artifact_model.dart';
-import 'package:museumcode/features/artifacts/provider/artifact_provider.dart';
-import 'package:museumcode/features/auth/provider/auth_provider.dart'; // <-- ИСПРАВЛЕНИЕ: Добавлен импорт
+import 'package:ArcheoAI/core/utils/generate_random_id.dart';
+import 'package:ArcheoAI/core/widgets/flash_message.dart';
+import 'package:ArcheoAI/core/widgets/glass_text_field.dart';
+import 'package:ArcheoAI/features/artifacts/domain/artifact_model.dart';
+import 'package:ArcheoAI/features/artifacts/provider/artifact_provider.dart';
+import 'package:ArcheoAI/features/auth/provider/auth_provider.dart'; // <-- ИСПРАВЛЕНИЕ: Добавлен импорт
 import 'package:provider/provider.dart';
 
 class AddArtifactTab extends StatefulWidget {

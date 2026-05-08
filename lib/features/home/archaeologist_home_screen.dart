@@ -1,9 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:museumcode/core/services/sound_service.dart';
-import 'package:museumcode/features/home/tabs/expedition_tab.dart';
-import 'package:museumcode/features/home/tabs/moderator_tab.dart';
-import 'package:museumcode/features/home/tabs/scan_qr_tab.dart';
+import 'package:ArcheoAI/core/services/sound_service.dart';
+import 'package:ArcheoAI/features/home/tabs/expedition_tab.dart';
+import 'package:ArcheoAI/features/home/tabs/moderator_tab.dart';
+import 'package:ArcheoAI/features/home/tabs/scan_qr_tab.dart';
 import 'package:provider/provider.dart';
 
 import '../auth/provider/auth_provider.dart';

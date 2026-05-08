@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:museumcode/core/widgets/flash_message.dart';
-import 'package:museumcode/features/artifacts/data/artifact_service.dart';
+import 'package:ArcheoAI/core/widgets/flash_message.dart';
+import 'package:ArcheoAI/features/artifacts/data/artifact_service.dart';
 import 'package:provider/provider.dart';
 
 import '../../artifacts/domain/artifact_model.dart';
@@ -145,7 +145,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             ),
           ),
           const Text(
-            "Safety Box",
+            "ArcheoAI",
             style: TextStyle(
               color: Colors.white,
               fontSize: 32,
@@ -227,7 +227,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           image: DecorationImage(
-            image: AssetImage(a.imageUrl),
+            image: a.imageUrl.startsWith('http') 
+                ? NetworkImage(a.imageUrl) as ImageProvider
+                : AssetImage(a.imageUrl.isEmpty ? 'assets/images/museum_bg.jpg' : a.imageUrl),
             fit: BoxFit.cover,
           ),
           boxShadow: [
@@ -288,6 +290,15 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     );
   }
 
+  Widget _buildErrorImage() {
+    return Container(
+      width: 120,
+      height: 130,
+      color: Colors.black.withOpacity(0.2),
+      child: const Icon(Icons.broken_image, color: Colors.white54),
+    );
+  }
+
   Widget _buildListCard(Artifact a) {
     return GestureDetector(
       onTap: () => Navigator.push(
@@ -313,18 +324,21 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                     borderRadius: const BorderRadius.horizontal(
                       left: Radius.circular(20),
                     ),
-                    child: Image.asset(
-                      a.imageUrl,
-                      width: 120,
-                      height: 130,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
-                        width: 120,
-                        height: 130,
-                        color: Colors.black.withOpacity(0.2),
-                        child: const Icon(Icons.broken_image, color: Colors.white54),
-                      ),
-                    ),
+                    child: a.imageUrl.startsWith('http')
+                        ? Image.network(
+                            a.imageUrl,
+                            width: 120,
+                            height: 130,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => _buildErrorImage(),
+                          )
+                        : Image.asset(
+                            a.imageUrl.isEmpty ? 'assets/images/museum_bg.jpg' : a.imageUrl,
+                            width: 120,
+                            height: 130,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => _buildErrorImage(),
+                          ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(

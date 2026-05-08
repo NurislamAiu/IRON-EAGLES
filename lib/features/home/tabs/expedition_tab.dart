@@ -2,9 +2,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:museumcode/features/artifacts/domain/expedition_model.dart';
-import 'package:museumcode/features/artifacts/provider/expedition_provider.dart';
-import 'package:museumcode/features/auth/provider/auth_provider.dart';
+import 'package:ArcheoAI/features/artifacts/domain/expedition_model.dart';
+import 'package:ArcheoAI/features/artifacts/provider/expedition_provider.dart';
+import 'package:ArcheoAI/features/auth/provider/auth_provider.dart';
 
 class ExpeditionTab extends StatelessWidget {
   const ExpeditionTab({super.key});

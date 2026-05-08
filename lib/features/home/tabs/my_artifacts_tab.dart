@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:museumcode/core/widgets/flash_message.dart';
+import 'package:ArcheoAI/core/widgets/flash_message.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 

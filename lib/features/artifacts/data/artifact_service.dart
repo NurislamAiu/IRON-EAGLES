@@ -4,7 +4,7 @@ import 'dart:io' show File;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:museumcode/core/utils/mock_artifacts.dart';
+import 'package:ArcheoAI/core/utils/mock_artifacts.dart';
 
 import '../domain/artifact_model.dart';
 

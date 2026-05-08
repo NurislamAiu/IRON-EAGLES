@@ -144,9 +144,11 @@ class FavoritesScreen extends StatelessWidget {
     return Container(
       width: 100,
       height: 110,
-      decoration: BoxDecoration(
+      decoration: url.isEmpty ? null : BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(url), // Using AssetImage for now as in detail screen
+          image: url.startsWith('http')
+              ? NetworkImage(url) as ImageProvider
+              : AssetImage(url.isEmpty ? 'assets/images/museum_bg.jpg' : url),
           fit: BoxFit.cover,
         ),
       ),

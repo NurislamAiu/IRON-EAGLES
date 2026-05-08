@@ -88,6 +88,15 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
     );
   }
 
+  Widget _buildErrorImage() {
+    return Container(
+      color: Colors.white24,
+      width: 110,
+      height: 110,
+      child: const Icon(Icons.image, color: Colors.white54),
+    );
+  }
+
   Widget _artifactCard(Artifact artifact) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -101,18 +110,21 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
           ClipRRect(
             borderRadius:
             const BorderRadius.horizontal(left: Radius.circular(14)),
-            child: Image.network(
-              artifact.imageUrl,
-              width: 110,
-              height: 110,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
-                color: Colors.white24,
-                width: 110,
-                height: 110,
-                child: const Icon(Icons.image, color: Colors.white54),
-              ),
-            ),
+            child: artifact.imageUrl.startsWith('http')
+                ? Image.network(
+                    artifact.imageUrl,
+                    width: 110,
+                    height: 110,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => _buildErrorImage(),
+                  )
+                : Image.asset(
+                    artifact.imageUrl.isEmpty ? 'assets/images/museum_bg.jpg' : artifact.imageUrl,
+                    width: 110,
+                    height: 110,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => _buildErrorImage(),
+                  ),
           ),
           Expanded(
             child: Padding(

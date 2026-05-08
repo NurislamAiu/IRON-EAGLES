@@ -81,20 +81,30 @@ class _TimeTravelerViewState extends State<TimeTravelerView> {
   Widget _buildImage(String url) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
-      child: Image.asset(
-        url,
-        height: 350,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-           return Container(
-             height: 350,
-             width: double.infinity,
-             color: Colors.white10,
-             child: const Center(child: Icon(Icons.image_not_supported, color: Colors.white24, size: 50)),
-           );
-        },
-      ),
+      child: url.startsWith('http')
+          ? Image.network(
+              url,
+              height: 350,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => _buildErrorState(),
+            )
+          : Image.asset(
+              url.isEmpty ? 'assets/images/museum_bg.jpg' : url,
+              height: 350,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => _buildErrorState(),
+            ),
     );
+  }
+
+  Widget _buildErrorState() {
+     return Container(
+       height: 350,
+       width: double.infinity,
+       color: Colors.white10,
+       child: const Center(child: Icon(Icons.image_not_supported, color: Colors.white24, size: 50)),
+     );
   }
 }
