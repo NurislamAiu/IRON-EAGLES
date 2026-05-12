@@ -16,6 +16,8 @@ import 'features/artifacts/provider/achievement_provider.dart';
 import 'features/artifacts/provider/expedition_provider.dart';
 import 'features/blogs/provider/blog_provider.dart';
 import 'features/communities/provider/community_provider.dart';
+import 'features/courses/provider/course_provider.dart';
+import 'features/courses/provider/currency_provider.dart';
 
 // Обход ошибки сертификата (CERTIFICATE_VERIFY_FAILED) для картинок в разработке
 class MyHttpOverrides extends HttpOverrides {
@@ -66,6 +68,8 @@ class MuseumApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AchievementProvider()),
         ChangeNotifierProvider(create: (_) => BlogProvider()),
         ChangeNotifierProvider(create: (_) => CommunityProvider()),
+        ChangeNotifierProvider(create: (_) => CourseProvider()),
+        ChangeNotifierProvider(create: (_) => CurrencyProvider()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

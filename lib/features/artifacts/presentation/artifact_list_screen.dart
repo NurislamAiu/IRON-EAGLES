@@ -90,10 +90,10 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
 
   Widget _buildErrorImage() {
     return Container(
-      color: Colors.white24,
+      color: Colors.white10,
       width: 110,
       height: 110,
-      child: const Icon(Icons.image, color: Colors.white54),
+      child: const Icon(Icons.museum_outlined, color: Colors.white24, size: 40),
     );
   }
 
@@ -110,21 +110,23 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
           ClipRRect(
             borderRadius:
             const BorderRadius.horizontal(left: Radius.circular(14)),
-            child: artifact.imageUrl.startsWith('http')
-                ? Image.network(
-                    artifact.imageUrl,
-                    width: 110,
-                    height: 110,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _buildErrorImage(),
-                  )
-                : Image.asset(
-                    artifact.imageUrl.isEmpty ? 'assets/images/museum_bg.jpg' : artifact.imageUrl,
-                    width: 110,
-                    height: 110,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _buildErrorImage(),
-                  ),
+            child: artifact.imageUrl.isEmpty 
+                ? _buildErrorImage()
+                : (artifact.imageUrl.startsWith('http')
+                    ? Image.network(
+                        artifact.imageUrl,
+                        width: 110,
+                        height: 110,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => _buildErrorImage(),
+                      )
+                    : Image.asset(
+                        artifact.imageUrl,
+                        width: 110,
+                        height: 110,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => _buildErrorImage(),
+                      )),
           ),
           Expanded(
             child: Padding(

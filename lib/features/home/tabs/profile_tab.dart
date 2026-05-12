@@ -286,7 +286,9 @@ class _ProfileTabState extends State<ProfileTab>
                     },
                   ),
 
-                  const SizedBox(height: 24),
+                  // Убрали кнопку "Образовательные курсы", так как она теперь в BottomNavBar
+
+                  const SizedBox(height: 16),
 
                   _glassButton(
                     icon: Icons.emoji_events_outlined,

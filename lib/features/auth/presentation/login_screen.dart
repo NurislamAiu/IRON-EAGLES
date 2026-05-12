@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             top: 50,
             left: 20,
             child: IconButton(
-              onPressed: () => context.go('/role-selection'),
+              onPressed: () => context.go('/'),
               icon: Icon(Icons.arrow_back_ios, color: Colors.white.withOpacity(0.8)),
             ),
           ),

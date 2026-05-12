@@ -226,10 +226,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          image: DecorationImage(
+          color: a.imageUrl.isEmpty ? Colors.white10 : null,
+          image: a.imageUrl.isEmpty ? null : DecorationImage(
             image: a.imageUrl.startsWith('http') 
                 ? NetworkImage(a.imageUrl) as ImageProvider
-                : AssetImage(a.imageUrl.isEmpty ? 'assets/images/museum_bg.jpg' : a.imageUrl),
+                : AssetImage(a.imageUrl),
             fit: BoxFit.cover,
           ),
           boxShadow: [
@@ -240,37 +241,44 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             ),
           ],
         ),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            gradient: LinearGradient(
-              colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (a.imageUrl.isEmpty)
+              const Center(child: Icon(Icons.museum_outlined, size: 60, color: Colors.white24)),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: LinearGradient(
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    a.title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    a.period,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                a.title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                a.period,
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.8),
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
+          ]
         ),
       ),
     );
@@ -324,21 +332,23 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                     borderRadius: const BorderRadius.horizontal(
                       left: Radius.circular(20),
                     ),
-                    child: a.imageUrl.startsWith('http')
-                        ? Image.network(
-                            a.imageUrl,
-                            width: 120,
-                            height: 130,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => _buildErrorImage(),
-                          )
-                        : Image.asset(
-                            a.imageUrl.isEmpty ? 'assets/images/museum_bg.jpg' : a.imageUrl,
-                            width: 120,
-                            height: 130,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => _buildErrorImage(),
-                          ),
+                    child: a.imageUrl.isEmpty 
+                        ? _buildErrorImage()
+                        : (a.imageUrl.startsWith('http')
+                            ? Image.network(
+                                a.imageUrl,
+                                width: 120,
+                                height: 130,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => _buildErrorImage(),
+                              )
+                            : Image.asset(
+                                a.imageUrl,
+                                width: 120,
+                                height: 130,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => _buildErrorImage(),
+                              )),
                   ),
                   const SizedBox(width: 12),
                   Expanded(

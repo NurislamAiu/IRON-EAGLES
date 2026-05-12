@@ -139,7 +139,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
               ? DecorationImage(
                   image: widget.artifact.imageUrl.startsWith('http')
                       ? NetworkImage(widget.artifact.imageUrl) as ImageProvider
-                      : AssetImage(widget.artifact.imageUrl.isEmpty ? 'assets/images/museum_bg.jpg' : widget.artifact.imageUrl),
+                      : AssetImage(widget.artifact.imageUrl),
                   fit: BoxFit.cover,
                 )
               : null,

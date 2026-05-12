@@ -144,16 +144,16 @@ class FavoritesScreen extends StatelessWidget {
     return Container(
       width: 100,
       height: 110,
-      decoration: url.isEmpty ? null : BoxDecoration(
+      decoration: url.isEmpty ? const BoxDecoration(color: Colors.white10) : BoxDecoration(
         image: DecorationImage(
           image: url.startsWith('http')
               ? NetworkImage(url) as ImageProvider
-              : AssetImage(url.isEmpty ? 'assets/images/museum_bg.jpg' : url),
+              : AssetImage(url),
           fit: BoxFit.cover,
         ),
       ),
       child: url.isEmpty 
-        ? const Icon(Icons.broken_image, color: Colors.white24)
+        ? const Icon(Icons.museum_outlined, color: Colors.white24, size: 40)
         : null,
     );
   }

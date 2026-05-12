@@ -79,6 +79,7 @@ class _TimeTravelerViewState extends State<TimeTravelerView> {
   }
 
   Widget _buildImage(String url) {
+    if (url.isEmpty) return _buildErrorState();
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: url.startsWith('http')
@@ -90,7 +91,7 @@ class _TimeTravelerViewState extends State<TimeTravelerView> {
               errorBuilder: (context, error, stackTrace) => _buildErrorState(),
             )
           : Image.asset(
-              url.isEmpty ? 'assets/images/museum_bg.jpg' : url,
+              url,
               height: 350,
               width: double.infinity,
               fit: BoxFit.cover,
