@@ -4,6 +4,7 @@ import 'dart:io' show File;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:ArcheoAI/core/utils/mock_artifacts.dart';
 
 import '../domain/artifact_model.dart';
@@ -130,12 +131,6 @@ class ArtifactService {
   // 🔍 4. GET ALL
   // =====================================================================
   Future<List<Artifact>> getAllArtifacts() async {
-    // final snapshot = await _firestore
-    //     .collection('artifacts')
-    //     .orderBy('createdAt', descending: true)
-    //     .get();
-
-    // return snapshot.docs.map((doc) => Artifact.fromMap(doc.data())).toList();
     return Future.value(mockArtifacts);
   }
 
@@ -143,13 +138,12 @@ class ArtifactService {
   // 🔍 5. Search keywords
   // =====================================================================
   List<String> _generateKeywords(
-      String title,
-      String period,
-      String location,
-      String category,
-      ) {
-    final words =
-    '$title $period $location $category'.toLowerCase().split(' ');
+    String title,
+    String period,
+    String location,
+    String category,
+  ) {
+    final words = '$title $period $location $category'.toLowerCase().split(' ');
 
     final set = <String>{};
 
@@ -162,21 +156,5 @@ class ArtifactService {
     }
 
     return set.toList();
-  }
-
-  // =====================================================================
-  // 🚀 6. UPLOAD MOCKS
-  // =====================================================================
-  Future<void> _addMockArtifact(Artifact artifact) async {
-    await _firestore
-        .collection('artifacts')
-        .doc(artifact.id)
-        .set(artifact.toMap());
-  }
-
-  Future<void> uploadMockArtifacts() async {
-    for (final artifact in mockArtifacts) {
-      await _addMockArtifact(artifact);
-    }
   }
 }

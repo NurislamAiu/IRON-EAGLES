@@ -44,17 +44,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  void _uploadMockData() async {
-    try {
-      FlashMessage.info(context, "Начинаю загрузку артефактов...");
-      await ArtifactService().uploadMockArtifacts();
-      FlashMessage.success(context, "Моковые данные успешно загружены!");
-      context.read<ArtifactProvider>().fetchArtifacts();
-    } catch (e) {
-      FlashMessage.error(context, "Ошибка загрузки: $e");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ArtifactProvider>();
@@ -118,7 +107,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
               padding: const EdgeInsets.all(16),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
-                      (context, index) => _buildListCard(filtered[index]),
+                  (context, index) => _buildListCard(filtered[index]),
                   childCount: filtered.length,
                 ),
               ),

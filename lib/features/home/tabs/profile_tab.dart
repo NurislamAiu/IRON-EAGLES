@@ -77,7 +77,6 @@ class _ProfileTabState extends State<ProfileTab>
                 ),
               ),
               const SizedBox(height: 24),
-
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -90,13 +89,11 @@ class _ProfileTabState extends State<ProfileTab>
                   color: Colors.black,
                 ),
               ),
-
               const SizedBox(height: 18),
               Text(
                 email,
                 style: const TextStyle(color: Colors.white70, fontSize: 15),
               ),
-
               const SizedBox(height: 24),
             ],
           ),
@@ -151,9 +148,8 @@ class _ProfileTabState extends State<ProfileTab>
                           child: CircleAvatar(
                             radius: 60,
                             backgroundColor: Colors.black,
-                            backgroundImage: _avatar != null
-                                ? FileImage(_avatar!)
-                                : null,
+                            backgroundImage:
+                                _avatar != null ? FileImage(_avatar!) : null,
                             child: _avatar == null
                                 ? Icon(
                                     Icons.person,
@@ -163,7 +159,6 @@ class _ProfileTabState extends State<ProfileTab>
                                 : null,
                           ),
                         ),
-
                         Positioned(
                           bottom: 0,
                           right: 0,
@@ -249,6 +244,13 @@ class _ProfileTabState extends State<ProfileTab>
                     ],
                   ),
 
+                  ElevatedButton(
+                    onPressed: () =>
+    // Это заставит ArtifactProvider сходить на сервер и обновить список artifacts
+                      context.read<ArtifactProvider>().fetchArtifacts(),
+                    child: Text("Очистить базу (оставить 100)"),
+                  ),
+
                   const SizedBox(height: 24),
 
                   Consumer<FavoriteProvider>(
@@ -273,12 +275,14 @@ class _ProfileTabState extends State<ProfileTab>
                                     const SizedBox(height: 4),
                                     Text(
                                       "Сохранено: ${favProvider.favorites.length}",
-                                      style: const TextStyle(color: Colors.white70, fontSize: 15),
+                                      style: const TextStyle(
+                                          color: Colors.white70, fontSize: 15),
                                     ),
                                   ],
                                 ),
                               ),
-                              const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 18),
+                              const Icon(Icons.arrow_forward_ios,
+                                  color: Colors.white54, size: 18),
                             ],
                           ),
                         ),
@@ -411,7 +415,6 @@ class _ProfileTabState extends State<ProfileTab>
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
               const SizedBox(height: 20),
-
               TextField(
                 controller: _nameController,
                 style: const TextStyle(color: Colors.white),
@@ -426,7 +429,6 @@ class _ProfileTabState extends State<ProfileTab>
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
               _glassButton(
                 icon: Icons.check,
