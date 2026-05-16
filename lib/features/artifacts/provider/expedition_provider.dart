@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import '../domain/expedition_model.dart';
 import '../domain/chat_message_model.dart';
+import '../domain/expedition_invite_model.dart';
 import '../data/expedition_service.dart';
+import '../data/invite_service.dart';
 
 class ExpeditionProvider extends ChangeNotifier {
   final ExpeditionService _service = ExpeditionService();
+  final InviteService _inviteService = InviteService();
+  
   List<Expedition> _myExpeditions = [];
   bool _isLoading = true;
 
@@ -78,23 +82,63 @@ class ExpeditionProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> inviteMember(String expeditionId, String memberEmail) async {
-    final index = _myExpeditions.indexWhere((e) => e.id == expeditionId);
-    if (index != -1) {
-      final members = List<String>.from(_myExpeditions[index].memberEmails);
-      if (!members.contains(memberEmail)) {
-        members.add(memberEmail);
-        final updated = _myExpeditions[index].copyWith(memberEmails: members);
-        try {
-          await _service.updateExpedition(updated);
-          _myExpeditions[index] = updated;
-          notifyListeners();
-        } catch (e) {
-          debugPrint("Error inviting member: $e");
-        }
-      }
+  // --- INVITE LOGIC ---
+
+  Future<void> sendInvite(Expedition expedition, String inviteeEmail, String inviterEmail) async {
+    final invite = ExpeditionInvite(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      expeditionId: expedition.id,
+      expeditionName: expedition.name,
+      inviterEmail: inviterEmail,
+      inviteeEmail: inviteeEmail,
+      createdAt: DateTime.now(),
+    );
+    
+    try {
+      await _inviteService.sendInvite(invite);
+    } catch (e) {
+      debugPrint("Error sending invite: $e");
     }
   }
+
+  Stream<List<ExpeditionInvite>> streamMyInvites(String email) {
+    return _inviteService.streamMyInvites(email);
+  }
+
+  Future<void> acceptInvite(ExpeditionInvite invite) async {
+    try {
+      // 1. Update invite status
+      await _inviteService.updateInviteStatus(invite.id, 'accepted');
+      
+      // 2. Add member to expedition
+      final expeditions = await _service.getExpeditions();
+      final expIndex = expeditions.indexWhere((e) => e.id == invite.expeditionId);
+      
+      if (expIndex != -1) {
+        final exp = expeditions[expIndex];
+        if (!exp.memberEmails.contains(invite.inviteeEmail)) {
+          final updatedMembers = [...exp.memberEmails, invite.inviteeEmail];
+          final updatedExp = exp.copyWith(memberEmails: updatedMembers);
+          await _service.updateExpedition(updatedExp);
+        }
+      }
+      
+      // 3. Refresh list
+      await fetchExpeditions();
+    } catch (e) {
+      debugPrint("Error accepting invite: $e");
+    }
+  }
+
+  Future<void> declineInvite(String inviteId) async {
+    try {
+      await _inviteService.updateInviteStatus(inviteId, 'declined');
+    } catch (e) {
+      debugPrint("Error declining invite: $e");
+    }
+  }
+
+  // --- LIKES ---
 
   Future<void> toggleLike(String expeditionId, String userEmail) async {
     final index = _myExpeditions.indexWhere((e) => e.id == expeditionId);
@@ -117,7 +161,7 @@ class ExpeditionProvider extends ChangeNotifier {
     }
   }
 
-  // --- CHAT LOGIC (Real-time with Firestore) ---
+  // --- CHAT LOGIC ---
   Stream<List<ChatMessage>> streamMessages(String expeditionId) {
     return _service.streamMessages(expeditionId);
   }
@@ -128,7 +172,7 @@ class ExpeditionProvider extends ChangeNotifier {
     required String senderEmail,
   }) async {
     final newMessage = ChatMessage(
-      id: '', // Service generates ID
+      id: '', 
       expeditionId: expeditionId,
       senderEmail: senderEmail,
       text: text,
@@ -146,7 +190,6 @@ class ExpeditionProvider extends ChangeNotifier {
 
   Future<void> setTypingStatus(String expeditionId, String email, bool isTyping) async {
     try {
-      debugPrint("💬 Setting typing status for $email: $isTyping");
       await _service.setTypingStatus(expeditionId, email, isTyping);
     } catch (e) {
       debugPrint("Error setting typing status: $e");

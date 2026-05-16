@@ -6,8 +6,6 @@ import '../domain/expedition_model.dart';
 import '../domain/chat_message_model.dart';
 import '../provider/expedition_provider.dart';
 import '../../auth/provider/auth_provider.dart';
-import '../../../core/localization/app_localizations.dart';
-import 'widgets/typing_indicator.dart';
 
 class ExpeditionChatScreen extends StatefulWidget {
   final Expedition expedition;
@@ -91,7 +89,7 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(widget.expedition.name, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            Text(S.of(context).teamChat, style: const TextStyle(color: Colors.white54, fontSize: 12)),
+            const Text("Чат команды", style: TextStyle(color: Colors.white54, fontSize: 12)),
           ],
         ),
       ),
@@ -151,9 +149,25 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
                     
                     if (typingUsers.isNotEmpty) {
                       _scrollToBottom();
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.orangeAccent),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "${typingUsers.join(', ')} печатает...",
+                              style: const TextStyle(color: Colors.orangeAccent, fontSize: 12, fontStyle: FontStyle.italic),
+                            ),
+                          ],
+                        ),
+                      );
                     }
-
-                    return TypingIndicator(typingUsers: typingUsers);
+                    return const SizedBox.shrink();
                   },
                 ),
 
@@ -167,13 +181,13 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
   }
 
   Widget _buildEmptyChat() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.chat_bubble_outline, size: 80, color: Colors.white10),
-          const SizedBox(height: 16),
-          Text(S.of(context).noMessages, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white24)),
+          Icon(Icons.chat_bubble_outline, size: 80, color: Colors.white10),
+          SizedBox(height: 16),
+          Text("Сообщений пока нет", textAlign: TextAlign.center, style: TextStyle(color: Colors.white24)),
         ],
       ),
     );
@@ -222,7 +236,7 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
               controller: _messageController,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: S.of(context).writeToTeam,
+                hintText: "Написать команде...",
                 hintStyle: const TextStyle(color: Colors.white24),
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),

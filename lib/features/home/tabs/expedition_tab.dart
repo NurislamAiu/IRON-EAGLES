@@ -7,6 +7,8 @@ import 'package:ArcheoAI/features/artifacts/provider/expedition_provider.dart';
 import 'package:ArcheoAI/features/auth/provider/auth_provider.dart';
 import 'package:ArcheoAI/features/blogs/provider/blog_provider.dart';
 import 'package:ArcheoAI/features/blogs/domain/blog_post_model.dart';
+import 'package:ArcheoAI/features/auth/data/user_service.dart';
+import 'package:ArcheoAI/features/artifacts/domain/expedition_invite_model.dart';
 import 'package:intl/intl.dart';
 
 class ExpeditionTab extends StatelessWidget {
@@ -78,6 +80,29 @@ class ExpeditionTab extends StatelessWidget {
                 ),
               ),
             ),
+            // 🔥 Pending Invites Section
+            if (userEmail.isNotEmpty)
+              StreamBuilder<List<ExpeditionInvite>>(
+                stream: provider.streamMyInvites(userEmail),
+                builder: (context, snapshot) {
+                  final invites = snapshot.data ?? [];
+                  if (invites.isEmpty) return const SliverToBoxAdapter(child: SizedBox.shrink());
+                  
+                  return SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text("Приглашения", style: TextStyle(color: Colors.orangeAccent, fontSize: 14, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 12),
+                          ...invites.map((invite) => _buildInviteCard(context, invite)),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              ),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               sliver: expeditions.isEmpty
@@ -140,6 +165,51 @@ class ExpeditionTab extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white54, fontSize: 15, height: 1.4),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInviteCard(BuildContext context, ExpeditionInvite invite) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.orangeAccent.withOpacity(0.2)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Приглашение в проект",
+                  style: TextStyle(color: Colors.white54, fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  invite.expeditionName,
+                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  "от ${invite.inviterEmail}",
+                  style: const TextStyle(color: Colors.orangeAccent, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.check_circle, color: Colors.greenAccent),
+            onPressed: () => context.read<ExpeditionProvider>().acceptInvite(invite),
+          ),
+          IconButton(
+            icon: const Icon(Icons.cancel, color: Colors.redAccent),
+            onPressed: () => context.read<ExpeditionProvider>().declineInvite(invite.id),
           ),
         ],
       ),
@@ -231,7 +301,7 @@ class ExpeditionTab extends StatelessWidget {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       offset: const Offset(0, 40),
                       onSelected: (value) {
-                        if (value == 'invite') _showInviteDialog(context, expedition.id);
+                        if (value == 'invite') _showInviteDialog(context, expedition, userEmail);
                         if (value == 'edit') _showEditDialog(context, expedition);
                         if (value == 'delete') _showDeleteConfirm(context, expedition);
                         if (value == 'announcement') _showAddAnnouncementDialog(context, expedition.id, userEmail);
@@ -504,66 +574,113 @@ class ExpeditionTab extends StatelessWidget {
     );
   }
 
-  void _showInviteDialog(BuildContext context, String expeditionId) {
+  void _showInviteDialog(BuildContext context, Expedition expedition, String userEmail) {
     final emailController = TextEditingController();
+    final userService = UserService();
+    List<Map<String, dynamic>> searchResults = [];
+    bool isSearching = false;
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xff1f1a18),
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-          side: BorderSide(color: Colors.white.withOpacity(0.1)),
-        ),
-        title: const Text("Пригласить коллегу", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Введите email археолога, чтобы добавить его в вашу команду экспедиции.",
-              style: TextStyle(color: Colors.white60, fontSize: 14, height: 1.4),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          backgroundColor: const Color(0xff1f1a18),
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+            side: BorderSide(color: Colors.white.withOpacity(0.1)),
+          ),
+          title: const Text("Пригласить коллегу", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "Найдите археолога по email, чтобы добавить его в вашу команду экспедиции.",
+                  style: TextStyle(color: Colors.white60, fontSize: 14, height: 1.4),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: emailController,
+                  style: const TextStyle(color: Colors.white),
+                  cursorColor: Colors.orangeAccent,
+                  onChanged: (val) async {
+                    if (val.length >= 2) {
+                      setState(() => isSearching = true);
+                      final results = await userService.searchArchaeologists(val);
+                      setState(() {
+                        searchResults = results;
+                        isSearching = false;
+                      });
+                    } else {
+                      setState(() => searchResults = []);
+                    }
+                  },
+                  decoration: InputDecoration(
+                    labelText: "Email археолога",
+                    labelStyle: const TextStyle(color: Colors.white38),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.05),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.white.withOpacity(0.1))),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.orangeAccent)),
+                    prefixIcon: const Icon(Icons.search_rounded, color: Colors.orangeAccent),
+                    suffixIcon: isSearching ? const Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator(strokeWidth: 2, color: Colors.orangeAccent)) : null,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                if (searchResults.isNotEmpty)
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 200),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: searchResults.length,
+                      itemBuilder: (context, index) {
+                        final user = searchResults[index];
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.orangeAccent.withOpacity(0.1),
+                            child: const Icon(Icons.person, color: Colors.orangeAccent, size: 20),
+                          ),
+                          title: Text(user['email'], style: const TextStyle(color: Colors.white, fontSize: 14)),
+                          trailing: const Icon(Icons.add_circle_outline_rounded, color: Colors.orangeAccent),
+                          onTap: () {
+                            emailController.text = user['email'];
+                            setState(() => searchResults = []);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+              ],
             ),
-            const SizedBox(height: 24),
-            TextField(
-              controller: emailController,
-              style: const TextStyle(color: Colors.white),
-              cursorColor: Colors.orangeAccent,
-              decoration: InputDecoration(
-                labelText: "Email археолога",
-                labelStyle: const TextStyle(color: Colors.white38),
-                filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.white.withOpacity(0.1))),
-                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.orangeAccent)),
-                prefixIcon: const Icon(Icons.alternate_email_rounded, color: Colors.orangeAccent),
+          ),
+          actionsPadding: const EdgeInsets.only(right: 20, bottom: 20),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Отмена", style: TextStyle(color: Colors.white54))),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange.shade800,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               ),
+              onPressed: () {
+                if (emailController.text.isNotEmpty) {
+                  context.read<ExpeditionProvider>().sendInvite(
+                    expedition,
+                    emailController.text.trim(),
+                    userEmail,
+                  );
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text("Пригласить", style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
-        actionsPadding: const EdgeInsets.only(right: 20, bottom: 20),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Отмена", style: TextStyle(color: Colors.white54))),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange.shade800,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
-            onPressed: () {
-              if (emailController.text.isNotEmpty) {
-                context.read<ExpeditionProvider>().inviteMember(
-                  expeditionId,
-                  emailController.text.trim(),
-                );
-                Navigator.pop(context);
-              }
-            },
-            child: const Text("Пригласить", style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-        ],
       ),
     );
   }
