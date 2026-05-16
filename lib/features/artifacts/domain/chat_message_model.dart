@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ChatMessage {
   final String id;
   final String expeditionId;
@@ -24,12 +26,21 @@ class ChatMessage {
   }
 
   factory ChatMessage.fromMap(Map<String, dynamic> map) {
+    DateTime ts = DateTime.now();
+    final rawTs = map['timestamp'];
+    
+    if (rawTs is Timestamp) {
+      ts = rawTs.toDate();
+    } else if (rawTs is String) {
+      ts = DateTime.tryParse(rawTs) ?? DateTime.now();
+    }
+
     return ChatMessage(
       id: map['id'] ?? '',
       expeditionId: map['expeditionId'] ?? '',
       senderEmail: map['senderEmail'] ?? '',
       text: map['text'] ?? '',
-      timestamp: DateTime.tryParse(map['timestamp'] ?? '') ?? DateTime.now(),
+      timestamp: ts,
     );
   }
 }

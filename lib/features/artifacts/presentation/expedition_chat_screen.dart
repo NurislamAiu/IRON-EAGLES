@@ -1,10 +1,13 @@
 import 'dart:ui';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../domain/expedition_model.dart';
 import '../domain/chat_message_model.dart';
 import '../provider/expedition_provider.dart';
 import '../../auth/provider/auth_provider.dart';
+import '../../../core/localization/app_localizations.dart';
+import 'widgets/typing_indicator.dart';
 
 class ExpeditionChatScreen extends StatefulWidget {
   final Expedition expedition;
@@ -18,6 +21,48 @@ class ExpeditionChatScreen extends StatefulWidget {
 class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  Timer? _typingTimer;
+  bool _isTyping = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _messageController.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    _messageController.removeListener(_onTextChanged);
+    _typingTimer?.cancel();
+    _setTyping(false);
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    if (_messageController.text.trim().isNotEmpty) {
+      if (!_isTyping) {
+        _setTyping(true);
+      }
+      _typingTimer?.cancel();
+      _typingTimer = Timer(const Duration(seconds: 3), () {
+        _setTyping(false);
+      });
+    } else if (_isTyping) {
+      _setTyping(false);
+      _typingTimer?.cancel();
+    }
+  }
+
+  void _setTyping(bool typing) {
+    if (_isTyping == typing) return;
+    _isTyping = typing;
+    final myEmail = context.read<AuthProviders>().user?.email;
+    if (myEmail != null) {
+      context.read<ExpeditionProvider>().setTypingStatus(widget.expedition.id, myEmail, typing);
+    }
+  }
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -46,7 +91,7 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(widget.expedition.name, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            const Text("Чат команды", style: TextStyle(color: Colors.white54, fontSize: 12)),
+            Text(S.of(context).teamChat, style: const TextStyle(color: Colors.white54, fontSize: 12)),
           ],
         ),
       ),
@@ -75,29 +120,43 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
                       }
                       
                       final messages = snapshot.data ?? [];
-                      // Reverse list because Firestore returns newest first (descending) but we need to display it correctly
-                      final reversedMessages = messages.reversed.toList();
-
-                      if (reversedMessages.isEmpty) {
+                      
+                      if (messages.isEmpty) {
                         return _buildEmptyChat();
                       }
 
-                      // Auto scroll to bottom when new message arrives
                       _scrollToBottom();
 
                       return ListView.builder(
                         controller: _scrollController,
                         padding: const EdgeInsets.all(20),
-                        itemCount: reversedMessages.length,
+                        itemCount: messages.length,
                         itemBuilder: (context, index) {
-                          final msg = reversedMessages[index];
+                          final msg = messages[index];
                           final isMe = msg.senderEmail == myEmail;
                           return _buildMessageBubble(msg, isMe);
                         },
                       );
-                    }
+                    },
                   ),
                 ),
+                
+                // Real-time Typing Status
+                StreamBuilder<List<String>>(
+                  stream: provider.streamTypingUsers(widget.expedition.id),
+                  builder: (context, snapshot) {
+                    final typingUsers = (snapshot.data ?? [])
+                        .where((email) => email != myEmail)
+                        .toList();
+                    
+                    if (typingUsers.isNotEmpty) {
+                      _scrollToBottom();
+                    }
+
+                    return TypingIndicator(typingUsers: typingUsers);
+                  },
+                ),
+
                 _buildInputBar(myEmail),
               ],
             ),
@@ -108,13 +167,13 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
   }
 
   Widget _buildEmptyChat() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.chat_bubble_outline, size: 80, color: Colors.white10),
-          SizedBox(height: 16),
-          Text("Сообщений пока нет", textAlign: TextAlign.center, style: TextStyle(color: Colors.white24)),
+          const Icon(Icons.chat_bubble_outline, size: 80, color: Colors.white10),
+          const SizedBox(height: 16),
+          Text(S.of(context).noMessages, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white24)),
         ],
       ),
     );
@@ -163,7 +222,7 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
               controller: _messageController,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: "Написать команде...",
+                hintText: S.of(context).writeToTeam,
                 hintStyle: const TextStyle(color: Colors.white24),
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),
@@ -183,7 +242,7 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
                   senderEmail: myEmail,
                 );
                 _messageController.clear();
-                _scrollToBottom();
+                _setTyping(false);
               }
             },
           ),

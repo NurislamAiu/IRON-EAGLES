@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import '../domain/expedition_model.dart';
 import '../domain/chat_message_model.dart';
 import '../data/expedition_service.dart';
-import '../data/chat_service.dart';
 
 class ExpeditionProvider extends ChangeNotifier {
   final ExpeditionService _service = ExpeditionService();
-  final ChatService _chatService = ChatService();
-  
   List<Expedition> _myExpeditions = [];
   bool _isLoading = true;
 
@@ -122,7 +119,7 @@ class ExpeditionProvider extends ChangeNotifier {
 
   // --- CHAT LOGIC (Real-time with Firestore) ---
   Stream<List<ChatMessage>> streamMessages(String expeditionId) {
-    return _chatService.streamMessages(expeditionId);
+    return _service.streamMessages(expeditionId);
   }
 
   Future<void> sendMessage({
@@ -131,7 +128,7 @@ class ExpeditionProvider extends ChangeNotifier {
     required String senderEmail,
   }) async {
     final newMessage = ChatMessage(
-      id: '', // Firestore generates ID on add
+      id: '', // Service generates ID
       expeditionId: expeditionId,
       senderEmail: senderEmail,
       text: text,
@@ -139,9 +136,24 @@ class ExpeditionProvider extends ChangeNotifier {
     );
     
     try {
-      await _chatService.sendMessage(newMessage);
+      await _service.sendMessage(newMessage);
     } catch (e) {
       debugPrint("Error sending message: $e");
     }
+  }
+
+  // --- TYPING STATUS ---
+
+  Future<void> setTypingStatus(String expeditionId, String email, bool isTyping) async {
+    try {
+      debugPrint("💬 Setting typing status for $email: $isTyping");
+      await _service.setTypingStatus(expeditionId, email, isTyping);
+    } catch (e) {
+      debugPrint("Error setting typing status: $e");
+    }
+  }
+
+  Stream<List<String>> streamTypingUsers(String expeditionId) {
+    return _service.streamTypingUsers(expeditionId);
   }
 }

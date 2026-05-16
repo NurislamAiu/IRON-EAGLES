@@ -581,6 +581,11 @@ class S {
   String get addName => get('addName');
   String get saved => get('saved');
   String get nameLabel => get('nameLabel');
+  String get artifactPath => get('artifactPath');
+  String get origin => get('origin');
+  String get find => get('find');
+  String get isTyping => get('isTyping');
+  String get areTyping => get('areTyping');
 }
 
 class SDelegate extends LocalizationsDelegate<S> {

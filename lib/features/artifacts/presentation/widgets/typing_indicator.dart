@@ -18,7 +18,7 @@ class _TypingIndicatorState extends State<TypingIndicator> with TickerProviderSt
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1200),
     )..repeat();
   }
 
@@ -41,12 +41,28 @@ class _TypingIndicatorState extends State<TypingIndicator> with TickerProviderSt
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            text,
-            style: const TextStyle(color: Colors.orangeAccent, fontSize: 12, fontStyle: FontStyle.italic),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  text,
+                  style: const TextStyle(
+                    color: Colors.orangeAccent, 
+                    fontSize: 11, 
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                _buildDots(),
+              ],
+            ),
           ),
-          const SizedBox(width: 8),
-          _buildDots(),
         ],
       ),
     );
@@ -57,17 +73,32 @@ class _TypingIndicatorState extends State<TypingIndicator> with TickerProviderSt
       animation: _controller,
       builder: (context, child) {
         return Row(
+          mainAxisSize: MainAxisSize.min,
           children: List.generate(3, (index) {
-            double value = (index + _controller.value * 3) % 3;
-            double opacity = value < 1 ? value : (value < 2 ? 2 - value : 0);
+            // Offset start time for each dot
+            double begin = index * 0.2;
+            double end = begin + 0.6;
+            
+            double val = 0.0;
+            if (_controller.value >= begin && _controller.value <= end) {
+              val = (_controller.value - begin) / 0.6;
+            } else if (_controller.value < begin && _controller.value + 1.0 <= end) {
+              val = (_controller.value + 1.0 - begin) / 0.6;
+            }
+
+            // Peak at 0.5
+            double factor = val < 0.5 ? val * 2 : 2 * (1 - val);
+            factor = Curves.easeInOut.transform(factor.clamp(0.0, 1.0));
+
             return Container(
-              margin: const EdgeInsets.only(right: 2),
+              margin: const EdgeInsets.only(right: 3),
               width: 4,
               height: 4,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.orangeAccent.withOpacity(opacity.clamp(0.2, 1.0)),
+                color: Colors.orangeAccent.withOpacity(0.3 + 0.7 * factor),
               ),
+              transform: Matrix4.translationValues(0, -4 * factor, 0),
             );
           }),
         );
