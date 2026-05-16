@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../full_map_screen.dart';
-import 'package:ArcheoAI/core/localization/app_localizations.dart';
 
 class ArtifactJourneyMap extends StatelessWidget {
   final double startLat;
@@ -85,7 +84,7 @@ class ArtifactJourneyMap extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (_) => FullMapScreen(
                             center: center,
-                            title: S.of(context).artifactPath,
+                            title: "Путь артефакта",
                             initialZoom: 4.0,
                             polylines: [
                               Polyline(
@@ -147,12 +146,12 @@ class ArtifactJourneyMap extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(child: _buildLocationInfo(Icons.auto_awesome, S.of(context).origin, startName, Colors.cyanAccent)),
+          Expanded(child: _buildLocationInfo(Icons.auto_awesome, "Исток", startName, Colors.cyanAccent)),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Icon(Icons.arrow_forward_rounded, color: Colors.white.withOpacity(0.2), size: 20),
           ),
-          Expanded(child: _buildLocationInfo(Icons.location_on_rounded, S.of(context).find, endName, Colors.orangeAccent)),
+          Expanded(child: _buildLocationInfo(Icons.location_on_rounded, "Находка", endName, Colors.orangeAccent)),
         ],
       ),
     );

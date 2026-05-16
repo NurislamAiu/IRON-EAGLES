@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import '../domain/expedition_model.dart';
 import '../domain/chat_message_model.dart';
 import '../data/expedition_service.dart';
+import '../data/chat_service.dart';
 
 class ExpeditionProvider extends ChangeNotifier {
   final ExpeditionService _service = ExpeditionService();
+  final ChatService _chatService = ChatService();
+  
   List<Expedition> _myExpeditions = [];
-  List<ChatMessage> _allMessages = []; // For now keeping chat in local/memory as requested only server for expeditions
   bool _isLoading = true;
 
   List<Expedition> get myExpeditions => _myExpeditions;
-  List<ChatMessage> get allMessages => _allMessages;
   bool get isLoading => _isLoading;
 
   ExpeditionProvider() {
@@ -119,24 +120,28 @@ class ExpeditionProvider extends ChangeNotifier {
     }
   }
 
-  // --- CHAT LOGIC (Temporary memory based) ---
+  // --- CHAT LOGIC (Real-time with Firestore) ---
+  Stream<List<ChatMessage>> streamMessages(String expeditionId) {
+    return _chatService.streamMessages(expeditionId);
+  }
+
   Future<void> sendMessage({
     required String expeditionId,
     required String text,
     required String senderEmail,
   }) async {
     final newMessage = ChatMessage(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: '', // Firestore generates ID on add
       expeditionId: expeditionId,
       senderEmail: senderEmail,
       text: text,
       timestamp: DateTime.now(),
     );
-    _allMessages.add(newMessage);
-    notifyListeners();
-  }
-
-  List<ChatMessage> getMessagesForExpedition(String expId) {
-    return _allMessages.where((m) => m.expeditionId == expId).toList();
+    
+    try {
+      await _chatService.sendMessage(newMessage);
+    } catch (e) {
+      debugPrint("Error sending message: $e");
+    }
   }
 }

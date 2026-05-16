@@ -5,7 +5,6 @@ import '../domain/expedition_model.dart';
 import '../domain/chat_message_model.dart';
 import '../provider/expedition_provider.dart';
 import '../../auth/provider/auth_provider.dart';
-import '../../../core/localization/app_localizations.dart';
 
 class ExpeditionChatScreen extends StatefulWidget {
   final Expedition expedition;
@@ -35,7 +34,6 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ExpeditionProvider>();
-    final messages = provider.getMessagesForExpedition(widget.expedition.id);
     final myEmail = context.read<AuthProviders>().user?.email ?? "";
 
     return Scaffold(
@@ -48,7 +46,7 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(widget.expedition.name, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            Text(S.of(context).teamChat, style: const TextStyle(color: Colors.white54, fontSize: 12)),
+            const Text("Чат команды", style: TextStyle(color: Colors.white54, fontSize: 12)),
           ],
         ),
       ),
@@ -69,18 +67,36 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
             child: Column(
               children: [
                 Expanded(
-                  child: messages.isEmpty 
-                    ? _buildEmptyChat()
-                    : ListView.builder(
+                  child: StreamBuilder<List<ChatMessage>>(
+                    stream: provider.streamMessages(widget.expedition.id),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator(color: Colors.orangeAccent));
+                      }
+                      
+                      final messages = snapshot.data ?? [];
+                      // Reverse list because Firestore returns newest first (descending) but we need to display it correctly
+                      final reversedMessages = messages.reversed.toList();
+
+                      if (reversedMessages.isEmpty) {
+                        return _buildEmptyChat();
+                      }
+
+                      // Auto scroll to bottom when new message arrives
+                      _scrollToBottom();
+
+                      return ListView.builder(
                         controller: _scrollController,
                         padding: const EdgeInsets.all(20),
-                        itemCount: messages.length,
+                        itemCount: reversedMessages.length,
                         itemBuilder: (context, index) {
-                          final msg = messages[index];
+                          final msg = reversedMessages[index];
                           final isMe = msg.senderEmail == myEmail;
                           return _buildMessageBubble(msg, isMe);
                         },
-                      ),
+                      );
+                    }
+                  ),
                 ),
                 _buildInputBar(myEmail),
               ],
@@ -92,13 +108,13 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
   }
 
   Widget _buildEmptyChat() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.chat_bubble_outline, size: 80, color: Colors.white10),
-          const SizedBox(height: 16),
-          Text(S.of(context).noMessages, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white24)),
+          Icon(Icons.chat_bubble_outline, size: 80, color: Colors.white10),
+          SizedBox(height: 16),
+          Text("Сообщений пока нет", textAlign: TextAlign.center, style: TextStyle(color: Colors.white24)),
         ],
       ),
     );
@@ -147,7 +163,7 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
               controller: _messageController,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: S.of(context).writeToTeam,
+                hintText: "Написать команде...",
                 hintStyle: const TextStyle(color: Colors.white24),
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),
