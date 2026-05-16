@@ -576,4 +576,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nameLabel => 'Name';
+
+  @override
+  String get artifactPath => 'Artifact Journey';
+
+  @override
+  String get origin => 'Origin';
+
+  @override
+  String get find => 'Find';
+
+  @override
+  String get isTyping => 'is typing';
+
+  @override
+  String get areTyping => 'people are typing';
 }

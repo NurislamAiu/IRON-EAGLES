@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../domain/expedition_model.dart';
@@ -6,6 +7,7 @@ import '../domain/chat_message_model.dart';
 import '../provider/expedition_provider.dart';
 import '../../auth/provider/auth_provider.dart';
 import '../../../core/localization/app_localizations.dart';
+import 'widgets/typing_indicator.dart';
 
 class ExpeditionChatScreen extends StatefulWidget {
   final Expedition expedition;
@@ -19,6 +21,48 @@ class ExpeditionChatScreen extends StatefulWidget {
 class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  Timer? _typingTimer;
+  bool _isTyping = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _messageController.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    _messageController.removeListener(_onTextChanged);
+    _typingTimer?.cancel();
+    _setTyping(false);
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    if (_messageController.text.trim().isNotEmpty) {
+      if (!_isTyping) {
+        _setTyping(true);
+      }
+      _typingTimer?.cancel();
+      _typingTimer = Timer(const Duration(seconds: 2), () {
+        _setTyping(false);
+      });
+    } else if (_isTyping) {
+      _setTyping(false);
+      _typingTimer?.cancel();
+    }
+  }
+
+  void _setTyping(bool typing) {
+    if (_isTyping == typing) return;
+    _isTyping = typing;
+    final myEmail = context.read<AuthProviders>().user?.email;
+    if (myEmail != null) {
+      context.read<ExpeditionProvider>().setTypingStatus(widget.expedition.id, myEmail, typing);
+    }
+  }
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -34,8 +78,7 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ExpeditionProvider>();
-    final messages = provider.getMessagesForExpedition(widget.expedition.id);
+    final provider = context.read<ExpeditionProvider>();
     final myEmail = context.read<AuthProviders>().user?.email ?? "";
 
     return Scaffold(
@@ -69,9 +112,23 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
             child: Column(
               children: [
                 Expanded(
-                  child: messages.isEmpty 
-                    ? _buildEmptyChat()
-                    : ListView.builder(
+                  child: StreamBuilder<List<ChatMessage>>(
+                    stream: provider.streamMessages(widget.expedition.id),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator(color: Colors.orangeAccent));
+                      }
+                      
+                      final messages = snapshot.data ?? [];
+                      
+                      if (messages.isEmpty) {
+                        return _buildEmptyChat();
+                      }
+
+                      // Scroll to bottom when new messages arrive
+                      _scrollToBottom();
+
+                      return ListView.builder(
                         controller: _scrollController,
                         padding: const EdgeInsets.all(20),
                         itemCount: messages.length,
@@ -80,7 +137,18 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
                           final isMe = msg.senderEmail == myEmail;
                           return _buildMessageBubble(msg, isMe);
                         },
-                      ),
+                      );
+                    },
+                  ),
+                ),
+                StreamBuilder<List<String>>(
+                  stream: provider.streamTypingUsers(widget.expedition.id),
+                  builder: (context, snapshot) {
+                    final typingUsers = (snapshot.data ?? [])
+                        .where((email) => email != myEmail)
+                        .toList();
+                    return TypingIndicator(typingUsers: typingUsers);
+                  },
                 ),
                 _buildInputBar(myEmail),
               ],
@@ -167,7 +235,7 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
                   senderEmail: myEmail,
                 );
                 _messageController.clear();
-                _scrollToBottom();
+                _setTyping(false);
               }
             },
           ),

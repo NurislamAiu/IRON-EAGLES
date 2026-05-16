@@ -197,7 +197,12 @@ class S {
       'scannerPolygon': 'POLYGON GENERATION',
       'addName': 'Add name',
       'saved': 'Saved',
-      'nameLabel': 'Name'
+      'nameLabel': 'Name',
+      'artifactPath': 'Artifact Journey',
+      'origin': 'Origin',
+      'find': 'Find',
+      'isTyping': 'is typing',
+      'areTyping': 'people are typing'
     },
     'ru': {
       'appTitle': 'ArcheoAI',
@@ -387,7 +392,12 @@ class S {
       'scannerPolygon': 'ГЕНЕРАЦИЯ ПОЛИГОНОВ',
       'addName': 'Добавьте имя',
       'saved': 'Сохранено',
-      'nameLabel': 'Имя'
+      'nameLabel': 'Имя',
+      'artifactPath': 'Путь артефакта',
+      'origin': 'Исток',
+      'find': 'Находка',
+      'isTyping': 'печатает...',
+      'areTyping': 'человека печатают...'
     },
   };
 
@@ -516,6 +526,7 @@ class S {
   String get descriptionHint => get('descriptionHint');
   String get cover => get('cover');
   String get addCover => get('addCover');
+  String get recommendationSize => get('recommendSize');
   String get recommendSize => get('recommendSize');
   String get createCommunityAction => get('createCommunityAction');
   String get fillFields => get('fillFields');
@@ -581,6 +592,11 @@ class S {
   String get addName => get('addName');
   String get saved => get('saved');
   String get nameLabel => get('nameLabel');
+  String get artifactPath => get('artifactPath');
+  String get origin => get('origin');
+  String get find => get('find');
+  String get isTyping => get('isTyping');
+  String get areTyping => get('areTyping');
 }
 
 class SDelegate extends LocalizationsDelegate<S> {

@@ -1,25 +1,31 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../domain/expedition_model.dart';
 import '../domain/chat_message_model.dart';
+import '../data/expedition_service.dart';
 
 class ExpeditionProvider extends ChangeNotifier {
+  final ExpeditionService _service = ExpeditionService();
   List<Expedition> _myExpeditions = [];
-  List<ChatMessage> _allMessages = [];
   bool _isLoading = true;
 
   List<Expedition> get myExpeditions => _myExpeditions;
-  List<ChatMessage> get allMessages => _allMessages;
   bool get isLoading => _isLoading;
 
   ExpeditionProvider() {
-    _loadData();
+    fetchExpeditions();
   }
 
-  Future<void> _loadData() async {
-    await _loadExpeditions();
-    await _loadMessages();
+  Future<void> fetchExpeditions() async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      _myExpeditions = await _service.getExpeditions();
+    } catch (e) {
+      debugPrint("Error fetching expeditions: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> createExpedition({
@@ -33,43 +39,89 @@ class ExpeditionProvider extends ChangeNotifier {
       description: description,
       leaderEmail: leaderEmail,
       memberEmails: [leaderEmail],
+      likes: [],
       startDate: DateTime.now(),
     );
 
-    _myExpeditions.add(newExpedition);
-    notifyListeners();
-    await _saveExpeditions();
+    try {
+      await _service.createExpedition(newExpedition);
+      _myExpeditions.insert(0, newExpedition);
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Error creating expedition: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> updateExpedition(Expedition expedition) async {
+    try {
+      await _service.updateExpedition(expedition);
+      final index = _myExpeditions.indexWhere((e) => e.id == expedition.id);
+      if (index != -1) {
+        _myExpeditions[index] = expedition;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint("Error updating expedition: $e");
+      rethrow;
+    }
   }
 
   Future<void> deleteExpedition(String id) async {
-    _myExpeditions.removeWhere((e) => e.id == id);
-    _allMessages.removeWhere((m) => m.expeditionId == id);
-    notifyListeners();
-    await _saveExpeditions();
-    await _saveMessages();
+    try {
+      await _service.deleteExpedition(id);
+      _myExpeditions.removeWhere((e) => e.id == id);
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Error deleting expedition: $e");
+      rethrow;
+    }
   }
 
   Future<void> inviteMember(String expeditionId, String memberEmail) async {
     final index = _myExpeditions.indexWhere((e) => e.id == expeditionId);
     if (index != -1) {
-      final e = _myExpeditions[index];
-      if (!e.memberEmails.contains(memberEmail)) {
-        final updated = Expedition(
-          id: e.id,
-          name: e.name,
-          description: e.description,
-          leaderEmail: e.leaderEmail,
-          memberEmails: [...e.memberEmails, memberEmail],
-          startDate: e.startDate,
-        );
-        _myExpeditions[index] = updated;
-        notifyListeners();
-        await _saveExpeditions();
+      final members = List<String>.from(_myExpeditions[index].memberEmails);
+      if (!members.contains(memberEmail)) {
+        members.add(memberEmail);
+        final updated = _myExpeditions[index].copyWith(memberEmails: members);
+        try {
+          await _service.updateExpedition(updated);
+          _myExpeditions[index] = updated;
+          notifyListeners();
+        } catch (e) {
+          debugPrint("Error inviting member: $e");
+        }
       }
     }
   }
 
-  // --- CHAT LOGIC ---
+  Future<void> toggleLike(String expeditionId, String userEmail) async {
+    final index = _myExpeditions.indexWhere((e) => e.id == expeditionId);
+    if (index == -1) return;
+
+    final currentLikes = List<String>.from(_myExpeditions[index].likes);
+    if (currentLikes.contains(userEmail)) {
+      currentLikes.remove(userEmail);
+    } else {
+      currentLikes.add(userEmail);
+    }
+
+    _myExpeditions[index] = _myExpeditions[index].copyWith(likes: currentLikes);
+    notifyListeners();
+
+    try {
+      await _service.toggleLike(expeditionId, userEmail);
+    } catch (e) {
+      debugPrint("Error toggling like: $e");
+    }
+  }
+
+  // --- CHAT LOGIC (Firebase based) ---
+
+  Stream<List<ChatMessage>> streamMessages(String expeditionId) {
+    return _service.streamMessages(expeditionId);
+  }
 
   Future<void> sendMessage({
     required String expeditionId,
@@ -83,63 +135,25 @@ class ExpeditionProvider extends ChangeNotifier {
       text: text,
       timestamp: DateTime.now(),
     );
-
-    _allMessages.add(newMessage);
-    notifyListeners();
-    await _saveMessages();
-  }
-
-  List<ChatMessage> getMessagesForExpedition(String expId) {
-    return _allMessages.where((m) => m.expeditionId == expId).toList();
-  }
-
-  Future<void> _saveExpeditions() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final encoded = jsonEncode(_myExpeditions.map((e) => e.toMap()).toList());
-      await prefs.setString('user_expeditions', encoded);
+      await _service.sendMessage(newMessage);
     } catch (e) {
-      debugPrint("Error saving expeditions: $e");
+      debugPrint("Error sending message: $e");
+      rethrow;
     }
   }
 
-  Future<void> _loadExpeditions() async {
+  // --- TYPING STATUS ---
+
+  Future<void> setTypingStatus(String expeditionId, String email, bool isTyping) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final data = prefs.getString('user_expeditions');
-      if (data != null) {
-        final List decoded = jsonDecode(data);
-        _myExpeditions = decoded.map((item) => Expedition.fromMap(item)).toList();
-      }
+      await _service.setTypingStatus(expeditionId, email, isTyping);
     } catch (e) {
-      debugPrint("Error loading expeditions: $e");
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      debugPrint("Error setting typing status: $e");
     }
   }
 
-  Future<void> _saveMessages() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final encoded = jsonEncode(_allMessages.map((m) => m.toMap()).toList());
-      await prefs.setString('expedition_messages', encoded);
-    } catch (e) {
-      debugPrint("Error saving messages: $e");
-    }
-  }
-
-  Future<void> _loadMessages() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final data = prefs.getString('expedition_messages');
-      if (data != null) {
-        final List decoded = jsonDecode(data);
-        _allMessages = decoded.map((item) => ChatMessage.fromMap(item)).toList();
-        notifyListeners();
-      }
-    } catch (e) {
-      debugPrint("Error loading messages: $e");
-    }
+  Stream<List<String>> streamTypingUsers(String expeditionId) {
+    return _service.streamTypingUsers(expeditionId);
   }
 }

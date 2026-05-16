@@ -1225,6 +1225,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Name'**
   String get nameLabel;
+
+  /// No description provided for @artifactPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Artifact Journey'**
+  String get artifactPath;
+
+  /// No description provided for @origin.
+  ///
+  /// In en, this message translates to:
+  /// **'Origin'**
+  String get origin;
+
+  /// No description provided for @find.
+  ///
+  /// In en, this message translates to:
+  /// **'Find'**
+  String get find;
+
+  /// No description provided for @isTyping.
+  ///
+  /// In en, this message translates to:
+  /// **'is typing'**
+  String get isTyping;
+
+  /// No description provided for @areTyping.
+  ///
+  /// In en, this message translates to:
+  /// **'people are typing'**
+  String get areTyping;
 }
 
 class _AppLocalizationsDelegate

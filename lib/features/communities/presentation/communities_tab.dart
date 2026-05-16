@@ -7,7 +7,6 @@ import '../provider/community_provider.dart';
 import '../domain/community_model.dart';
 import 'create_community_screen.dart';
 import 'community_detail_screen.dart';
-import '../../../core/localization/app_localizations.dart';
 
 class CommunitiesTab extends StatefulWidget {
   const CommunitiesTab({super.key});
@@ -54,20 +53,20 @@ class _CommunitiesTabState extends State<CommunitiesTab> {
                 ),
               ),
               icon: const Icon(Icons.group_add, color: Colors.white),
-              label: Text(S.of(context).create,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              label: const Text("Создать",
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             )
           : null,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          SliverAppBar(
+          const SliverAppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
             floating: true,
             title: Text(
-              S.of(context).communities,
-              style: const TextStyle(
+              "Сообщества",
+              style: TextStyle(
                   color: Colors.white,
                   fontSize: 28,
                   fontWeight: FontWeight.bold),
@@ -89,7 +88,7 @@ class _CommunitiesTabState extends State<CommunitiesTab> {
                   style: const TextStyle(color: Colors.white),
                   onChanged: (val) => setState(() => _searchQuery = val),
                   decoration: InputDecoration(
-                    hintText: S.of(context).searchCommunities,
+                    hintText: "Поиск сообществ...",
                     hintStyle: const TextStyle(color: Colors.white38),
                     prefixIcon: const Icon(Icons.search, color: Colors.white38),
                     border: InputBorder.none,
@@ -118,20 +117,20 @@ class _CommunitiesTabState extends State<CommunitiesTab> {
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.search_off, size: 80, color: Colors.white10),
-                    const SizedBox(height: 16),
-                    Text(S.of(context).noArtifacts, style: const TextStyle(color: Colors.white38, fontSize: 18)),
+                  children: const [
+                    Icon(Icons.search_off, size: 80, color: Colors.white10),
+                    SizedBox(height: 16),
+                    Text("Ничего не найдено", style: TextStyle(color: Colors.white38, fontSize: 18)),
                   ],
                 ),
               ),
             )
           else ...[
             if (myCommunities.isNotEmpty && _searchQuery.isEmpty) ...[
-              SliverToBoxAdapter(
+              const SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
-                  child: Text(S.of(context).myCommunities, style: const TextStyle(color: Colors.orangeAccent, fontSize: 14, fontWeight: FontWeight.bold)),
+                  padding: EdgeInsets.fromLTRB(24, 20, 24, 10),
+                  child: Text("Мои сообщества", style: TextStyle(color: Colors.orangeAccent, fontSize: 14, fontWeight: FontWeight.bold)),
                 ),
               ),
               SliverPadding(
@@ -147,10 +146,10 @@ class _CommunitiesTabState extends State<CommunitiesTab> {
 
             if (otherCommunities.isNotEmpty || _searchQuery.isNotEmpty) ...[
               if (_searchQuery.isEmpty)
-                SliverToBoxAdapter(
+                const SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
-                    child: Text(S.of(context).allCommunities, style: const TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold)),
+                    padding: EdgeInsets.fromLTRB(24, 20, 24, 10),
+                    child: Text("Все сообщества", style: TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold)),
                   ),
                 ),
               SliverPadding(
@@ -243,7 +242,7 @@ class _CommunitiesTabState extends State<CommunitiesTab> {
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              "${community.members.length} ${S.of(context).participantsCount}",
+                              "${community.members.length} участников",
                               style: const TextStyle(color: Colors.orangeAccent, fontSize: 12, fontWeight: FontWeight.bold),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
