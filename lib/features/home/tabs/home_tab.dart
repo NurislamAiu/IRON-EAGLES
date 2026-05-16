@@ -206,6 +206,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildHeroCard(Artifact a) {
+    final bool isNetwork = a.imageUrl.startsWith('http');
+    final bool hasImage = a.imageUrl.isNotEmpty;
+
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
@@ -215,13 +218,15 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          color: a.imageUrl.isEmpty ? Colors.white10 : null,
-          image: a.imageUrl.isEmpty ? null : DecorationImage(
-            image: a.imageUrl.startsWith('http') 
-                ? NetworkImage(a.imageUrl) as ImageProvider
-                : AssetImage(a.imageUrl),
-            fit: BoxFit.cover,
-          ),
+          color: Colors.white10,
+          image: hasImage 
+              ? DecorationImage(
+                  image: isNetwork 
+                      ? NetworkImage(a.imageUrl) as ImageProvider
+                      : AssetImage(a.imageUrl),
+                  fit: BoxFit.cover,
+                )
+              : null,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.5),
@@ -233,7 +238,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            if (a.imageUrl.isEmpty)
+            if (!hasImage)
               const Center(child: Icon(Icons.museum_outlined, size: 60, color: Colors.white24)),
             Container(
               padding: const EdgeInsets.all(16),
@@ -251,9 +256,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 children: [
                   Text(
                     a.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 24,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -261,7 +268,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                     a.period,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.8),
-                      fontSize: 16,
+                      fontSize: 14,
                     ),
                   ),
                 ],
@@ -329,14 +336,17 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                 width: 120,
                                 height: 130,
                                 fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => _buildErrorImage(),
+                                errorBuilder: (context, error, stackTrace) => _buildErrorImage(),
                               )
                             : Image.asset(
                                 a.imageUrl,
                                 width: 120,
                                 height: 130,
                                 fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => _buildErrorImage(),
+                                errorBuilder: (context, error, stackTrace) {
+                                  debugPrint("❌ Ошибка загрузки ассета: ${a.imageUrl}");
+                                  return _buildErrorImage();
+                                },
                               )),
                   ),
                   const SizedBox(width: 12),
