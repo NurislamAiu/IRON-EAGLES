@@ -23,7 +23,16 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   String _search = '';
   String _selectedFilter = 'Все';
-  final filters = ['Все', 'Скульптура', 'Стела', 'Украшения', 'Архитектура', 'Манускрипт'];
+  final filters = [
+    'Все', 
+    'Саки', 
+    'Сарматы', 
+    'Кангюи', 
+    'Усуни', 
+    'Древний Египет', 
+    'Древняя Греция',
+    'Тимуриды'
+  ];
 
   @override
   void initState() {
