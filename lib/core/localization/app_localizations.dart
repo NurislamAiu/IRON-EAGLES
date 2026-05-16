@@ -197,7 +197,10 @@ class S {
       'scannerPolygon': 'POLYGON GENERATION',
       'addName': 'Add name',
       'saved': 'Saved',
-      'nameLabel': 'Name'
+      'nameLabel': 'Name',
+      'artifactPath': 'Artifact Journey',
+      'origin': 'Origin',
+      'find': 'Find'
     },
     'ru': {
       'appTitle': 'ArcheoAI',
@@ -387,7 +390,10 @@ class S {
       'scannerPolygon': 'ГЕНЕРАЦИЯ ПОЛИГОНОВ',
       'addName': 'Добавьте имя',
       'saved': 'Сохранено',
-      'nameLabel': 'Имя'
+      'nameLabel': 'Имя',
+      'artifactPath': 'Путь артефакта',
+      'origin': 'Исток',
+      'find': 'Находка'
     },
   };
 
@@ -581,6 +587,9 @@ class S {
   String get addName => get('addName');
   String get saved => get('saved');
   String get nameLabel => get('nameLabel');
+  String get artifactPath => get('artifactPath');
+  String get origin => get('origin');
+  String get find => get('find');
 }
 
 class SDelegate extends LocalizationsDelegate<S> {

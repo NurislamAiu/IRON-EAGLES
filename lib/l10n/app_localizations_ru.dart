@@ -578,4 +578,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get nameLabel => 'Имя';
+
+  @override
+  String get artifactPath => 'Путь артефакта';
+
+  @override
+  String get origin => 'Исток';
+
+  @override
+  String get find => 'Находка';
 }

@@ -2,11 +2,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import 'package:ArcheoAI/features/artifacts/domain/expedition_model.dart';
 import 'package:ArcheoAI/features/artifacts/provider/expedition_provider.dart';
-import '../../auth/provider/auth_provider.dart';
-import '../../../core/localization/app_localizations.dart';
+import 'package:ArcheoAI/features/auth/provider/auth_provider.dart';
 
 class ExpeditionTab extends StatelessWidget {
   const ExpeditionTab({super.key});
@@ -41,9 +39,9 @@ class ExpeditionTab extends StatelessWidget {
           highlightElevation: 0,
           onPressed: () => _showCreateDialog(context, userEmail),
           icon: const Icon(Icons.add_location_alt_rounded, color: Colors.white),
-          label: Text(
-            S.of(context).newExpedition,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15, letterSpacing: 0.5),
+          label: const Text(
+            "Новая экспедиция",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15, letterSpacing: 0.5),
           ),
         ),
       ),
@@ -61,14 +59,14 @@ class ExpeditionTab extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    S.of(context).expeditions,
-                    style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+                  const Text(
+                    "Экспедиции",
+                    style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: 0.5),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    S.of(context).yourProjects,
-                    style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w500),
+                    "Ваши археологические проекты",
+                    style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -77,7 +75,7 @@ class ExpeditionTab extends StatelessWidget {
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             sliver: expeditions.isEmpty
-                ? SliverFillRemaining(child: _buildEmptyState(context))
+                ? SliverFillRemaining(child: _buildEmptyState())
                 : SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) => _buildExpeditionCard(context, expeditions[index]),
@@ -91,7 +89,7 @@ class ExpeditionTab extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -122,18 +120,18 @@ class ExpeditionTab extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 32),
-          Text(
-            S.of(context).noProjects,
+          const Text(
+            "Нет активных проектов",
             textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700),
+            style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Text(
-              S.of(context).createProjectMsg,
+              "Создайте новую экспедицию для своей команды или дождитесь приглашения от коллег.",
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white54, fontSize: 15, height: 1.4),
+              style: TextStyle(color: Colors.white54, fontSize: 15, height: 1.4),
             ),
           ),
         ],
@@ -208,7 +206,7 @@ class ExpeditionTab extends StatelessWidget {
                               const Icon(Icons.calendar_today_rounded, color: Colors.white54, size: 14),
                               const SizedBox(width: 6),
                               Text(
-                                "${S.of(context).start}: ${DateFormat('dd.MM.yyyy').format(expedition.startDate)}",
+                                "Старт: ${expedition.startDate.day.toString().padLeft(2, '0')}.${expedition.startDate.month.toString().padLeft(2, '0')}.${expedition.startDate.year}",
                                 style: const TextStyle(color: Colors.white54, fontSize: 13, fontWeight: FontWeight.w500),
                               ),
                             ],
@@ -227,23 +225,23 @@ class ExpeditionTab extends StatelessWidget {
                         if (value == 'delete') _showDeleteConfirm(context, expedition);
                       },
                       itemBuilder: (context) => [
-                        PopupMenuItem(
+                        const PopupMenuItem(
                           value: 'invite',
                           child: Row(
                             children: [
-                              const Icon(Icons.person_add_rounded, color: Colors.orangeAccent, size: 20),
-                              const SizedBox(width: 12),
-                              Text(S.of(context).invite, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+                              Icon(Icons.person_add_rounded, color: Colors.orangeAccent, size: 20),
+                              SizedBox(width: 12),
+                              Text("Пригласить", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
                             ],
                           ),
                         ),
-                        PopupMenuItem(
+                        const PopupMenuItem(
                           value: 'delete',
                           child: Row(
                             children: [
-                              const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 20),
-                              const SizedBox(width: 12),
-                              Text(S.of(context).delete, style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w500)),
+                              Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 20),
+                              SizedBox(width: 12),
+                              Text("Удалить", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w500)),
                             ],
                           ),
                         ),
@@ -254,7 +252,7 @@ class ExpeditionTab extends StatelessWidget {
                 const SizedBox(height: 20),
                 // Описание
                 Text(
-                  expedition.description.isNotEmpty ? expedition.description : S.of(context).noDescription,
+                  expedition.description.isNotEmpty ? expedition.description : "Описание отсутствует...",
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 15, height: 1.4),
@@ -264,7 +262,7 @@ class ExpeditionTab extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildMembersStack(context, expedition.memberEmails),
+                    _buildMembersStack(expedition.memberEmails),
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.cyan.shade700.withOpacity(0.2),
@@ -279,7 +277,7 @@ class ExpeditionTab extends StatelessWidget {
                       ),
                       onPressed: () => context.push('/expedition-chat', extra: expedition),
                       icon: const Icon(Icons.chat_bubble_rounded, size: 20),
-                      label: Text(S.of(context).chat, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      label: const Text("Чат", style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
@@ -291,7 +289,7 @@ class ExpeditionTab extends StatelessWidget {
     );
   }
 
-  Widget _buildMembersStack(BuildContext context, List<String> emails) {
+  Widget _buildMembersStack(List<String> emails) {
     if (emails.isEmpty) return const SizedBox.shrink();
 
     final displayCount = emails.length > 3 ? 3 : emails.length;
@@ -344,9 +342,9 @@ class ExpeditionTab extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        Text(
-          S.of(context).participants,
-          style: const TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.w500),
+        const Text(
+          "Участники",
+          style: TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -382,18 +380,18 @@ class ExpeditionTab extends StatelessWidget {
               child: const Icon(Icons.warning_rounded, color: Colors.redAccent),
             ),
             const SizedBox(width: 12),
-            Expanded(child: Text(S.of(context).deleteProject, style: const TextStyle(color: Colors.white, fontSize: 20))),
+            const Expanded(child: Text("Удалить проект?", style: TextStyle(color: Colors.white, fontSize: 20))),
           ],
         ),
         content: Text(
-          "${S.of(context).deleteProjectConfirm} '${expedition.name}'? ${S.of(context).cannotUndo}",
+          "Вы уверены, что хотите навсегда удалить экспедицию '${expedition.name}'? Все данные будут потеряны.",
           style: const TextStyle(color: Colors.white70, height: 1.4),
         ),
         actionsPadding: const EdgeInsets.only(right: 20, bottom: 20),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(S.of(context).cancel, style: const TextStyle(color: Colors.white54)),
+            child: const Text("Отмена", style: TextStyle(color: Colors.white54)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -406,7 +404,7 @@ class ExpeditionTab extends StatelessWidget {
               context.read<ExpeditionProvider>().deleteExpedition(expedition.id);
               Navigator.pop(context);
             },
-            child: Text(S.of(context).deleteAction, style: const TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text("Удалить", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -425,13 +423,13 @@ class ExpeditionTab extends StatelessWidget {
           borderRadius: BorderRadius.circular(28),
           side: BorderSide(color: Colors.white.withOpacity(0.1)),
         ),
-        title: Text(S.of(context).inviteColleague, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text("Пригласить коллегу", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              S.of(context).inviteEmailLabel,
-              style: const TextStyle(color: Colors.white60, fontSize: 14, height: 1.4),
+            const Text(
+              "Введите email археолога, чтобы добавить его в вашу команду экспедиции.",
+              style: TextStyle(color: Colors.white60, fontSize: 14, height: 1.4),
             ),
             const SizedBox(height: 24),
             TextField(
@@ -439,7 +437,7 @@ class ExpeditionTab extends StatelessWidget {
               style: const TextStyle(color: Colors.white),
               cursorColor: Colors.orangeAccent,
               decoration: InputDecoration(
-                labelText: S.of(context).emailLabel,
+                labelText: "Email археолога",
                 labelStyle: const TextStyle(color: Colors.white38),
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),
@@ -452,7 +450,7 @@ class ExpeditionTab extends StatelessWidget {
         ),
         actionsPadding: const EdgeInsets.only(right: 20, bottom: 20),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(S.of(context).cancel, style: const TextStyle(color: Colors.white54))),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Отмена", style: TextStyle(color: Colors.white54))),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange.shade800,
@@ -470,11 +468,11 @@ class ExpeditionTab extends StatelessWidget {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Row(
+                    content: const Row(
                       children: [
-                        const Icon(Icons.check_circle_rounded, color: Colors.white),
-                        const SizedBox(width: 12),
-                        Text(S.of(context).inviteSent),
+                        Icon(Icons.check_circle_rounded, color: Colors.white),
+                        SizedBox(width: 12),
+                        Text("Приглашение отправлено!"),
                       ],
                     ),
                     backgroundColor: Colors.green.shade700,
@@ -484,7 +482,7 @@ class ExpeditionTab extends StatelessWidget {
                 );
               }
             },
-            child: Text(S.of(context).invite, style: const TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text("Пригласить", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -505,7 +503,7 @@ class ExpeditionTab extends StatelessWidget {
           borderRadius: BorderRadius.circular(28),
           side: BorderSide(color: Colors.white.withOpacity(0.1)),
         ),
-        title: Text(S.of(context).startExpedition, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text("Начать экспедицию", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         content: Form(
           key: formKey,
           child: Column(
@@ -515,9 +513,9 @@ class ExpeditionTab extends StatelessWidget {
                 controller: nameController,
                 style: const TextStyle(color: Colors.white),
                 cursorColor: Colors.orangeAccent,
-                validator: (value) => (value == null || value.isEmpty) ? S.of(context).enterName : null,
+                validator: (value) => (value == null || value.isEmpty) ? "Введите название" : null,
                 decoration: InputDecoration(
-                  labelText: S.of(context).projectName,
+                  labelText: "Название проекта*",
                   labelStyle: const TextStyle(color: Colors.white38),
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.05),
@@ -534,7 +532,7 @@ class ExpeditionTab extends StatelessWidget {
                 style: const TextStyle(color: Colors.white),
                 cursorColor: Colors.orangeAccent,
                 decoration: InputDecoration(
-                  labelText: S.of(context).projectDescription,
+                  labelText: "Описание (необязательно)",
                   alignLabelWithHint: true,
                   labelStyle: const TextStyle(color: Colors.white38),
                   filled: true,
@@ -548,7 +546,7 @@ class ExpeditionTab extends StatelessWidget {
         ),
         actionsPadding: const EdgeInsets.only(right: 20, bottom: 20),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(S.of(context).cancel, style: const TextStyle(color: Colors.white54))),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Отмена", style: TextStyle(color: Colors.white54))),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange.shade800,
@@ -567,7 +565,7 @@ class ExpeditionTab extends StatelessWidget {
                 Navigator.pop(context);
               }
             },
-            child: Text(S.of(context).create, style: const TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text("Создать", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),

@@ -34,8 +34,7 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ExpeditionProvider>();
-    final messages = provider.getMessagesForExpedition(widget.expedition.id);
+    final provider = context.read<ExpeditionProvider>();
     final myEmail = context.read<AuthProviders>().user?.email ?? "";
 
     return Scaffold(
@@ -69,9 +68,23 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
             child: Column(
               children: [
                 Expanded(
-                  child: messages.isEmpty 
-                    ? _buildEmptyChat()
-                    : ListView.builder(
+                  child: StreamBuilder<List<ChatMessage>>(
+                    stream: provider.streamMessages(widget.expedition.id),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator(color: Colors.orangeAccent));
+                      }
+                      
+                      final messages = snapshot.data ?? [];
+                      
+                      if (messages.isEmpty) {
+                        return _buildEmptyChat();
+                      }
+
+                      // Scroll to bottom when new messages arrive
+                      _scrollToBottom();
+
+                      return ListView.builder(
                         controller: _scrollController,
                         padding: const EdgeInsets.all(20),
                         itemCount: messages.length,
@@ -80,7 +93,9 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
                           final isMe = msg.senderEmail == myEmail;
                           return _buildMessageBubble(msg, isMe);
                         },
-                      ),
+                      );
+                    },
+                  ),
                 ),
                 _buildInputBar(myEmail),
               ],
@@ -167,7 +182,6 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
                   senderEmail: myEmail,
                 );
                 _messageController.clear();
-                _scrollToBottom();
               }
             },
           ),

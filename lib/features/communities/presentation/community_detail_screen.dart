@@ -8,8 +8,6 @@ import '../../blogs/provider/blog_provider.dart';
 import '../../blogs/domain/blog_post_model.dart';
 
 
-import '../../../core/localization/app_localizations.dart';
-
 class CommunityDetailScreen extends StatefulWidget {
   final String communityId;
   const CommunityDetailScreen({super.key, required this.communityId});
@@ -23,7 +21,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
   Widget build(BuildContext context) {
     final communityProvider = context.watch<CommunityProvider>();
     final communityIndex = communityProvider.communities.indexWhere((c) => c.id == widget.communityId);
-    if (communityIndex == -1) return Scaffold(body: Center(child: Text(S.of(context).noArtifacts))); // Or a more specific message if added
+    if (communityIndex == -1) return const Scaffold(body: Center(child: Text("Сообщество не найдено")));
     final community = communityProvider.communities[communityIndex];
 
     final user = context.watch<AuthProviders>().user;
@@ -41,7 +39,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
               backgroundColor: Colors.orange.shade800,
               onPressed: () => _showAddPostDialog(context, widget.communityId, userEmail),
               icon: const Icon(Icons.add, color: Colors.white),
-              label: Text(S.of(context).publish, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              label: const Text("Объявить", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             )
           : null,
       body: CustomScrollView(
@@ -88,7 +86,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                     children: [
                       const Icon(Icons.people, color: Colors.orangeAccent, size: 20),
                       const SizedBox(width: 8),
-                      Text("${community.members.length} ${S.of(context).participantsCount}", style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text("${community.members.length} участников", style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                       const Spacer(),
                       if (userEmail.isNotEmpty)
                         ElevatedButton(
@@ -103,12 +101,12 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                               communityProvider.joinCommunity(community.id, userEmail);
                             }
                           },
-                          child: Text(isMember ? S.of(context).leave : S.of(context).join),
+                          child: Text(isMember ? "Покинуть" : "Вступить"),
                         ),
                     ],
                   ),
                   const Divider(color: Colors.white10, height: 40, thickness: 1),
-                  Text(S.of(context).communityPosts, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                  const Text("Записи сообщества", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
                 ],
               ),
@@ -117,7 +115,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
           if (posts.isEmpty)
             SliverFillRemaining(
               child: Center(
-                child: Text(S.of(context).noPosts, style: const TextStyle(color: Colors.white38)),
+                child: Text("В этом сообществе пока нет записей.", style: TextStyle(color: Colors.white38)),
               ),
             )
           else
@@ -200,7 +198,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            isAdmin ? S.of(context).officialAnnouncement : S.of(context).clubAnnouncement,
+                            isAdmin ? "ОФИЦИАЛЬНОЕ ОБЪЯВЛЕНИЕ" : "ОБЪЯВЛЕНИЕ КЛУБА",
                             style: TextStyle(
                               color: isAdmin ? Colors.redAccent : Colors.orangeAccent,
                               fontSize: 11,
@@ -220,11 +218,11 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                           ),
                         ),
                         if (blog.isEdited)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 6.0),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 6.0),
                             child: Text(
-                              "(${S.of(context).edited})",
-                              style: const TextStyle(
+                              "(изменено)",
+                              style: TextStyle(
                                   color: Colors.white38,
                                   fontSize: 11,
                                   fontStyle: FontStyle.italic),
@@ -255,7 +253,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                         const Icon(Icons.person_outline, size: 14, color: Colors.white38),
                         const SizedBox(width: 6),
                         Text(
-                          "${S.of(context).publishedBy}: ${blog.authorEmail}",
+                          "От: ${blog.authorEmail}",
                           style: const TextStyle(color: Colors.white38, fontSize: 13),
                         ),
                       ],
@@ -314,7 +312,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(S.of(context).newPost, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text("Новое объявление", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.white54),
                     onPressed: () => Navigator.pop(ctx),
@@ -326,7 +324,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                 controller: titleCtrl,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: S.of(context).postTitle,
+                  labelText: "Заголовок",
                   labelStyle: const TextStyle(color: Colors.white54),
                   filled: true,
                   fillColor: Colors.white10,
@@ -339,7 +337,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                 style: const TextStyle(color: Colors.white),
                 maxLines: 5,
                 decoration: InputDecoration(
-                  labelText: S.of(context).postContent,
+                  labelText: "Содержание",
                   labelStyle: const TextStyle(color: Colors.white54),
                   filled: true,
                   fillColor: Colors.white10,
@@ -366,7 +364,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                       Navigator.pop(ctx);
                     }
                   },
-                  child: Text(S.of(context).publish, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                  child: const Text("Опубликовать", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(height: 20),

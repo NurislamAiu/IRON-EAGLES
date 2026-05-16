@@ -2,25 +2,26 @@ import 'package:flutter/material.dart';
 import '../../data/comment_service.dart';
 import 'comment_item.dart';
 import 'glass_card.dart';
-
 import 'package:ArcheoAI/core/localization/app_localizations.dart';
 
 class CommentsSection extends StatelessWidget {
   final String artifactId;
   final CommentService commentService;
-  final EdgeInsetsGeometry? padding; // <-- ДОБАВЛЕНО
+  final EdgeInsetsGeometry? padding;
+  final ScrollController? controller;
 
   const CommentsSection({
     super.key,
     required this.artifactId,
     required this.commentService,
-    this.padding, // <-- ДОБАВЛЕНО
+    this.padding,
+    this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding( // <-- ДОБАВЛЕНО
-      padding: padding ?? EdgeInsets.zero, // <-- ДОБАВЛЕНО
+    return Padding(
+      padding: padding ?? EdgeInsets.zero,
       child: StreamBuilder(
         stream: commentService.streamComments(artifactId),
         builder: (context, snapshot) {

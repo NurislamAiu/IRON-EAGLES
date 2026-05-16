@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:ArcheoAI/core/localization/app_localizations.dart';
 
 class CommentInputBar extends StatelessWidget {

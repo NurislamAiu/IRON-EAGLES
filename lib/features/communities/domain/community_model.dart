@@ -5,6 +5,7 @@ class Community {
   final String creatorEmail;
   final String imageUrl;
   final List<String> members;
+  final List<String> likes; // 🔥 Added likes
   final DateTime createdAt;
 
   Community({
@@ -14,6 +15,7 @@ class Community {
     required this.creatorEmail,
     required this.imageUrl,
     required this.members,
+    this.likes = const [], // 🔥 Added likes
     required this.createdAt,
   });
 
@@ -24,6 +26,7 @@ class Community {
     String? creatorEmail,
     String? imageUrl,
     List<String>? members,
+    List<String>? likes, // 🔥 Added likes
     DateTime? createdAt,
   }) {
     return Community(
@@ -33,6 +36,7 @@ class Community {
       creatorEmail: creatorEmail ?? this.creatorEmail,
       imageUrl: imageUrl ?? this.imageUrl,
       members: members ?? this.members,
+      likes: likes ?? this.likes, // 🔥 Added likes
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -45,6 +49,7 @@ class Community {
       'creatorEmail': creatorEmail,
       'imageUrl': imageUrl,
       'members': members,
+      'likes': likes, // 🔥 Added likes
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -57,6 +62,7 @@ class Community {
       creatorEmail: map['creatorEmail'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
       members: List<String>.from(map['members'] ?? []),
+      likes: List<String>.from(map['likes'] ?? []), // 🔥 Added likes
       createdAt: DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
     );
   }

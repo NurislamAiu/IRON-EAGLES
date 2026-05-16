@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
-
 import 'package:ArcheoAI/core/localization/app_localizations.dart';
 
 class ArtifactLocationMap extends StatefulWidget {
   final String location;
+  final double? latitude;
+  final double? longitude;
 
-  const ArtifactLocationMap({super.key, required this.location});
+  const ArtifactLocationMap({
+    super.key,
+    required this.location,
+    this.latitude,
+    this.longitude,
+  });
 
   @override
   State<ArtifactLocationMap> createState() => _ArtifactLocationMapState();
@@ -35,6 +41,11 @@ class _ArtifactLocationMapState extends State<ArtifactLocationMap> with SingleTi
   }
 
   Future<LatLng?> _getCoordinates() async {
+    // If coordinates are already provided, use them immediately
+    if (widget.latitude != null && widget.longitude != null) {
+      return LatLng(widget.latitude!, widget.longitude!);
+    }
+
     try {
       final locations = await locationFromAddress(widget.location);
       if (locations.isNotEmpty) {
@@ -42,7 +53,6 @@ class _ArtifactLocationMapState extends State<ArtifactLocationMap> with SingleTi
         return LatLng(location.latitude, location.longitude);
       }
     } catch (e) {
-      // Handle exceptions from geocoding (e.g., network issues, invalid address)
       debugPrint("Geocoding error: $e");
     }
     return null;

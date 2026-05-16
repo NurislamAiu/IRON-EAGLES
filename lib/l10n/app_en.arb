@@ -186,5 +186,8 @@
   "scannerPolygon": "POLYGON GENERATION",
   "addName": "Add name",
   "saved": "Saved",
-  "nameLabel": "Name"
+  "nameLabel": "Name",
+  "artifactPath": "Artifact Journey",
+  "origin": "Origin",
+  "find": "Find"
 }
