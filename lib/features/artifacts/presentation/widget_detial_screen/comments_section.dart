@@ -1,92 +1,60 @@
 import 'package:flutter/material.dart';
 import '../../data/comment_service.dart';
 import 'comment_item.dart';
-import 'glass_card.dart';
 
 class CommentsSection extends StatelessWidget {
   final String artifactId;
   final CommentService commentService;
-  final EdgeInsetsGeometry? padding; // <-- ДОБАВЛЕНО
+  final ScrollController? controller;
 
   const CommentsSection({
     super.key,
     required this.artifactId,
     required this.commentService,
-    this.padding, // <-- ДОБАВЛЕНО
+    this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding( // <-- ДОБАВЛЕНО
-      padding: padding ?? EdgeInsets.zero, // <-- ДОБАВЛЕНО
-      child: StreamBuilder(
-        stream: commentService.streamComments(artifactId),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return GlassCard(
-              child: const Text("Загрузка комментариев...",
-                  style: TextStyle(color: Colors.white54)),
-            );
-          }
-
-          final comments = snapshot.data!;
-          final hasMore = comments.length > 3;
-          final visible = hasMore ? comments.take(3).toList() : comments;
-
-          return GlassCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Text("Комментарии",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold)),
-                    const Spacer(),
-                    if (hasMore)
-                      GestureDetector(
-                        onTap: () => _openAll(context, comments),
-                        child: const Icon(Icons.expand_circle_down_rounded,
-                            color: Colors.white70, size: 28),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                visible.isEmpty
-                    ? const Text("Пока нет комментариев",
-                    style: TextStyle(color: Colors.white54))
-                    : Column(children: visible.map((c) => CommentItem(c)).toList())
-              ],
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      stream: commentService.streamComments(artifactId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.only(top: 40),
+              child: CircularProgressIndicator(color: Colors.orangeAccent),
             ),
           );
-        },
-      ),
-    );
-  }
+        }
 
-  void _openAll(BuildContext context, List<Map<String, dynamic>> comments) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (_) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        maxChildSize: 0.95,
-        minChildSize: 0.4,
-        builder: (_, controller) {
-          return Container(
-            color: Colors.black.withOpacity(0.65),
-            child: ListView.builder(
-              controller: controller,
-              itemCount: comments.length,
-              itemBuilder: (_, i) => CommentItem(comments[i]),
+        final comments = snapshot.data ?? [];
+
+        if (comments.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 60),
+              child: Column(
+                children: [
+                  Icon(Icons.chat_bubble_outline_rounded, size: 48, color: Colors.white.withOpacity(0.2)),
+                  const SizedBox(height: 12),
+                  Text(
+                    "Будьте первым, кто оставит отзыв!",
+                    style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 14),
+                  ),
+                ],
+              ),
             ),
           );
-        },
-      ),
+        }
+
+        return ListView.builder(
+          controller: controller,
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 140), // Оставляем место под клавиатуру/инпут
+          itemCount: comments.length,
+          itemBuilder: (context, index) => CommentItem(comments[index]),
+        );
+      },
     );
   }
 }

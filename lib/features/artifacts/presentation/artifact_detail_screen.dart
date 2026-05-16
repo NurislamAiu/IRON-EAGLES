@@ -370,6 +370,8 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
   
    Widget _buildMapTab() {
     final a = widget.artifact;
+    
+    // Если есть и точка происхождения, и точка находки — рисуем путь
     if (a.originLat != null && a.gpsLat != null) {
       return Padding(
         padding: const EdgeInsets.all(20),
@@ -383,9 +385,23 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
         ),
       );
     }
+    
+    // Если есть только координаты находки — показываем точку
+    if (a.gpsLat != null && a.gpsLng != null) {
+      return Padding(
+        padding: const EdgeInsets.all(20),
+        child: ArtifactLocationMap(
+          location: a.foundLocation,
+          latitude: a.gpsLat,
+          longitude: a.gpsLng,
+        ),
+      );
+    }
+
+    // В крайнем случае пытаемся найти по названию
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: ArtifactLocationMap(location: widget.artifact.foundLocation),
+      child: ArtifactLocationMap(location: a.foundLocation),
     );
   }
 
@@ -416,15 +432,10 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
   }
   
   Widget _buildCommentsTab(ScrollController sc) {
-     return ListView(
+    return CommentsSection(
+      artifactId: widget.artifact.id,
+      commentService: _commentService,
       controller: sc,
-      children: [
-        CommentsSection(
-          artifactId: widget.artifact.id,
-          commentService: _commentService,
-          padding: const EdgeInsets.only(bottom: 120), 
-        ),
-      ],
     );
   }
 

@@ -1,10 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class CommentInputBar extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
-
-  /// 🔥 добавлено
   final bool enabled;
 
   const CommentInputBar({
@@ -16,59 +15,73 @@ class CommentInputBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 6, 16, 16),
-        child: Row(
-          children: [
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.13),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: TextField(
-                  enabled: enabled, // ← блокируем ввод
-                  controller: controller,
-                  maxLines: 3,
-                  minLines: 1,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: enabled
-                        ? "Написать комментарий..."
-                        : "Войдите, чтобы писать",
-                    hintStyle: TextStyle(
-                      color: Colors.white.withOpacity(0.45),
+    return ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          decoration: BoxDecoration(
+            color: const Color(0xff1f1a18).withOpacity(0.85),
+            border: Border(top: BorderSide(color: Colors.white.withOpacity(0.08))),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.06),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: Colors.white.withOpacity(0.05)),
+                  ),
+                  child: TextField(
+                    enabled: enabled,
+                    controller: controller,
+                    maxLines: 4,
+                    minLines: 1,
+                    style: const TextStyle(color: Colors.white, fontSize: 15),
+                    cursorColor: Colors.orangeAccent,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      border: InputBorder.none,
+                      hintText: enabled
+                          ? "Ваши мысли об этом артефакте..."
+                          : "Войдите, чтобы оставить отзыв",
+                      hintStyle: TextStyle(
+                        color: Colors.white.withOpacity(0.3),
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-
-            const SizedBox(width: 12),
-
-            // --------------------------
-            //  SEND BUTTON
-            // --------------------------
-            GestureDetector(
-              onTap: enabled ? onSend : null, // ← выключаем кнопку
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: enabled
-                      ? const Color(0xFF8D6E63)
-                      : Colors.grey.withOpacity(0.4), // ← серый для гостей
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Icon(
-                  Icons.send,
-                  color: enabled ? Colors.white : Colors.white30,
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: enabled ? onSend : null,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: enabled
+                        ? Colors.orange.shade800
+                        : Colors.white.withOpacity(0.05),
+                    shape: BoxShape.circle,
+                    boxShadow: enabled ? [
+                      BoxShadow(
+                        color: Colors.orange.shade800.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      )
+                    ] : null,
+                  ),
+                  child: Icon(
+                    Icons.send_rounded,
+                    color: enabled ? Colors.white : Colors.white24,
+                    size: 22,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
