@@ -497,7 +497,7 @@ class ExpeditionTab extends StatelessWidget {
         backgroundColor: const Color(0xff1f1a18),
         title: const Text("Редактировать экспедицию", style: TextStyle(color: Colors.white)),
         content: Column(
-          mainAxisSize: MapAxisSize.min,
+          mainAxisSize: MainAxisSize.min,
           children: [
             TextField(controller: nameCtrl, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "Название", labelStyle: TextStyle(color: Colors.white54))),
             TextField(controller: descCtrl, style: const TextStyle(color: Colors.white), maxLines: 3, decoration: const InputDecoration(labelText: "Описание", labelStyle: TextStyle(color: Colors.white54))),
