@@ -7,6 +7,8 @@ import 'package:ArcheoAI/features/artifacts/provider/expedition_provider.dart';
 import 'package:ArcheoAI/features/auth/provider/auth_provider.dart';
 import 'package:ArcheoAI/features/blogs/provider/blog_provider.dart';
 import 'package:ArcheoAI/features/blogs/domain/blog_post_model.dart';
+import 'package:ArcheoAI/features/auth/data/user_service.dart';
+import 'package:ArcheoAI/features/artifacts/domain/expedition_invite_model.dart';
 import 'package:intl/intl.dart';
 
 class ExpeditionTab extends StatelessWidget {
@@ -16,7 +18,15 @@ class ExpeditionTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<ExpeditionProvider>();
     final expeditions = provider.myExpeditions;
-    final userEmail = context.read<AuthProviders>().user?.email ?? "";
+    final user = context.watch<AuthProviders>().user;
+    final userEmail = (user?.email ?? "").toLowerCase();
+
+    // 🔥 Privacy: Filter expeditions where user is leader or member
+    final visibleExpeditions = expeditions.where((e) {
+      final isLeader = e.leaderEmail.toLowerCase() == userEmail;
+      final isMember = e.memberEmails.any((m) => m.toLowerCase() == userEmail);
+      return isLeader || isMember;
+    }).toList();
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -58,38 +68,62 @@ class ExpeditionTab extends StatelessWidget {
               backgroundColor: Colors.transparent,
               elevation: 0,
               floating: true,
-              expandedHeight: 110,
+              expandedHeight: 80, 
               flexibleSpace: FlexibleSpaceBar(
                 titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
-                title: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Экспедиции",
-                      style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: 0.5),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      "Ваши археологические проекты",
-                      style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w500),
-                    ),
-                  ],
+                title: const Text(
+                  "Экспедиции",
+                  style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800, letterSpacing: 0.5),
                 ),
               ),
             ),
+
+            // 🔥 Pending Invites Section
+            if (userEmail.isNotEmpty)
+              StreamBuilder<List<ExpeditionInvite>>(
+                stream: provider.streamMyInvites(userEmail),
+                builder: (context, snapshot) {
+                  final invites = snapshot.data ?? [];
+                  if (invites.isEmpty) return const SliverToBoxAdapter(child: SizedBox.shrink());
+                  
+                  return SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: const BoxDecoration(color: Colors.orangeAccent, shape: BoxShape.circle),
+                              ),
+                              const SizedBox(width: 8),
+                              const Text("НОВЫЕ ПРИГЛАШЕНИЯ", style: TextStyle(color: Colors.orangeAccent, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          ...invites.map((invite) => _buildInviteCard(context, invite)),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              ),
+
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              sliver: expeditions.isEmpty
+              sliver: visibleExpeditions.isEmpty
                   ? SliverFillRemaining(child: _buildEmptyState())
                   : SliverList(
                       delegate: SliverChildBuilderDelegate(
-                        (context, index) => _buildExpeditionCard(context, expeditions[index], userEmail),
-                        childCount: expeditions.length,
+                        (context, index) => _buildExpeditionCard(context, visibleExpeditions[index], userEmail),
+                        childCount: visibleExpeditions.length,
                       ),
                     ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 100)),
+            const SliverToBoxAdapter(child: SizedBox(height: 120)),
           ],
         ),
       ),
@@ -102,43 +136,28 @@ class ExpeditionTab extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 140,
-            height: 140,
+            width: 120,
+            height: 120,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  Colors.orange.shade800.withOpacity(0.2),
-                  Colors.transparent,
-                ],
-                stops: const [0.4, 1.0],
-              ),
+              color: Colors.white.withOpacity(0.05),
+              border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
             ),
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.05),
-                  border: Border.all(color: Colors.white.withOpacity(0.1), width: 2),
-                ),
-                child: const Icon(Icons.travel_explore_rounded, size: 60, color: Colors.white54),
-              ),
-            ),
+            child: const Icon(Icons.travel_explore_rounded, size: 50, color: Colors.white24),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
           const Text(
             "Нет активных проектов",
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700),
+            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700),
           ),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
+          const SizedBox(height: 8),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 40),
             child: Text(
-              "Создайте новую экспедицию для своей команды или дождитесь приглашения от коллег.",
+              "Создайте проект или дождитесь приглашения.",
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white54, fontSize: 15, height: 1.4),
+              style: TextStyle(color: Colors.white38, fontSize: 14),
             ),
           ),
         ],
@@ -146,8 +165,57 @@ class ExpeditionTab extends StatelessWidget {
     );
   }
 
+  Widget _buildInviteCard(BuildContext context, ExpeditionInvite invite) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.orangeAccent.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.orangeAccent.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Приглашение в проект",
+                  style: TextStyle(color: Colors.orangeAccent.withOpacity(0.7), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  invite.expeditionName,
+                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  "от ${invite.inviterEmail}",
+                  style: const TextStyle(color: Colors.white54, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            style: IconButton.styleFrom(backgroundColor: Colors.greenAccent.withOpacity(0.2)),
+            icon: const Icon(Icons.check_rounded, color: Colors.greenAccent),
+            onPressed: () => context.read<ExpeditionProvider>().acceptInvite(invite),
+          ),
+          const SizedBox(width: 4),
+          IconButton(
+            style: IconButton.styleFrom(backgroundColor: Colors.redAccent.withOpacity(0.2)),
+            icon: const Icon(Icons.close_rounded, color: Colors.redAccent),
+            onPressed: () => context.read<ExpeditionProvider>().declineInvite(invite.id),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildExpeditionCard(BuildContext context, Expedition expedition, String userEmail) {
-    final isLeader = expedition.leaderEmail == userEmail;
+    final isLeader = expedition.leaderEmail.toLowerCase() == userEmail;
     final isLiked = expedition.likes.contains(userEmail);
 
     return Container(
@@ -166,13 +234,6 @@ class ExpeditionTab extends StatelessWidget {
           color: Colors.white.withOpacity(0.15),
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(28),
@@ -183,7 +244,6 @@ class ExpeditionTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Заголовок и меню
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -224,14 +284,13 @@ class ExpeditionTab extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Меню опций
                     PopupMenuButton<String>(
                       icon: const Icon(Icons.more_vert_rounded, color: Colors.white70),
                       color: const Color(0xff2a2422),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       offset: const Offset(0, 40),
                       onSelected: (value) {
-                        if (value == 'invite') _showInviteDialog(context, expedition.id);
+                        if (value == 'invite') _showInviteDialog(context, expedition, userEmail);
                         if (value == 'edit') _showEditDialog(context, expedition);
                         if (value == 'delete') _showDeleteConfirm(context, expedition);
                         if (value == 'announcement') _showAddAnnouncementDialog(context, expedition.id, userEmail);
@@ -284,7 +343,6 @@ class ExpeditionTab extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 20),
-                // Описание
                 Text(
                   expedition.description.isNotEmpty ? expedition.description : "Описание отсутствует...",
                   maxLines: 2,
@@ -292,7 +350,6 @@ class ExpeditionTab extends StatelessWidget {
                   style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 15, height: 1.4),
                 ),
                 const SizedBox(height: 16),
-                // Likes for expedition
                 GestureDetector(
                   onTap: userEmail.isEmpty ? null : () => context.read<ExpeditionProvider>().toggleLike(expedition.id, userEmail),
                   child: Row(
@@ -309,14 +366,12 @@ class ExpeditionTab extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                // Нижняя панель
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildMembersStack(expedition.memberEmails),
                     Row(
                       children: [
-                        // Announcements button
                         IconButton(
                           icon: const Icon(Icons.campaign_rounded, color: Colors.orangeAccent),
                           onPressed: () => _showAnnouncements(context, expedition.id, userEmail),
@@ -327,7 +382,6 @@ class ExpeditionTab extends StatelessWidget {
                             backgroundColor: Colors.cyan.shade700.withOpacity(0.2),
                             foregroundColor: Colors.cyanAccent,
                             elevation: 0,
-                            shadowColor: Colors.transparent,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                               side: BorderSide(color: Colors.cyanAccent.withOpacity(0.3)),
@@ -352,10 +406,8 @@ class ExpeditionTab extends StatelessWidget {
 
   Widget _buildMembersStack(List<String> emails) {
     if (emails.isEmpty) return const SizedBox.shrink();
-
     final displayCount = emails.length > 3 ? 3 : emails.length;
     final extraCount = emails.length - displayCount;
-
     return Row(
       children: [
         SizedBox(
@@ -403,23 +455,13 @@ class ExpeditionTab extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        const Text(
-          "Участники",
-          style: TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.w500),
-        ),
+        const Text("Участники", style: TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.w500)),
       ],
     );
   }
 
   Color _getAvatarColor(String email) {
-    final colors = [
-      Colors.orange.shade700,
-      Colors.blue.shade700,
-      Colors.green.shade700,
-      Colors.purple.shade700,
-      Colors.pink.shade700,
-      Colors.teal.shade700,
-    ];
+    final colors = [Colors.orange.shade700, Colors.blue.shade700, Colors.green.shade700, Colors.purple.shade700, Colors.pink.shade700, Colors.teal.shade700];
     return colors[email.hashCode % colors.length];
   }
 
@@ -428,44 +470,18 @@ class ExpeditionTab extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xff1f1a18),
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-          side: BorderSide(color: Colors.redAccent.withOpacity(0.3)),
-        ),
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: Colors.redAccent.withOpacity(0.2), shape: BoxShape.circle),
-              child: const Icon(Icons.warning_rounded, color: Colors.redAccent),
-            ),
-            const SizedBox(width: 12),
-            const Expanded(child: Text("Удалить проект?", style: TextStyle(color: Colors.white, fontSize: 20))),
-          ],
-        ),
-        content: Text(
-          "Вы уверены, что хотите навсегда удалить экспедицию '${expedition.name}'? Все данные будут потеряны.",
-          style: const TextStyle(color: Colors.white70, height: 1.4),
-        ),
-        actionsPadding: const EdgeInsets.only(right: 20, bottom: 20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28), side: BorderSide(color: Colors.redAccent.withOpacity(0.3))),
+        title: const Text("Удалить проект?", style: TextStyle(color: Colors.white, fontSize: 20)),
+        content: Text("Вы уверены, что хотите удалить экспедицию '${expedition.name}'?", style: const TextStyle(color: Colors.white70)),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Отмена", style: TextStyle(color: Colors.white54)),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Отмена", style: TextStyle(color: Colors.white54))),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white),
             onPressed: () {
               context.read<ExpeditionProvider>().deleteExpedition(expedition.id);
               Navigator.pop(context);
             },
-            child: const Text("Удалить", style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text("Удалить"),
           ),
         ],
       ),
@@ -475,14 +491,13 @@ class ExpeditionTab extends StatelessWidget {
   void _showEditDialog(BuildContext context, Expedition expedition) {
     final nameCtrl = TextEditingController(text: expedition.name);
     final descCtrl = TextEditingController(text: expedition.description);
-
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xff1f1a18),
         title: const Text("Редактировать экспедицию", style: TextStyle(color: Colors.white)),
         content: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MapAxisSize.min,
           children: [
             TextField(controller: nameCtrl, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "Название", labelStyle: TextStyle(color: Colors.white54))),
             TextField(controller: descCtrl, style: const TextStyle(color: Colors.white), maxLines: 3, decoration: const InputDecoration(labelText: "Описание", labelStyle: TextStyle(color: Colors.white54))),
@@ -492,9 +507,7 @@ class ExpeditionTab extends StatelessWidget {
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Отмена")),
           ElevatedButton(
             onPressed: () {
-              context.read<ExpeditionProvider>().updateExpedition(
-                expedition.copyWith(name: nameCtrl.text.trim(), description: descCtrl.text.trim())
-              );
+              context.read<ExpeditionProvider>().updateExpedition(expedition.copyWith(name: nameCtrl.text.trim(), description: descCtrl.text.trim()));
               Navigator.pop(ctx);
             },
             child: const Text("Сохранить"),
@@ -504,66 +517,81 @@ class ExpeditionTab extends StatelessWidget {
     );
   }
 
-  void _showInviteDialog(BuildContext context, String expeditionId) {
+  void _showInviteDialog(BuildContext context, Expedition expedition, String userEmail) {
     final emailController = TextEditingController();
-
+    final userService = UserService();
+    List<Map<String, dynamic>> searchResults = [];
+    bool isSearching = false;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xff1f1a18),
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-          side: BorderSide(color: Colors.white.withOpacity(0.1)),
-        ),
-        title: const Text("Пригласить коллегу", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Введите email археолога, чтобы добавить его в вашу команду экспедиции.",
-              style: TextStyle(color: Colors.white60, fontSize: 14, height: 1.4),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          backgroundColor: const Color(0xff1f1a18),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28), side: BorderSide(color: Colors.white.withOpacity(0.1))),
+          title: const Text("Пригласить коллегу", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text("Найдите археолога по email.", style: TextStyle(color: Colors.white60, fontSize: 14)),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: emailController,
+                  style: const TextStyle(color: Colors.white),
+                  onChanged: (val) async {
+                    if (val.length >= 2) {
+                      setState(() => isSearching = true);
+                      final results = await userService.searchArchaeologists(val);
+                      setState(() { searchResults = results; isSearching = false; });
+                    } else {
+                      setState(() => searchResults = []);
+                    }
+                  },
+                  decoration: InputDecoration(
+                    labelText: "Email археолога",
+                    labelStyle: const TextStyle(color: Colors.white38),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.05),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.white.withOpacity(0.1))),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.orangeAccent)),
+                    prefixIcon: const Icon(Icons.search_rounded, color: Colors.orangeAccent),
+                    suffixIcon: isSearching ? const Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator(strokeWidth: 2, color: Colors.orangeAccent)) : null,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                if (searchResults.isNotEmpty)
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 200),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: searchResults.length,
+                      itemBuilder: (context, index) {
+                        final userResult = searchResults[index];
+                        return ListTile(
+                          leading: const Icon(Icons.person, color: Colors.orangeAccent),
+                          title: Text(userResult['email'], style: const TextStyle(color: Colors.white, fontSize: 14)),
+                          onTap: () { emailController.text = userResult['email']; setState(() => searchResults = []); },
+                        );
+                      },
+                    ),
+                  ),
+              ],
             ),
-            const SizedBox(height: 24),
-            TextField(
-              controller: emailController,
-              style: const TextStyle(color: Colors.white),
-              cursorColor: Colors.orangeAccent,
-              decoration: InputDecoration(
-                labelText: "Email археолога",
-                labelStyle: const TextStyle(color: Colors.white38),
-                filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.white.withOpacity(0.1))),
-                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.orangeAccent)),
-                prefixIcon: const Icon(Icons.alternate_email_rounded, color: Colors.orangeAccent),
-              ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Отмена", style: TextStyle(color: Colors.white54))),
+            ElevatedButton(
+              onPressed: () {
+                if (emailController.text.isNotEmpty) {
+                  context.read<ExpeditionProvider>().sendInvite(expedition, emailController.text.trim(), userEmail);
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text("Пригласить"),
             ),
           ],
         ),
-        actionsPadding: const EdgeInsets.only(right: 20, bottom: 20),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Отмена", style: TextStyle(color: Colors.white54))),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange.shade800,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
-            onPressed: () {
-              if (emailController.text.isNotEmpty) {
-                context.read<ExpeditionProvider>().inviteMember(
-                  expeditionId,
-                  emailController.text.trim(),
-                );
-                Navigator.pop(context);
-              }
-            },
-            child: const Text("Пригласить", style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-        ],
       ),
     );
   }
@@ -572,16 +600,10 @@ class ExpeditionTab extends StatelessWidget {
     final nameController = TextEditingController();
     final descController = TextEditingController();
     final formKey = GlobalKey<FormState>();
-
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xff1f1a18),
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-          side: BorderSide(color: Colors.white.withOpacity(0.1)),
-        ),
         title: const Text("Начать экспедицию", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         content: Form(
           key: formKey,
@@ -591,71 +613,38 @@ class ExpeditionTab extends StatelessWidget {
               TextFormField(
                 controller: nameController,
                 style: const TextStyle(color: Colors.white),
-                cursorColor: Colors.orangeAccent,
                 validator: (value) => (value == null || value.isEmpty) ? "Введите название" : null,
-                decoration: InputDecoration(
-                  labelText: "Название проекта*",
-                  labelStyle: const TextStyle(color: Colors.white38),
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.05),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.white.withOpacity(0.1))),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.orangeAccent)),
-                  errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.redAccent)),
-                  focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.redAccent)),
-                ),
+                decoration: InputDecoration(labelText: "Название проекта*", labelStyle: const TextStyle(color: Colors.white38)),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: descController,
                 maxLines: 3,
                 style: const TextStyle(color: Colors.white),
-                cursorColor: Colors.orangeAccent,
-                decoration: InputDecoration(
-                  labelText: "Описание (необязательно)",
-                  alignLabelWithHint: true,
-                  labelStyle: const TextStyle(color: Colors.white38),
-                  filled: true,
-                  fillColor: Colors.white.withOpacity(0.05),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: Colors.white.withOpacity(0.1))),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Colors.orangeAccent)),
-                ),
+                decoration: InputDecoration(labelText: "Описание", labelStyle: const TextStyle(color: Colors.white38)),
               ),
             ],
           ),
         ),
-        actionsPadding: const EdgeInsets.only(right: 20, bottom: 20),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Отмена", style: TextStyle(color: Colors.white54))),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Отмена")),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange.shade800,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
             onPressed: () {
               if (formKey.currentState!.validate()) {
-                context.read<ExpeditionProvider>().createExpedition(
-                  name: nameController.text,
-                  description: descController.text,
-                  leaderEmail: email,
-                );
+                context.read<ExpeditionProvider>().createExpedition(name: nameController.text, description: descController.text, leaderEmail: email);
                 Navigator.pop(context);
               }
             },
-            child: const Text("Создать", style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text("Создать"),
           ),
         ],
       ),
     );
   }
 
-  // Announcements logic using BlogProvider (reusing communityId as expeditionId)
   void _showAddAnnouncementDialog(BuildContext context, String expId, String email) {
     final titleCtrl = TextEditingController();
     final contentCtrl = TextEditingController();
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -665,18 +654,13 @@ class ExpeditionTab extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text("Новое объявление экспедиции", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            TextField(controller: titleCtrl, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "Заголовок", labelStyle: TextStyle(color: Colors.white54))),
-            TextField(controller: contentCtrl, style: const TextStyle(color: Colors.white), maxLines: 5, decoration: const InputDecoration(labelText: "Содержание", labelStyle: TextStyle(color: Colors.white54))),
+            const Text("Новое объявление", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            TextField(controller: titleCtrl, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "Заголовок")),
+            TextField(controller: contentCtrl, style: const TextStyle(color: Colors.white), maxLines: 5, decoration: const InputDecoration(labelText: "Содержание")),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                context.read<BlogProvider>().addBlogPost(
-                  title: titleCtrl.text.trim(), 
-                  content: contentCtrl.text.trim(),
-                  authorEmail: email,
-                  communityId: expId,
-                );
+                context.read<BlogProvider>().addBlogPost(title: titleCtrl.text.trim(), content: contentCtrl.text.trim(), authorEmail: email, communityId: expId);
                 Navigator.pop(ctx);
               },
               child: const Text("Опубликовать"),
@@ -696,7 +680,6 @@ class ExpeditionTab extends StatelessWidget {
       builder: (ctx) {
         final blogProvider = context.watch<BlogProvider>();
         final posts = blogProvider.getCommunityPosts(expId);
-
         return Container(
           height: MediaQuery.of(context).size.height * 0.8,
           padding: const EdgeInsets.all(20),
@@ -707,13 +690,7 @@ class ExpeditionTab extends StatelessWidget {
               Expanded(
                 child: posts.isEmpty 
                   ? const Center(child: Text("Нет объявлений", style: TextStyle(color: Colors.white38)))
-                  : ListView.builder(
-                      itemCount: posts.length,
-                      itemBuilder: (context, index) {
-                        final post = posts[index];
-                        return _buildAnnouncementCard(context, post, userEmail);
-                      },
-                    ),
+                  : ListView.builder(itemCount: posts.length, itemBuilder: (context, index) => _buildAnnouncementCard(context, posts[index], userEmail)),
               ),
             ],
           ),
@@ -727,11 +704,7 @@ class ExpeditionTab extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white10),
-      ),
+      decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.white10)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -740,33 +713,11 @@ class ExpeditionTab extends StatelessWidget {
             children: [
               Text(post.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
               if (isMyPost)
-                PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_horiz, color: Colors.white54, size: 20),
-                  onSelected: (val) {
-                    if (val == 'delete') context.read<BlogProvider>().deleteBlogPost(post.id);
-                  },
-                  itemBuilder: (_) => [
-                    const PopupMenuItem(value: 'delete', child: Text("Удалить", style: TextStyle(color: Colors.redAccent))),
-                  ],
-                ),
+                IconButton(icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), onPressed: () => context.read<BlogProvider>().deleteBlogPost(post.id)),
             ],
           ),
           const SizedBox(height: 8),
           Text(post.content, style: const TextStyle(color: Colors.white70, fontSize: 14)),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(DateFormat('dd.MM.yyyy').format(post.createdAt), style: const TextStyle(color: Colors.white38, fontSize: 12)),
-              Row(
-                children: [
-                  const Icon(Icons.favorite, color: Colors.redAccent, size: 14),
-                  const SizedBox(width: 4),
-                  Text("${post.likes.length}", style: const TextStyle(color: Colors.white38, fontSize: 12)),
-                ],
-              ),
-            ],
-          ),
         ],
       ),
     );
