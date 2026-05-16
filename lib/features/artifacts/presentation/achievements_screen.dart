@@ -153,7 +153,6 @@ class _AchievementCard extends StatelessWidget {
 
   IconData _getIcon(String name) {
     switch (name) {
-      case 'qr_code_scanner': return Icons.qr_code_scanner;
       case 'menu_book': return Icons.menu_book;
       case 'comment': return Icons.comment;
       case 'view_in_ar': return Icons.view_in_ar;

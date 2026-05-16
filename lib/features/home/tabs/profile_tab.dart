@@ -54,54 +54,6 @@ class _ProfileTabState extends State<ProfileTab>
     setState(() => _avatar = File(img.path));
   }
 
-  void _openQrDialog(String email) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.black87,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
-      ),
-      builder: (_) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(24, 32, 24, 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Ваш QR-код",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Icon(
-                  Icons.qr_code_2,
-                  size: 220,
-                  color: Colors.black,
-                ),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                email,
-                style: const TextStyle(color: Colors.white70, fontSize: 15),
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthProviders>().user;
@@ -233,22 +185,7 @@ class _ProfileTabState extends State<ProfileTab>
                           onTap: () => _openEdit(context, user),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _glassButton(
-                          icon: Icons.qr_code,
-                          text: "QR-код",
-                          onTap: () => _openQrDialog(user?.email ?? ""),
-                        ),
-                      ),
                     ],
-                  ),
-
-                  ElevatedButton(
-                    onPressed: () =>
-    // Это заставит ArtifactProvider сходить на сервер и обновить список artifacts
-                      context.read<ArtifactProvider>().fetchArtifacts(),
-                    child: Text("Очистить базу (оставить 100)"),
                   ),
 
                   const SizedBox(height: 24),
@@ -289,8 +226,6 @@ class _ProfileTabState extends State<ProfileTab>
                       );
                     },
                   ),
-
-                  // Убрали кнопку "Образовательные курсы", так как она теперь в BottomNavBar
 
                   const SizedBox(height: 16),
 

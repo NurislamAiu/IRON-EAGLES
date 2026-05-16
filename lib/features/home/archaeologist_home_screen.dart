@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:ArcheoAI/core/services/sound_service.dart';
 import 'package:ArcheoAI/features/home/tabs/expedition_tab.dart';
 import 'package:ArcheoAI/features/home/tabs/moderator_tab.dart';
-import 'package:ArcheoAI/features/home/tabs/scan_qr_tab.dart';
 import 'package:provider/provider.dart';
 
 import '../auth/provider/auth_provider.dart';
@@ -11,10 +10,8 @@ import '../auth/provider/auth_provider.dart';
 // Tabs
 import 'tabs/home_tab.dart';
 import 'tabs/add_artifact_tab.dart';
-import 'tabs/my_artifacts_tab.dart';
 import 'tabs/profile_tab.dart';
 import '../communities/presentation/communities_tab.dart';
-import '../courses/presentation/courses_screen.dart';
 
 class ArchaeologistHomeScreen extends StatefulWidget {
   const ArchaeologistHomeScreen({super.key});
@@ -46,16 +43,12 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
       screens = const [
         HomeTab(),
         CommunitiesTab(),
-        ScanQRTab(),
-        CoursesScreen(),
         ProfileTab(),
       ];
 
       items = [
         _NavItemData(Icons.home_filled, "Главная"),
         _NavItemData(Icons.groups, "Клубы"),
-        _NavItemData(Icons.qr_code_scanner, "Сканер"),
-        _NavItemData(Icons.school, "Курсы"),
         _NavItemData(Icons.person, "Профиль"),
       ];
     } else if (isAdmin) {
@@ -65,7 +58,6 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
         const CommunitiesTab(),
         const ModeratorTab(),
         const ExpeditionTab(),
-        const CoursesScreen(),
         const ProfileTab(),
       ];
 
@@ -74,7 +66,6 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
         _NavItemData(Icons.groups, "Клубы"),
         _NavItemData(Icons.admin_panel_settings, "Админ"),
         _NavItemData(Icons.explore, "Проекты"),
-        _NavItemData(Icons.school, "Курсы"),
         _NavItemData(Icons.person, "Профиль"),
       ];
     } else {
@@ -84,7 +75,6 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
         const CommunitiesTab(),
         const AddArtifactTab(),
         const ExpeditionTab(),
-        const CoursesScreen(),
         const ProfileTab(),
       ];
 
@@ -93,7 +83,6 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
         _NavItemData(Icons.groups, "Клубы"),
         _NavItemData(Icons.add_circle, "Создать"),
         _NavItemData(Icons.explore, "Проекты"),
-        _NavItemData(Icons.school, "Курсы"),
         _NavItemData(Icons.person, "Профиль"),
       ];
     }

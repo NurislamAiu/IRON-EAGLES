@@ -146,7 +146,6 @@ class _EditArtifactScreenState extends State<EditArtifactScreen> {
       description: _description.text.trim(),
       foundLocation: _location.text.trim(),
       imageUrl: widget.artifact.imageUrl,
-      qrCodeUrl: widget.artifact.qrCodeUrl,
       addedBy: widget.artifact.addedBy,
       createdAt: widget.artifact.createdAt,
 

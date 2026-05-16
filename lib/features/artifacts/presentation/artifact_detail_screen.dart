@@ -37,7 +37,6 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
 
   bool get _showMapTab => widget.artifact.foundLocation.isNotEmpty;
   bool get _show3dTab => widget.artifact.modelUrl.isNotEmpty; // 👈 Проверяем наличие модели
-  bool get _showErasTab => widget.artifact.ancientImageUrl != null && widget.artifact.ancientImageUrl!.isNotEmpty;
 
   @override
   void initState() {
@@ -45,7 +44,6 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
     int tabCount = 2; // Описание, Детали
     if (_showMapTab) tabCount++;
     if (_show3dTab) tabCount++;
-    if (_showErasTab) tabCount++;
     tabCount++; // Комментарии
 
     _tabController = TabController(length: tabCount, vsync: this);
@@ -252,7 +250,6 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
             runSpacing: 8.0,
             children: [
               if (widget.artifact.category.isNotEmpty) _buildInfoChip(Icons.category_outlined, widget.artifact.category),
-              if (widget.artifact.period.isNotEmpty) _buildInfoChip(Icons.history_edu_outlined, widget.artifact.period),
             ],
           ),
           const SizedBox(height: 16),
@@ -267,7 +264,6 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
       const Tab(text: 'Детали'),
       if (_showMapTab) const Tab(text: 'Карта'),
       if (_show3dTab) const Tab(text: '3D'),
-      if (_showErasTab) const Tab(text: 'Эпохи'),
       const Tab(text: 'Комментарии'),
     ];
 
@@ -291,7 +287,6 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
       _buildDetailsTab(scrollController),
       if (_showMapTab) _buildMapTab(),
       if (_show3dTab) _build3dTab(),
-      if (_showErasTab) _buildErasTab(scrollController),
       _buildCommentsTab(scrollController),
     ];
     return Expanded(
@@ -416,17 +411,6 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
           // Simple trigger when 3D model is loaded
           context.read<AchievementProvider>().updateProgress(context, '3d_master');
         },
-      ),
-    );
-  }
-
-  Widget _buildErasTab(ScrollController sc) {
-    return SingleChildScrollView(
-      controller: sc,
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
-      child: TimeTravelerView(
-        ancientUrl: widget.artifact.ancientImageUrl!,
-        modernUrl: widget.artifact.imageUrl,
       ),
     );
   }

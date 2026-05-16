@@ -3,13 +3,6 @@ import '../domain/achievement_model.dart';
 class AchievementData {
   static List<Achievement> get initialAchievements => [
     Achievement(
-      id: 'first_scan',
-      title: 'First Discovery',
-      description: 'Scan your first artifact QR code.',
-      icon: 'qr_code_scanner',
-      goal: 1,
-    ),
-    Achievement(
       id: 'scholar',
       title: 'History Scholar',
       description: 'View 5 different artifacts.',

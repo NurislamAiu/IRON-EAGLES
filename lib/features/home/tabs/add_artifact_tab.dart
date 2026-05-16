@@ -135,7 +135,6 @@ class _AddArtifactTabState extends State<AddArtifactTab> {
       addedBy: user?.email ?? 'unknown',
       createdAt: DateTime.now(),
       imageUrl: '',
-      qrCodeUrl: '',
     );
 
     try {

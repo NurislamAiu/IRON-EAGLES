@@ -15,10 +15,6 @@ import 'package:ArcheoAI/features/auth/presentation/role_selection_screen.dart';
 import 'package:ArcheoAI/features/auth/provider/auth_provider.dart';
 import 'package:ArcheoAI/features/home/archaeologist_home_screen.dart';
 import 'package:ArcheoAI/features/home/tabs/add_artifact_tab.dart';
-import 'package:ArcheoAI/features/courses/presentation/courses_screen.dart';
-import 'package:ArcheoAI/features/courses/presentation/course_detail_screen.dart';
-import 'package:ArcheoAI/features/courses/presentation/create_course_screen.dart';
-import 'package:ArcheoAI/features/courses/domain/course_model.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -39,12 +35,11 @@ class AppRouter {
 
       // ---------- VISITOR ----------
       if (role == 'visitor') {
-        // Визитор НЕ должен попадать куда-то кроме home, artifact, scan, profile
+        // Визитор НЕ должен попадать куда-то кроме home, artifact, profile
         final allowed = [
           '/',
           '/home',
           '/artifact',
-          '/scan',
           '/profile',
         ];
 
@@ -142,22 +137,6 @@ class AppRouter {
           final exp = state.extra as Expedition;
           return _buildFadeTransition(ExpeditionChatScreen(expedition: exp));
         },
-      ),
-
-      GoRoute(
-        path: '/courses',
-        pageBuilder: (_, __) => _buildFadeTransition(const CoursesScreen()),
-      ),
-      GoRoute(
-        path: '/course-detail',
-        pageBuilder: (context, state) {
-          final course = state.extra as Course;
-          return _buildSlideUpTransition(CourseDetailScreen(course: course));
-        },
-      ),
-      GoRoute(
-        path: '/create-course',
-        pageBuilder: (_, __) => _buildSlideUpTransition(const CreateCourseScreen()),
       ),
     ],
   );
