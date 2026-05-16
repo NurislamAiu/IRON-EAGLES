@@ -1,1 +1,31 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"iron-eagle-b81b4","appId":"1:92887521146:android:3e59cc17cb70e5108b68c3","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"iron-eagle-b81b4","appId":"1:92887521146:ios:f79b062a3502f9328b68c3","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"iron-eagle-b81b4","configurations":{"android":"1:92887521146:android:3e59cc17cb70e5108b68c3","ios":"1:92887521146:ios:f79b062a3502f9328b68c3","web":"1:92887521146:web:3c076fc922fa1ac68b68c3"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "iron-eagle-b81b4",
+          "appId": "1:92887521146:android:3e59cc17cb70e5108b68c3",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "iron-eagle-b81b4",
+          "appId": "1:92887521146:ios:f79b062a3502f9328b68c3",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "iron-eagle-b81b4",
+          "configurations": {
+            "android": "1:92887521146:android:3e59cc17cb70e5108b68c3",
+            "ios": "1:92887521146:ios:f79b062a3502f9328b68c3",
+            "web": "1:92887521146:web:3c076fc922fa1ac68b68c3"
+          }
+        }
+      }
+    }
+  }
+}

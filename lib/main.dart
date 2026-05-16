@@ -19,15 +19,6 @@ import 'features/communities/provider/community_provider.dart';
 import 'features/courses/provider/course_provider.dart';
 import 'features/courses/provider/currency_provider.dart';
 
-// Обход ошибки сертификата (CERTIFICATE_VERIFY_FAILED) для картинок в разработке
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-  }
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -36,9 +27,6 @@ void main() async {
 
   // 2. ИНИЦИАЛИЗАЦИЯ ЛОКАЛИ ДЛЯ ДАТ
   await initializeDateFormatting('ru', null);
-
-  // Игнорируем ошибки SSL сертификатов (только для отладки)
-  HttpOverrides.global = MyHttpOverrides();
 
   print("INIT USER: ${FirebaseAuth.instance.currentUser?.email}");
 

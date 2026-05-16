@@ -8,6 +8,7 @@ import 'package:ArcheoAI/features/artifacts/provider/expedition_provider.dart';
 import 'package:ArcheoAI/features/artifacts/presentation/widget_detial_screen/artifact_journey_map.dart';
 import 'package:ArcheoAI/features/artifacts/presentation/widget_detial_screen/artifact_location_map.dart';
 import 'package:ArcheoAI/features/artifacts/presentation/widget_detial_screen/time_traveler_view.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/widgets/flash_message.dart';
@@ -129,24 +130,32 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
 
   Widget _buildImageHeader() {
     final hasImage = widget.artifact.imageUrl.isNotEmpty;
+    final isNetwork = widget.artifact.imageUrl.startsWith('http');
+    
     return Hero(
       tag: 'artifact_${widget.artifact.id}',
       child: Container(
         height: MediaQuery.of(context).size.height * 0.5,
         decoration: BoxDecoration(
           color: Colors.grey.shade900,
-          image: hasImage
-              ? DecorationImage(
-                  image: widget.artifact.imageUrl.startsWith('http')
-                      ? NetworkImage(widget.artifact.imageUrl) as ImageProvider
-                      : AssetImage(widget.artifact.imageUrl),
-                  fit: BoxFit.cover,
-                )
-              : null,
         ),
         child: Stack(
           fit: StackFit.expand,
           children: [
+            if (hasImage)
+              isNetwork
+                  ? CachedNetworkImage(
+                      imageUrl: widget.artifact.imageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: Colors.black12,
+                        child: const Center(child: CircularProgressIndicator(color: Colors.orangeAccent)),
+                      ),
+                      errorWidget: (context, url, error) => const Center(
+                        child: Icon(Icons.broken_image_outlined, color: Colors.white24, size: 60),
+                      ),
+                    )
+                  : Image.asset(widget.artifact.imageUrl, fit: BoxFit.cover),
             // Gradient overlay
             Container(
               decoration: BoxDecoration(
@@ -162,7 +171,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
                 ),
               ),
             ),
-            // Placeholder Icon
+            // Placeholder Icon if no image
             if (!hasImage)
               Center(
                 child: Icon(
