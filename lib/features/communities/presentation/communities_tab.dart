@@ -57,10 +57,14 @@ class _CommunitiesTabState extends State<CommunitiesTab> {
                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             )
           : null,
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          const SliverAppBar(
+      body: RefreshIndicator(
+        onRefresh: () => context.read<CommunityProvider>().fetchCommunities(),
+        color: Colors.orangeAccent,
+        backgroundColor: const Color(0xff1a1412),
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          slivers: [
+            const SliverAppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
             floating: true,
@@ -165,7 +169,8 @@ class _CommunitiesTabState extends State<CommunitiesTab> {
           ],
           
           const SliverToBoxAdapter(child: SizedBox(height: 100)),
-        ],
+          ],
+        ),
       ),
     );
   }

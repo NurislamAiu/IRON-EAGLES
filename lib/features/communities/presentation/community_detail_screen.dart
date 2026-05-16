@@ -6,6 +6,7 @@ import '../../auth/provider/auth_provider.dart';
 import '../provider/community_provider.dart';
 import '../../blogs/provider/blog_provider.dart';
 import '../../blogs/domain/blog_post_model.dart';
+import '../domain/community_model.dart';
 
 
 class CommunityDetailScreen extends StatefulWidget {
@@ -17,6 +18,14 @@ class CommunityDetailScreen extends StatefulWidget {
 }
 
 class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
+  final _commentController = TextEditingController();
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final communityProvider = context.watch<CommunityProvider>();
@@ -51,6 +60,20 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
               icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () => Navigator.pop(context),
             ),
+            actions: [
+              if (isOwner)
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert, color: Colors.white),
+                  onSelected: (val) {
+                    if (val == 'edit') _showEditCommunityDialog(context, community);
+                    if (val == 'delete') _showDeleteCommunityConfirm(context, community);
+                  },
+                  itemBuilder: (_) => [
+                    const PopupMenuItem(value: 'edit', child: Text("Редактировать")),
+                    const PopupMenuItem(value: 'delete', child: Text("Удалить сообщество", style: TextStyle(color: Colors.redAccent))),
+                  ],
+                ),
+            ],
             backgroundColor: const Color(0xff2c1e19),
             flexibleSpace: FlexibleSpaceBar(
               title: Text(community.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -87,6 +110,22 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                       const Icon(Icons.people, color: Colors.orangeAccent, size: 20),
                       const SizedBox(width: 8),
                       Text("${community.members.length} участников", style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                      const SizedBox(width: 16),
+                      // Community Likes
+                      GestureDetector(
+                        onTap: userEmail.isEmpty ? null : () => communityProvider.toggleLike(community.id, userEmail),
+                        child: Row(
+                          children: [
+                            Icon(
+                              community.likes.contains(userEmail) ? Icons.favorite : Icons.favorite_border,
+                              color: community.likes.contains(userEmail) ? Colors.redAccent : Colors.white54,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 6),
+                            Text("${community.likes.length}", style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
                       const Spacer(),
                       if (userEmail.isNotEmpty)
                         ElevatedButton(
@@ -114,8 +153,9 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
           ),
           if (posts.isEmpty)
             SliverFillRemaining(
+              hasScrollBody: false,
               child: Center(
-                child: Text("В этом сообществе пока нет записей.", style: TextStyle(color: Colors.white38)),
+                child: Text("В этом сообществе пока нет записей.", style: const TextStyle(color: Colors.white38)),
               ),
             )
           else
@@ -123,7 +163,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
-                  (context, index) => _buildSimplePostCard(context, posts[index]),
+                  (context, index) => _buildSimplePostCard(context, posts[index], userEmail),
                   childCount: posts.length,
                 ),
               ),
@@ -134,8 +174,9 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
     );
   }
 
-  Widget _buildSimplePostCard(BuildContext context, BlogPost blog) {
+  Widget _buildSimplePostCard(BuildContext context, BlogPost blog, String userEmail) {
     final bool isAdmin = blog.authorEmail.toLowerCase().contains('admin');
+    final bool isMyPost = blog.authorEmail == userEmail;
     
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
@@ -188,7 +229,6 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Icon(
                           isAdmin ? Icons.campaign : Icons.article,
@@ -205,81 +245,80 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.2,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        Text(
-                          DateFormat('dd.MM.yyyy').format(blog.createdAt),
-                          style: const TextStyle(
-                            color: Colors.white54,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        if (blog.isEdited)
-                          const Padding(
-                            padding: EdgeInsets.only(left: 6.0),
-                            child: Text(
-                              "(изменено)",
-                              style: TextStyle(
-                                  color: Colors.white38,
-                                  fontSize: 11,
-                                  fontStyle: FontStyle.italic),
-                            ),
+                        if (isMyPost)
+                          PopupMenuButton<String>(
+                            icon: const Icon(Icons.more_horiz, color: Colors.white54, size: 20),
+                            onSelected: (val) {
+                              if (val == 'edit') _showEditPostDialog(context, blog);
+                              if (val == 'delete') context.read<BlogProvider>().deleteBlogPost(blog.id);
+                            },
+                            itemBuilder: (_) => [
+                              const PopupMenuItem(value: 'edit', child: Text("Изменить")),
+                              const PopupMenuItem(value: 'delete', child: Text("Удалить", style: TextStyle(color: Colors.redAccent))),
+                            ],
                           ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      blog.title,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          height: 1.3),
-                    ),
                     const SizedBox(height: 12),
                     Text(
-                      blog.content, 
-                      style: const TextStyle(
-                          color: Colors.white70, 
-                          fontSize: 15, 
-                          height: 1.5),
+                      blog.title,
+                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 8),
+                    Text(
+                      blog.content, 
+                      style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
+                    ),
+                    const SizedBox(height: 16),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(Icons.person_outline, size: 14, color: Colors.white38),
-                        const SizedBox(width: 6),
+                        Text(
+                          DateFormat('dd.MM.yyyy').format(blog.createdAt),
+                          style: const TextStyle(color: Colors.white38, fontSize: 12),
+                        ),
                         Text(
                           "От: ${blog.authorEmail}",
-                          style: const TextStyle(color: Colors.white38, fontSize: 13),
+                          style: const TextStyle(color: Colors.white38, fontSize: 12),
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-              const Divider(color: Colors.white10, height: 1, thickness: 1),
+              const Divider(color: Colors.white10, height: 1),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Icon(Icons.favorite, color: Colors.white54, size: 20),
-                        const SizedBox(width: 6),
-                        Text('${blog.likes.length}', style: TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold)),
-                      ],
+                    // Like Post
+                    InkWell(
+                      onTap: userEmail.isEmpty ? null : () => context.read<BlogProvider>().toggleLike(blog.id, userEmail),
+                      child: Row(
+                        children: [
+                          Icon(
+                            blog.likes.contains(userEmail) ? Icons.favorite : Icons.favorite_border,
+                            color: blog.likes.contains(userEmail) ? Colors.redAccent : Colors.white54,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 6),
+                          Text('${blog.likes.length}', style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 16),
-                    Row(
-                      children: [
-                        Icon(Icons.chat_bubble_outline, color: Colors.white54, size: 20),
-                        const SizedBox(width: 6),
-                        Text('${blog.comments.length}', style: TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold)),
-                      ],
+                    const SizedBox(width: 20),
+                    // Comments button
+                    InkWell(
+                      onTap: () => _showComments(context, blog, userEmail),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.chat_bubble_outline, color: Colors.white54, size: 20),
+                          const SizedBox(width: 6),
+                          Text('${blog.comments.length}', style: const TextStyle(color: Colors.white54, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -287,6 +326,151 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  void _showEditCommunityDialog(BuildContext context, Community community) {
+    final nameCtrl = TextEditingController(text: community.name);
+    final descCtrl = TextEditingController(text: community.description);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xff2c1e19),
+        title: const Text("Редактировать сообщество", style: TextStyle(color: Colors.white)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(controller: nameCtrl, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "Название", labelStyle: TextStyle(color: Colors.white54))),
+            TextField(controller: descCtrl, style: const TextStyle(color: Colors.white), maxLines: 3, decoration: const InputDecoration(labelText: "Описание", labelStyle: TextStyle(color: Colors.white54))),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Отмена")),
+          ElevatedButton(
+            onPressed: () {
+              context.read<CommunityProvider>().updateCommunity(
+                community.copyWith(name: nameCtrl.text.trim(), description: descCtrl.text.trim())
+              );
+              Navigator.pop(ctx);
+            },
+            child: const Text("Сохранить"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteCommunityConfirm(BuildContext context, Community community) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xff2c1e19),
+        title: const Text("Удалить сообщество?", style: TextStyle(color: Colors.white)),
+        content: const Text("Это действие нельзя отменить.", style: TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Отмена")),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () {
+              context.read<CommunityProvider>().deleteCommunity(community.id);
+              Navigator.pop(ctx);
+              Navigator.pop(context);
+            },
+            child: const Text("Удалить"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditPostDialog(BuildContext context, BlogPost post) {
+    final titleCtrl = TextEditingController(text: post.title);
+    final contentCtrl = TextEditingController(text: post.content);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xff2c1e19),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom, left: 20, right: 20, top: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("Изменить объявление", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            TextField(controller: titleCtrl, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "Заголовок", labelStyle: TextStyle(color: Colors.white54))),
+            TextField(controller: contentCtrl, style: const TextStyle(color: Colors.white), maxLines: 5, decoration: const InputDecoration(labelText: "Содержание", labelStyle: TextStyle(color: Colors.white54))),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                context.read<BlogProvider>().editBlogPost(post.id, titleCtrl.text, contentCtrl.text);
+                Navigator.pop(ctx);
+              },
+              child: const Text("Сохранить"),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showComments(BuildContext context, BlogPost post, String userEmail) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xff1a1412),
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setState) {
+          final currentPost = context.watch<BlogProvider>().getCommunityPosts(post.communityId!).firstWhere((p) => p.id == post.id);
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.75,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                const Text("Комментарии", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                const Divider(color: Colors.white10),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: currentPost.comments.length,
+                    itemBuilder: (context, index) {
+                      final comment = currentPost.comments[index];
+                      return ListTile(
+                        title: Text(comment.authorEmail, style: const TextStyle(color: Colors.orangeAccent, fontSize: 12)),
+                        subtitle: Text(comment.content, style: const TextStyle(color: Colors.white70)),
+                        trailing: userEmail == comment.authorEmail 
+                          ? IconButton(icon: const Icon(Icons.delete, size: 16, color: Colors.white24), onPressed: () => context.read<BlogProvider>().deleteComment(post.id, comment.id))
+                          : null,
+                      );
+                    },
+                  ),
+                ),
+                if (userEmail.isNotEmpty)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _commentController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: const InputDecoration(hintText: "Напишите комментарий...", hintStyle: TextStyle(color: Colors.white24)),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.send, color: Colors.orangeAccent),
+                        onPressed: () {
+                          if (_commentController.text.trim().isNotEmpty) {
+                            context.read<BlogProvider>().addComment(post.id, _commentController.text.trim(), userEmail);
+                            _commentController.clear();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          );
+        }
       ),
     );
   }
