@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import '../../auth/provider/auth_provider.dart';
 import '../../artifacts/provider/artifact_provider.dart';
 import '../../artifacts/provider/favorite_provider.dart';
+import '../../../core/providers/language_provider.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -156,7 +158,7 @@ class _ProfileTabState extends State<ProfileTab>
 
                   if (!hasName)
                     Text(
-                      "Добавьте имя",
+                      S.of(context).addName,
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.5),
                         fontSize: 18,
@@ -181,7 +183,7 @@ class _ProfileTabState extends State<ProfileTab>
                       Expanded(
                         child: _glassButton(
                           icon: Icons.edit,
-                          text: "Редактировать",
+                          text: S.of(context).editProfile,
                           onTap: () => _openEdit(context, user),
                         ),
                       ),
@@ -201,9 +203,9 @@ class _ProfileTabState extends State<ProfileTab>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      "Избранное",
-                                      style: TextStyle(
+                                    Text(
+                                      S.of(context).favorites,
+                                      style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 19,
                                         fontWeight: FontWeight.bold,
@@ -211,7 +213,7 @@ class _ProfileTabState extends State<ProfileTab>
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      "Сохранено: ${favProvider.favorites.length}",
+                                      "${S.of(context).saved}: ${favProvider.favorites.length}",
                                       style: const TextStyle(
                                           color: Colors.white70, fontSize: 15),
                                     ),
@@ -231,7 +233,7 @@ class _ProfileTabState extends State<ProfileTab>
 
                   _glassButton(
                     icon: Icons.emoji_events_outlined,
-                    text: "Достижения",
+                    text: S.of(context).achievements,
                     onTap: () => context.push('/achievements'),
                     color: Colors.orange.shade800.withOpacity(0.6),
                   ),
@@ -242,9 +244,9 @@ class _ProfileTabState extends State<ProfileTab>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Статистика",
-                          style: TextStyle(
+                        Text(
+                          S.of(context).statistics,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 19,
                             fontWeight: FontWeight.bold,
@@ -252,7 +254,7 @@ class _ProfileTabState extends State<ProfileTab>
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          "Артефактов добавлено: $added",
+                          "${S.of(context).artifactsAdded}: $added",
                           style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 15,
@@ -262,11 +264,41 @@ class _ProfileTabState extends State<ProfileTab>
                     ),
                   ),
 
+                  const SizedBox(height: 16),
+
+                  _glassCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          S.of(context).language,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 19,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Consumer<LanguageProvider>(
+                          builder: (context, langProvider, child) {
+                            return Row(
+                              children: [
+                                _langOption(context, langProvider, 'ru', S.of(context).russian),
+                                const SizedBox(width: 12),
+                                _langOption(context, langProvider, 'en', S.of(context).english),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
                   const SizedBox(height: 28),
 
                   _glassButton(
                     icon: Icons.logout,
-                    text: "Выйти",
+                    text: S.of(context).logout,
                     onTap: () {
                       context.read<AuthProviders>().logout();
                       context.push('/');
@@ -279,6 +311,32 @@ class _ProfileTabState extends State<ProfileTab>
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _langOption(BuildContext context, LanguageProvider lp, String code, String label) {
+    final selected = lp.locale.languageCode == code;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => lp.setLocale(Locale(code)),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: selected ? Colors.orangeAccent.withOpacity(0.2) : Colors.white.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: selected ? Colors.orangeAccent : Colors.white10),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: selected ? Colors.orangeAccent : Colors.white70,
+                fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -345,16 +403,16 @@ class _ProfileTabState extends State<ProfileTab>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                "Редактирование профиля",
-                style: TextStyle(color: Colors.white, fontSize: 20),
+              Text(
+                S.of(context).editProfile,
+                style: const TextStyle(color: Colors.white, fontSize: 20),
               ),
               const SizedBox(height: 20),
               TextField(
                 controller: _nameController,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: "Имя",
+                  labelText: S.of(context).nameLabel,
                   labelStyle: const TextStyle(color: Colors.white54),
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.12),
@@ -367,7 +425,7 @@ class _ProfileTabState extends State<ProfileTab>
               const SizedBox(height: 20),
               _glassButton(
                 icon: Icons.check,
-                text: "Сохранить",
+                text: S.of(context).save,
                 onTap: () {
                   Navigator.pop(context);
                 },

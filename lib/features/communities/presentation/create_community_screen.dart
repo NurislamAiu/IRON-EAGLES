@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../../auth/provider/auth_provider.dart';
 import '../provider/community_provider.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class CreateCommunityScreen extends StatefulWidget {
   const CreateCommunityScreen({super.key});
@@ -57,11 +58,11 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     if (name.isEmpty || desc.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Row(
+          content: Row(
             children: [
-              Icon(Icons.error_outline_rounded, color: Colors.white),
-              SizedBox(width: 12),
-              Expanded(child: Text("Заполните название и описание")),
+              const Icon(Icons.error_outline_rounded, color: Colors.white),
+              const SizedBox(width: 12),
+              Expanded(child: Text(S.of(context).fillFields)),
             ],
           ),
           backgroundColor: Colors.redAccent.shade700,
@@ -94,11 +95,11 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Row(
+          content: Row(
             children: [
-              Icon(Icons.check_circle_rounded, color: Colors.white),
-              SizedBox(width: 12),
-              Text("Сообщество успешно создано!"),
+              const Icon(Icons.check_circle_rounded, color: Colors.white),
+              const SizedBox(width: 12),
+              Text(S.of(context).communityCreated),
             ],
           ),
           backgroundColor: Colors.green.shade700,
@@ -166,15 +167,15 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              "Новое сообщество",
-              style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+            Text(
+              S.of(context).newCommunity,
+              style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: 0.5),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            const Text(
-              "Объедините исследователей по интересам.\nДелитесь находками и обсуждайте теории.",
-              style: TextStyle(color: Colors.white54, fontSize: 14, height: 1.4),
+            Text(
+              S.of(context).communityPromo,
+              style: const TextStyle(color: Colors.white54, fontSize: 14, height: 1.4),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 36),
@@ -182,24 +183,24 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
             // Поля ввода
             _buildTextField(
               controller: _nameController,
-              label: "Название сообщества",
-              hint: "Например: Египтологи",
+              label: S.of(context).communityName,
+              hint: S.of(context).communityHint,
               maxLines: 1,
               prefixIcon: Icons.title_rounded,
             ),
             const SizedBox(height: 20),
             _buildTextField(
               controller: _descController,
-              label: "Описание",
-              hint: "О чем ваше сообщество?",
+              label: S.of(context).description,
+              hint: S.of(context).descriptionHint,
               maxLines: 4,
             ),
             const SizedBox(height: 24),
 
             // Выбор обложки
-            const Text(
-              "Обложка",
-              style: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w600),
+            Text(
+              S.of(context).cover,
+              style: const TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
             GestureDetector(
@@ -245,14 +246,14 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                             child: const Icon(Icons.add_photo_alternate_rounded, color: Colors.orangeAccent, size: 32),
                           ),
                           const SizedBox(height: 12),
-                          const Text(
-                            "Добавить обложку",
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                          Text(
+                            S.of(context).addCover,
+                            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 4),
-                          const Text(
-                            "Рекомендуемый размер 800x400 (опционально)",
-                            style: TextStyle(color: Colors.white38, fontSize: 12),
+                          Text(
+                            S.of(context).recommendSize,
+                            style: const TextStyle(color: Colors.white38, fontSize: 12),
                           ),
                         ],
                       ),
@@ -292,9 +293,9 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                         width: 24,
                         child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
                       )
-                    : const Text(
-                        "Создать сообщество",
-                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                    : Text(
+                        S.of(context).createCommunityAction,
+                        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.5),
                       ),
               ),
             ),

@@ -1,13 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:ArcheoAI/core/widgets/flash_message.dart';
-import 'package:ArcheoAI/features/artifacts/data/artifact_service.dart';
 import 'package:provider/provider.dart';
 
 import '../../artifacts/domain/artifact_model.dart';
 import '../../artifacts/presentation/artifact_detail_screen.dart';
 import '../../artifacts/provider/artifact_provider.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -22,8 +21,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   late PageController _pageController;
 
   String _search = '';
-  String _selectedFilter = 'Все';
-  final filters = ['Все', 'Скульптура', 'Стела', 'Украшения', 'Архитектура', 'Манускрипт'];
+  String _selectedFilterId = 'all';
 
   @override
   void initState() {
@@ -49,18 +47,48 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     final provider = context.watch<ArtifactProvider>();
     final artifacts = provider.artifacts;
 
+    final List<Map<String, String>> filters = [
+      {'id': 'all', 'label': S.of(context).filterAll},
+      {'id': 'saka', 'label': S.of(context).filterSaka},
+      {'id': 'egypt', 'label': S.of(context).filterEgypt},
+      {'id': 'antiquity', 'label': S.of(context).filterAntiquity},
+      {'id': 'medieval', 'label': S.of(context).filterMedieval},
+      {'id': 'steppe', 'label': S.of(context).filterSteppe}
+    ];
+
+    final locale = S.of(context).locale;
+
     // Логика фильтрации и поиска
     final filtered = artifacts.where((a) {
       final q = _search.toLowerCase().trim();
+      final title = a.getDisplayTitle(locale).toLowerCase();
+      final desc = a.getDisplayDescription(locale).toLowerCase();
+      final cat = a.getDisplayCategory(locale).toLowerCase();
+      final period = a.getDisplayPeriod(locale).toLowerCase();
+      final material = a.getDisplayMaterial(locale).toLowerCase();
+
       final searchMatch = q.isEmpty ||
           a.id.toLowerCase().contains(q) ||
-          a.title.toLowerCase().contains(q) ||
-          a.description.toLowerCase().contains(q) ||
-          a.category.toLowerCase().contains(q) ||
-          a.material.toLowerCase().contains(q) ||
-          a.period.toLowerCase().contains(q);
-      if (_selectedFilter == "Все") return searchMatch;
-      return searchMatch && a.category.toLowerCase().contains(_selectedFilter.toLowerCase());
+          title.contains(q) ||
+          desc.contains(q) ||
+          cat.contains(q) ||
+          material.contains(q) ||
+          period.contains(q);
+      
+      if (_selectedFilterId == 'all') return searchMatch;
+      
+      // Map IDs to search terms (check both lang for safety in search)
+      String termRu = '';
+      String termEn = '';
+      switch(_selectedFilterId) {
+        case 'saka': termRu = 'саки'; termEn = 'saka'; break;
+        case 'egypt': termRu = 'египет'; termEn = 'egypt'; break;
+        case 'antiquity': termRu = 'античность'; termEn = 'antiquity'; break;
+        case 'medieval': termRu = 'средневековье'; termEn = 'medieval'; break;
+        case 'steppe': termRu = 'кочевники'; termEn = 'nomads'; break;
+      }
+      
+      return searchMatch && (a.category.toLowerCase().contains(termRu) || a.categoryEn.toLowerCase().contains(termEn));
     }).toList();
 
     // Для карусели берем первые 5
@@ -87,9 +115,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 child: _buildSearch(),
               ),
             ),
-            SliverToBoxAdapter(child: _buildFilterChips()),
+            SliverToBoxAdapter(child: _buildFilterChips(filters)),
             if (featured.isNotEmpty) ...[
-              SliverToBoxAdapter(child: _buildSectionTitle("Избранные")),
+              SliverToBoxAdapter(child: _buildSectionTitle(S.of(context).featured)),
               SliverToBoxAdapter(
                 child: SizedBox(
                   height: 300,
@@ -102,7 +130,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 ),
               ),
             ],
-            SliverToBoxAdapter(child: _buildSectionTitle("Все Артефакты")),
+            SliverToBoxAdapter(child: _buildSectionTitle(S.of(context).allArtifacts)),
             SliverPadding(
               padding: const EdgeInsets.all(16),
               sliver: SliverList(
@@ -126,16 +154,16 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Добро пожаловать в",
+            S.of(context).welcome,
             style: TextStyle(
               color: Colors.white.withOpacity(0.8),
               fontSize: 20,
               fontWeight: FontWeight.w400,
             ),
           ),
-          const Text(
-            "ArcheoAI",
-            style: TextStyle(
+          Text(
+            S.of(context).appTitle,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 32,
               fontWeight: FontWeight.bold,
@@ -161,7 +189,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search, color: Colors.white70),
-                hintText: "Поиск артефактов...",
+                hintText: S.of(context).searchHint,
                 hintStyle: const TextStyle(color: Colors.white70),
                 border: InputBorder.none,
               ),
@@ -172,7 +200,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildFilterChips() {
+  Widget _buildFilterChips(List<Map<String, String>> filters) {
     return SizedBox(
       height: 60,
       child: ListView.builder(
@@ -181,13 +209,13 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         itemCount: filters.length,
         itemBuilder: (_, i) {
           final f = filters[i];
-          final selected = f == _selectedFilter;
+          final selected = f['id'] == _selectedFilterId;
           return Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: ChoiceChip(
-              label: Text(f),
+              label: Text(f['label']!),
               selected: selected,
-              onSelected: (_) => setState(() => _selectedFilter = f),
+              onSelected: (_) => setState(() => _selectedFilterId = f['id']!),
               backgroundColor: Colors.white.withOpacity(0.1),
               selectedColor: Colors.white.withOpacity(0.8),
               labelStyle: TextStyle(
@@ -255,7 +283,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    a.title,
+                    a.getDisplayTitle(S.of(context).locale),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -265,7 +293,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Text(
-                    a.period,
+                    a.getDisplayPeriod(S.of(context).locale),
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.8),
                       fontSize: 14,
@@ -358,7 +386,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            a.title,
+                            a.getDisplayTitle(S.of(context).locale),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
@@ -368,7 +396,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                             ),
                           ),
                           Text(
-                            a.category,
+                            a.getDisplayCategory(S.of(context).locale),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -379,7 +407,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                           ),
                           const Spacer(),
                           Text(
-                            a.foundLocation,
+                            a.getDisplayLocation(S.of(context).locale),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/achievement_provider.dart';
 import '../domain/achievement_model.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class AchievementsScreen extends StatelessWidget {
   const AchievementsScreen({super.key});
@@ -15,7 +16,7 @@ class AchievementsScreen extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Achievements', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(S.of(context).achievements, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -90,7 +91,7 @@ class _AchievementCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                achievement.title,
+                _getTranslatedTitle(context, achievement.id, achievement.title),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: isUnlocked ? Colors.white : Colors.white70,
@@ -100,7 +101,7 @@ class _AchievementCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                achievement.description,
+                _getTranslatedDesc(context, achievement.id, achievement.description),
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -157,6 +158,24 @@ class _AchievementCard extends StatelessWidget {
       case 'comment': return Icons.comment;
       case 'view_in_ar': return Icons.view_in_ar;
       default: return Icons.emoji_events;
+    }
+  }
+
+  String _getTranslatedTitle(BuildContext context, String id, String fallback) {
+    switch (id) {
+      case 'scholar': return S.of(context).scholarTitle;
+      case 'critic': return S.of(context).criticTitle;
+      case '3d_master': return S.of(context).masterTitle;
+      default: return fallback;
+    }
+  }
+
+  String _getTranslatedDesc(BuildContext context, String id, String fallback) {
+    switch (id) {
+      case 'scholar': return S.of(context).scholarDesc;
+      case 'critic': return S.of(context).criticDesc;
+      case '3d_master': return S.of(context).masterDesc;
+      default: return fallback;
     }
   }
 }

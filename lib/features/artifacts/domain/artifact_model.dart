@@ -1,62 +1,85 @@
+import 'package:flutter/material.dart';
+
 class Artifact {
   final String id;
   final String title;
+  final String titleEn;
   final String description;
+  final String descriptionEn;
   final String foundLocation;
+  final String foundLocationEn;
   final String imageUrl;
-  final String modelUrl; // 👈 Новое поле для 3D модели
+  final String modelUrl;
   final String addedBy;
   final DateTime createdAt;
   final double? originLat;
   final double? originLng;
   final String originName;
-  final String? ancientImageUrl; // 👈 Новое поле для Time Traveler
+  final String originNameEn;
+  final String? ancientImageUrl;
   final String? expeditionId;
 
-  // ➕ Новые поля (все НЕ обязательные, чтобы не ломать код)
-  final String category;            // тип: Керамика, Металл и т.д.
-  final String period;              // эпоха / период
-  final String museumSection;       // зал: "Общий зал", "Зал 1" и т.п.
-  final String condition;           // состояние: Отличное / Среднее / Плохое
-  final String finderId;            // ID или email находчика
-  final DateTime? foundDate;        // когда нашли (может быть null)
+  final String category;
+  final String categoryEn;
+  final String period;
+  final String periodEn;
+  final String museumSection;
+  final String museumSectionEn;
+  final String condition;
+  final String conditionEn;
+  final String finderId;
+  final DateTime? foundDate;
 
-  final String material;            // материал: глина, бронза и т.д.
-  final String restorationStatus;   // статус реставрации
-  final String contextNotes;        // заметки контекста (глубина, слой и т.п.)
+  final String material;
+  final String materialEn;
+  final String restorationStatus;
+  final String restorationStatusEn;
+  final String contextNotes;
+  final String contextNotesEn;
 
-  final double? height;             // см
-  final double? width;              // см
-  final double? depth;              // см
+  final double? height;
+  final double? width;
+  final double? depth;
 
-  final double? gpsLat;             // широта
-  final double? gpsLng;             // долгота
+  final double? gpsLat;
+  final double? gpsLng;
 
   Artifact({
     required this.id,
     required this.title,
+    this.titleEn = '',
     required this.description,
+    this.descriptionEn = '',
     required this.foundLocation,
+    this.foundLocationEn = '',
     required this.imageUrl,
-    this.modelUrl = '', // 👈 Значение по умолчанию
+    this.modelUrl = '',
     required this.addedBy,
     required this.createdAt,
     this.originLat,
     this.originLng,
     this.originName = 'Неизвестно',
-    this.ancientImageUrl, // 👈
-    this.expeditionId, // 👈
+    this.originNameEn = 'Unknown',
+    this.ancientImageUrl,
+    this.expeditionId,
 
     this.category = 'Не указана',
+    this.categoryEn = 'Not specified',
     this.period = '',
+    this.periodEn = '',
     this.museumSection = 'Общий зал',
+    this.museumSectionEn = 'Main Hall',
     this.condition = '',
+    this.conditionEn = '',
     this.finderId = '',
     this.foundDate,
 
     this.material = '',
+    this.materialEn = '',
     this.restorationStatus = '',
+    this.restorationStatusEn = '',
     this.contextNotes = '',
+    this.contextNotesEn = '',
 
     this.height,
     this.width,
@@ -66,37 +89,57 @@ class Artifact {
     this.gpsLng,
   });
 
+  // Helper to safely get fields during Hot Reload or from incomplete data
+  String _safe(String? val) => val ?? '';
+
+  String getDisplayTitle(Locale locale) => locale.languageCode == 'en' && _safe(titleEn).isNotEmpty ? _safe(titleEn) : _safe(title);
+  String getDisplayDescription(Locale locale) => locale.languageCode == 'en' && _safe(descriptionEn).isNotEmpty ? _safe(descriptionEn) : _safe(description);
+  String getDisplayLocation(Locale locale) => locale.languageCode == 'en' && _safe(foundLocationEn).isNotEmpty ? _safe(foundLocationEn) : _safe(foundLocation);
+  String getDisplayCategory(Locale locale) => locale.languageCode == 'en' && _safe(categoryEn).isNotEmpty ? _safe(categoryEn) : _safe(category);
+  String getDisplayPeriod(Locale locale) => locale.languageCode == 'en' && _safe(periodEn).isNotEmpty ? _safe(periodEn) : _safe(period);
+  String getDisplayMaterial(Locale locale) => locale.languageCode == 'en' && _safe(materialEn).isNotEmpty ? _safe(materialEn) : _safe(material);
+  String getDisplayCondition(Locale locale) => locale.languageCode == 'en' && _safe(conditionEn).isNotEmpty ? _safe(conditionEn) : _safe(condition);
+  String getDisplayMuseumSection(Locale locale) => locale.languageCode == 'en' && _safe(museumSectionEn).isNotEmpty ? _safe(museumSectionEn) : _safe(museumSection);
+  String getDisplayOriginName(Locale locale) => locale.languageCode == 'en' && _safe(originNameEn).isNotEmpty ? _safe(originNameEn) : _safe(originName);
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'title': title,
+      'titleEn': titleEn,
       'description': description,
+      'descriptionEn': descriptionEn,
       'foundLocation': foundLocation,
+      'foundLocationEn': foundLocationEn,
       'imageUrl': imageUrl,
-      'modelUrl': modelUrl, // 👈 Добавлено в toMap
+      'modelUrl': modelUrl,
       'addedBy': addedBy,
       'createdAt': createdAt.toIso8601String(),
       'originLat': originLat,
       'originLng': originLng,
       'originName': originName,
-      'ancientImageUrl': ancientImageUrl, // 👈
-      'expeditionId': expeditionId, // 👈
-
+      'originNameEn': originNameEn,
+      'ancientImageUrl': ancientImageUrl,
+      'expeditionId': expeditionId,
       'category': category,
+      'categoryEn': categoryEn,
       'period': period,
+      'periodEn': periodEn,
       'museumSection': museumSection,
+      'museumSectionEn': museumSectionEn,
       'condition': condition,
+      'conditionEn': conditionEn,
       'finderId': finderId,
       'foundDate': foundDate?.toIso8601String(),
-
       'material': material,
+      'materialEn': materialEn,
       'restorationStatus': restorationStatus,
+      'restorationStatusEn': restorationStatusEn,
       'contextNotes': contextNotes,
-
+      'contextNotesEn': contextNotesEn,
       'height': height,
       'width': width,
       'depth': depth,
-
       'gpsLat': gpsLat,
       'gpsLng': gpsLng,
     };
@@ -104,37 +147,42 @@ class Artifact {
 
   factory Artifact.fromMap(Map<String, dynamic> data) {
     return Artifact(
-      id: data['id'] ?? '',
-      title: data['title'] ?? '',
-      description: data['description'] ?? '',
-      foundLocation: data['foundLocation'] ?? '',
-      imageUrl: data['imageUrl'] ?? '',
-      modelUrl: data['modelUrl'] ?? '', // 👈 Добавлено в fromMap
-      addedBy: data['addedBy'] ?? '',
-      createdAt: DateTime.tryParse(data['createdAt'] ?? '') ?? DateTime.now(),
+      id: data['id']?.toString() ?? '',
+      title: data['title']?.toString() ?? '',
+      titleEn: data['titleEn']?.toString() ?? '',
+      description: data['description']?.toString() ?? '',
+      descriptionEn: data['descriptionEn']?.toString() ?? '',
+      foundLocation: data['foundLocation']?.toString() ?? '',
+      foundLocationEn: data['foundLocationEn']?.toString() ?? '',
+      imageUrl: data['imageUrl']?.toString() ?? '',
+      modelUrl: data['modelUrl']?.toString() ?? '',
+      addedBy: data['addedBy']?.toString() ?? '',
+      createdAt: DateTime.tryParse(data['createdAt']?.toString() ?? '') ?? DateTime.now(),
       originLat: (data['originLat'] is num) ? (data['originLat'] as num).toDouble() : null,
       originLng: (data['originLng'] is num) ? (data['originLng'] as num).toDouble() : null,
-      originName: data['originName'] ?? 'Неизвестно',
-      ancientImageUrl: data['ancientImageUrl'], // 👈
-      expeditionId: data['expeditionId'], // 👈
-
-      category: data['category'] ?? 'Не указана',
-      period: data['period'] ?? '',
-      museumSection: data['museumSection'] ?? 'Общий зал',
-      condition: data['condition'] ?? '',
-      finderId: data['finderId'] ?? '',
-      foundDate: data['foundDate'] != null
-          ? DateTime.tryParse(data['foundDate'])
-          : null,
-
-      material: data['material'] ?? '',
-      restorationStatus: data['restorationStatus'] ?? '',
-      contextNotes: data['contextNotes'] ?? '',
-
+      originName: data['originName']?.toString() ?? 'Неизвестно',
+      originNameEn: data['originNameEn']?.toString() ?? 'Unknown',
+      ancientImageUrl: data['ancientImageUrl']?.toString(),
+      expeditionId: data['expeditionId']?.toString(),
+      category: data['category']?.toString() ?? 'Не указана',
+      categoryEn: data['categoryEn']?.toString() ?? 'Not specified',
+      period: data['period']?.toString() ?? '',
+      periodEn: data['periodEn']?.toString() ?? '',
+      museumSection: data['museumSection']?.toString() ?? 'Общий зал',
+      museumSectionEn: data['museumSectionEn']?.toString() ?? 'Main Hall',
+      condition: data['condition']?.toString() ?? '',
+      conditionEn: data['conditionEn']?.toString() ?? '',
+      finderId: data['finderId']?.toString() ?? '',
+      foundDate: data['foundDate'] != null ? DateTime.tryParse(data['foundDate'].toString()) : null,
+      material: data['material']?.toString() ?? '',
+      materialEn: data['materialEn']?.toString() ?? '',
+      restorationStatus: data['restorationStatus']?.toString() ?? '',
+      restorationStatusEn: data['restorationStatusEn']?.toString() ?? '',
+      contextNotes: data['contextNotes']?.toString() ?? '',
+      contextNotesEn: data['contextNotesEn']?.toString() ?? '',
       height: (data['height'] is num) ? (data['height'] as num).toDouble() : null,
       width: (data['width'] is num) ? (data['width'] as num).toDouble() : null,
       depth: (data['depth'] is num) ? (data['depth'] as num).toDouble() : null,
-
       gpsLat: (data['gpsLat'] is num) ? (data['gpsLat'] as num).toDouble() : null,
       gpsLng: (data['gpsLng'] is num) ? (data['gpsLng'] as num).toDouble() : null,
     );

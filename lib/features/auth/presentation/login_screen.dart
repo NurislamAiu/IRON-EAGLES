@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/flash_message.dart';
 import '../../../core/widgets/glass_text_field.dart';
 import '../provider/auth_provider.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   final String? email;
@@ -58,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     final password = _password.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      FlashMessage.error(context, 'Введите email и пароль');
+      FlashMessage.error(context, S.of(context).enterEmailPass);
       return;
     }
 
@@ -67,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     try {
       await context.read<AuthProviders>().login(email, password);
       if (mounted) {
-        FlashMessage.success(context, 'Добро пожаловать!');
+        FlashMessage.success(context, S.of(context).welcomeBack);
         await Future.delayed(const Duration(milliseconds: 300));
         context.go('/home');
       }
@@ -75,24 +76,24 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       String message;
       switch (e.code) {
         case 'invalid-email':
-          message = 'Неверный формат email.';
+          message = S.of(context).invalidEmail;
           break;
         case 'user-not-found':
         case 'wrong-password':
-          message = 'Неверный email или пароль.';
+          message = S.of(context).userNotFound;
           break;
         case 'user-disabled':
-          message = 'Этот аккаунт был отключён.';
+          message = S.of(context).userDisabled;
           break;
         case 'too-many-requests':
-          message = 'Слишком много попыток входа. Попробуйте позже.';
+          message = S.of(context).tooManyRequests;
           break;
         default:
-          message = 'Произошла ошибка. Попробуйте ещё раз.';
+          message = S.of(context).errorOccurred;
       }
       if(mounted) FlashMessage.error(context, message);
     } catch (e) {
-      if(mounted) FlashMessage.error(context, 'Ошибка входа: ${e.toString()}');
+      if(mounted) FlashMessage.error(context, '${S.of(context).loginError}: ${e.toString()}');
     } finally {
       if(mounted) setState(() => _loading = false);
     }
@@ -136,9 +137,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          'Вход для археолога',
-                          style: TextStyle(
+                        Text(
+                          S.of(context).loginTitle,
+                          style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -147,13 +148,13 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         const SizedBox(height: 30),
                         GlassTextField(
                           controller: _email,
-                          hint: 'Email',
+                          hint: S.of(context).email,
                           icon: Icons.email_outlined,
                         ),
                         const SizedBox(height: 16),
                         GlassTextField(
                           controller: _password,
-                          hint: 'Пароль',
+                          hint: S.of(context).password,
                           icon: Icons.lock_outline,
                           obscure: true,
                         ),
@@ -211,9 +212,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           ),
           elevation: 0,
         ),
-        child: const Text(
-          'Войти',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        child: Text(
+          S.of(context).login,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -222,9 +223,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   Widget _buildRegisterButton() {
     return TextButton(
       onPressed: () => context.push('/register'),
-      child: const Text(
-        'Создать аккаунт',
-        style: TextStyle(
+      child: Text(
+        S.of(context).createAccount,
+        style: const TextStyle(
           color: Colors.white70,
           decoration: TextDecoration.underline,
         ),

@@ -3,6 +3,8 @@ import '../../data/comment_service.dart';
 import 'comment_item.dart';
 import 'glass_card.dart';
 
+import 'package:ArcheoAI/core/localization/app_localizations.dart';
+
 class CommentsSection extends StatelessWidget {
   final String artifactId;
   final CommentService commentService;
@@ -24,8 +26,8 @@ class CommentsSection extends StatelessWidget {
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return GlassCard(
-              child: const Text("Загрузка комментариев...",
-                  style: TextStyle(color: Colors.white54)),
+              child: Text(S.of(context).loadingComments,
+                  style: const TextStyle(color: Colors.white54)),
             );
           }
 
@@ -39,8 +41,8 @@ class CommentsSection extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Text("Комментарии",
-                        style: TextStyle(
+                    Text(S.of(context).comments,
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 22,
                             fontWeight: FontWeight.bold)),
@@ -56,8 +58,8 @@ class CommentsSection extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 visible.isEmpty
-                    ? const Text("Пока нет комментариев",
-                    style: TextStyle(color: Colors.white54))
+                    ? Text(S.of(context).noCommentsYet,
+                    style: const TextStyle(color: Colors.white54))
                     : Column(children: visible.map((c) => CommentItem(c)).toList())
               ],
             ),

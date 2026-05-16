@@ -2,7 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../auth/provider/auth_provider.dart';
+import '../provider/auth_provider.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -77,10 +78,10 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> with SingleTi
                 children: [
                   FadeTransition(
                     opacity: _fadeAnimation,
-                    child: const Text(
-                      'Выберите вашу роль',
+                    child: Text(
+                      S.of(context).selectRole,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 34,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -92,7 +93,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> with SingleTi
                   FadeTransition(
                     opacity: _fadeAnimation,
                     child: Text(
-                      'Чтобы мы могли предоставить вам наилучший опыт',
+                      S.of(context).roleSelectionSubtitle,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
@@ -108,8 +109,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> with SingleTi
                       child: _buildRoleCard(
                         context,
                         icon: Icons.travel_explore,
-                        title: 'Я Посетитель',
-                        description: 'Исследуйте экспонаты и погрузитесь в историю',
+                        title: S.of(context).iAmVisitor,
+                        description: S.of(context).exploreMuseum,
                         onTap: () => _selectRole(context, 'visitor'),
                       ),
                     ),
@@ -122,8 +123,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> with SingleTi
                       child: _buildRoleCard(
                         context,
                         icon: Icons.history_edu,
-                        title: 'Я Археолог',
-                        description: 'Добавляйте и управляйте артефактами',
+                        title: S.of(context).iAmArchaeologist,
+                        description: S.of(context).manageArtifacts,
                         onTap: () => _selectRole(context, 'archaeologist'),
                       ),
                     ),

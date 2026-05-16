@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -16,6 +15,9 @@ import 'features/artifacts/provider/achievement_provider.dart';
 import 'features/artifacts/provider/expedition_provider.dart';
 import 'features/blogs/provider/blog_provider.dart';
 import 'features/communities/provider/community_provider.dart';
+import 'core/providers/language_provider.dart';
+import 'core/localization/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,15 +56,31 @@ class MuseumApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AchievementProvider()),
         ChangeNotifierProvider(create: (_) => BlogProvider()),
         ChangeNotifierProvider(create: (_) => CommunityProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
       ],
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        title: 'ArcheoAI',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6B4F3A)),
-          useMaterial3: true,
-        ),
-        routerConfig: AppRouter.router,
+      child: Consumer<LanguageProvider>(
+        builder: (context, langProvider, child) {
+          return MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            title: 'ArcheoAI',
+            locale: langProvider.locale,
+            localizationsDelegates: const [
+              SDelegate(),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en'),
+              Locale('ru'),
+            ],
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6B4F3A)),
+              useMaterial3: true,
+            ),
+            routerConfig: AppRouter.router,
+          );
+        },
       ),
     );
   }

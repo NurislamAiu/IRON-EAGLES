@@ -1,0 +1,7 @@
+Building com.example.museumcode for simulator (ios)...
+Running Xcode build...                                          
+Xcode build done.                                            6.8s
+Failed to build iOS app
+Error (Xcode): unsupported option '-G' for target 'x86_64-apple-ios15.0-simulator'
+
+Encountered error while building for simulator.

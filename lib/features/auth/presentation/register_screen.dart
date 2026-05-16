@@ -7,6 +7,7 @@ import '../../../core/widgets/flash_message.dart';
 import '../../../core/widgets/glass_text_field.dart';
 import '../provider/auth_provider.dart';
 import 'login_screen.dart'; // For RotatingLoader
+import '../../../core/localization/app_localizations.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -50,12 +51,12 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     final confirm = _confirm.text.trim();
 
     if (email.isEmpty || password.isEmpty || confirm.isEmpty) {
-      FlashMessage.error(context, 'Пожалуйста, заполните все поля');
+      FlashMessage.error(context, S.of(context).fillAllFields);
       return;
     }
 
     if (password != confirm) {
-      FlashMessage.error(context, 'Пароли не совпадают');
+      FlashMessage.error(context, S.of(context).passwordsDoNotMatch);
       return;
     }
 
@@ -64,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     try {
       await context.read<AuthProviders>().register(email, password);
       if (mounted) {
-        FlashMessage.success(context, 'Аккаунт успешно создан!');
+        FlashMessage.success(context, S.of(context).registrationSuccess);
         await Future.delayed(const Duration(milliseconds: 300));
         context.go('/home');
       }
@@ -72,20 +73,20 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
       String message;
       switch (e.code) {
         case 'email-already-in-use':
-          message = 'Такой email уже зарегистрирован.';
+          message = S.of(context).emailAlreadyInUse;
           break;
         case 'invalid-email':
-          message = 'Неверный формат email.';
+          message = S.of(context).invalidEmail;
           break;
         case 'weak-password':
-          message = 'Пароль слишком слабый. Используйте минимум 6 символов.';
+          message = S.of(context).weakPassword;
           break;
         default:
-          message = 'Неизвестная ошибка: ${e.code}';
+          message = '${S.of(context).registrationError}: ${e.code}';
       }
       if (mounted) FlashMessage.error(context, message);
     } catch (e) {
-      if (mounted) FlashMessage.error(context, 'Ошибка регистрации: ${e.toString()}');
+      if (mounted) FlashMessage.error(context, '${S.of(context).registrationError}: ${e.toString()}');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -129,9 +130,9 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          'Регистрация',
-                          style: TextStyle(
+                        Text(
+                          S.of(context).register,
+                          style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -140,20 +141,20 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                         const SizedBox(height: 30),
                         GlassTextField(
                           controller: _email,
-                          hint: 'Email',
+                          hint: S.of(context).email,
                           icon: Icons.email_outlined,
                         ),
                         const SizedBox(height: 16),
                         GlassTextField(
                           controller: _password,
-                          hint: 'Пароль',
+                          hint: S.of(context).password,
                           icon: Icons.lock_outline,
                           obscure: true,
                         ),
                         const SizedBox(height: 16),
                         GlassTextField(
                           controller: _confirm,
-                          hint: 'Подтвердите пароль',
+                          hint: S.of(context).confirmPassword,
                           icon: Icons.lock_person_outlined,
                           obscure: true,
                         ),
@@ -211,9 +212,9 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
           ),
           elevation: 0,
         ),
-        child: const Text(
-          'Зарегистрироваться',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        child: Text(
+          S.of(context).registerAction,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -222,9 +223,9 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   Widget _buildLoginButton() {
     return TextButton(
       onPressed: () => context.go('/login'),
-      child: const Text(
-        'У меня уже есть аккаунт',
-        style: TextStyle(
+      child: Text(
+        S.of(context).alreadyHaveAccount,
+        style: const TextStyle(
           color: Colors.white70,
           decoration: TextDecoration.underline,
         ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:ArcheoAI/core/localization/app_localizations.dart';
 
 class ScannerView extends StatefulWidget {
   const ScannerView({super.key});
@@ -17,7 +18,7 @@ class _ScannerViewState extends State<ScannerView> {
   final int _maxScans = 15;
   bool _isProcessing = false;
   double _processingProgress = 0.0;
-  String _statusText = "Настройте фокус на объекте";
+  String? _statusText;
 
   @override
   void initState() {
@@ -44,7 +45,7 @@ class _ScannerViewState extends State<ScannerView> {
     if (_scanCount < _maxScans) {
       setState(() {
         _scanCount++;
-        _statusText = "Захвачено точек: ${_scanCount * 1240}";
+        _statusText = "${S.of(context).scannerPoints}: ${_scanCount * 1240}";
       });
       if (_scanCount == _maxScans) {
         _startProcessing();
@@ -55,7 +56,7 @@ class _ScannerViewState extends State<ScannerView> {
   void _startProcessing() {
     setState(() {
       _isProcessing = true;
-      _statusText = "Генерация 3D модели...";
+      _statusText = S.of(context).scannerGenerating;
     });
 
     Timer.periodic(const Duration(milliseconds: 50), (timer) {
@@ -146,7 +147,7 @@ class _ScannerViewState extends State<ScannerView> {
           Column(
             children: [
               const Text("ARCHAEOLOGY SCAN V2.4", style: TextStyle(color: Colors.cyanAccent, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
-              Text(_statusText, style: const TextStyle(color: Colors.white70, fontSize: 14)),
+              Text(_statusText ?? S.of(context).scannerFocus, style: const TextStyle(color: Colors.white70, fontSize: 14)),
             ],
           ),
           const Icon(Icons.sensors, color: Colors.redAccent, size: 24),
@@ -184,7 +185,7 @@ class _ScannerViewState extends State<ScannerView> {
           ],
         ),
         const SizedBox(height: 20),
-        const Text("Обойдите объект, делая снимки", style: TextStyle(color: Colors.white54)),
+        Text(S.of(context).scannerInstruction, style: const TextStyle(color: Colors.white54)),
       ],
     );
   }
@@ -201,7 +202,7 @@ class _ScannerViewState extends State<ScannerView> {
           const CircularProgressIndicator(color: Colors.cyanAccent),
           const SizedBox(height: 20),
           Text("${(_processingProgress * 100).toInt()}%", style: const TextStyle(color: Colors.cyanAccent, fontSize: 24, fontWeight: FontWeight.bold)),
-          const Text("ГЕНЕРАЦИЯ ПОЛИГОНОВ", style: TextStyle(color: Colors.white38, fontSize: 10)),
+          Text(S.of(context).scannerPolygon, style: const TextStyle(color: Colors.white38, fontSize: 10)),
         ],
       ),
     );

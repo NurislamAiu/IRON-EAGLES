@@ -5,6 +5,7 @@ import '../domain/expedition_model.dart';
 import '../domain/chat_message_model.dart';
 import '../provider/expedition_provider.dart';
 import '../../auth/provider/auth_provider.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class ExpeditionChatScreen extends StatefulWidget {
   final Expedition expedition;
@@ -47,7 +48,7 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(widget.expedition.name, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            const Text("Командный чат", style: TextStyle(color: Colors.white54, fontSize: 12)),
+            Text(S.of(context).teamChat, style: const TextStyle(color: Colors.white54, fontSize: 12)),
           ],
         ),
       ),
@@ -94,10 +95,10 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Icon(Icons.chat_bubble_outline, size: 80, color: Colors.white10),
-          SizedBox(height: 16),
-          Text("Сообщений пока нет.\nНачните обсуждение!", textAlign: TextAlign.center, style: TextStyle(color: Colors.white24)),
+        children: [
+          const Icon(Icons.chat_bubble_outline, size: 80, color: Colors.white10),
+          const SizedBox(height: 16),
+          Text(S.of(context).noMessages, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white24)),
         ],
       ),
     );
@@ -146,7 +147,7 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
               controller: _messageController,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: "Написать команде...",
+                hintText: S.of(context).writeToTeam,
                 hintStyle: const TextStyle(color: Colors.white24),
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),

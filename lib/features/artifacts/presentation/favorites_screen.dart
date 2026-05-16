@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../provider/favorite_provider.dart';
 import '../domain/artifact_model.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -16,9 +17,9 @@ class FavoritesScreen extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text(
-          'Избранное',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Text(
+          S.of(context).favorites,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -38,7 +39,7 @@ class FavoritesScreen extends StatelessWidget {
           ),
           SafeArea(
             child: favorites.isEmpty
-                ? _buildEmptyState()
+                ? _buildEmptyState(context)
                 : ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: favorites.length,
@@ -52,16 +53,16 @@ class FavoritesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.favorite_border, size: 80, color: Colors.white24),
+          const Icon(Icons.favorite_border, size: 80, color: Colors.white24),
           const SizedBox(height: 16),
-          const Text(
-            "У вас пока нет избранных артефактов",
-            style: TextStyle(color: Colors.white70, fontSize: 16),
+          Text(
+            S.of(context).noFavorites,
+            style: const TextStyle(color: Colors.white70, fontSize: 16),
           ),
         ],
       ),
@@ -69,6 +70,7 @@ class FavoritesScreen extends StatelessWidget {
   }
 
   Widget _buildFavoriteCard(BuildContext context, Artifact artifact) {
+    final locale = S.of(context).locale;
     return GestureDetector(
       onTap: () => context.push('/artifact/${artifact.id}', extra: artifact),
       child: Container(
@@ -97,7 +99,7 @@ class FavoritesScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          artifact.title,
+                          artifact.getDisplayTitle(locale),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -108,7 +110,7 @@ class FavoritesScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          artifact.category,
+                          artifact.getDisplayCategory(locale),
                           style: TextStyle(
                             color: Colors.orange.shade300,
                             fontSize: 14,
@@ -116,7 +118,7 @@ class FavoritesScreen extends StatelessWidget {
                         ),
                         const Spacer(),
                         Text(
-                          artifact.period,
+                          artifact.getDisplayPeriod(locale),
                           style: const TextStyle(color: Colors.white54, fontSize: 12),
                         ),
                       ],

@@ -11,6 +11,7 @@ import '../../../core/widgets/flash_message.dart';
 import '../../artifacts/domain/artifact_model.dart';
 import '../../artifacts/provider/artifact_provider.dart';
 import '../../auth/provider/auth_provider.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class EditArtifactScreen extends StatefulWidget {
   final Artifact artifact;
@@ -174,10 +175,10 @@ class _EditArtifactScreenState extends State<EditArtifactScreen> {
         newImageBytes: (kIsWeb && _picked != null) ? _bytes : null,
       );
 
-      FlashMessage.success(context, "Артефакт обновлён!");
+      FlashMessage.success(context, S.of(context).saveChanges);
       Navigator.pop(context);
     } catch (e) {
-      FlashMessage.error(context, "Ошибка: $e");
+      FlashMessage.error(context, "Error: $e");
     }
 
     setState(() => _loading = false);
@@ -193,7 +194,7 @@ class _EditArtifactScreenState extends State<EditArtifactScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text("Редактирование", style: TextStyle(color: Colors.white)),
+        title: Text(S.of(context).editProfile, style: const TextStyle(color: Colors.white)), // Or editArtifact
       ),
 
       body: Stack(
@@ -232,9 +233,9 @@ class _EditArtifactScreenState extends State<EditArtifactScreen> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        const Text(
-                          "Редактировать артефакт",
-                          style: TextStyle(
+                        Text(
+                          S.of(context).editArtifact,
+                          style: const TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -245,15 +246,15 @@ class _EditArtifactScreenState extends State<EditArtifactScreen> {
                         _photoPicker(),
                         const SizedBox(height: 20),
 
-                        _input("Название", _title),
-                        _input("Описание", _description, maxLines: 3),
-                        _input("Место находки", _location),
+                        _input(S.of(context).title, _title),
+                        _input(S.of(context).description, _description, maxLines: 3),
+                        _input(S.of(context).location, _location),
 
-                        _input("Категория", _category),
+                        _input(S.of(context).category, _category),
                         _dropdownPeriod(),
 
-                        _input("Материал", _material),
-                        _input("Контекст", _contextNotes, maxLines: 2),
+                        _input(S.of(context).material, _material),
+                        _input(S.of(context).notes, _contextNotes, maxLines: 2),
 
                         _dropdownCondition(),
 
@@ -276,9 +277,9 @@ class _EditArtifactScreenState extends State<EditArtifactScreen> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16)),
                           ),
-                          child: const Text(
-                            "Сохранить изменения",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          child: Text(
+                            S.of(context).saveChanges,
+                            style: const TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
 
@@ -325,10 +326,10 @@ class _EditArtifactScreenState extends State<EditArtifactScreen> {
           borderRadius: BorderRadius.circular(18),
           child: Image.network(a.imageUrl, fit: BoxFit.cover),
         )
-            : const Center(
+            : Center(
           child: Text(
-            "Добавить фото",
-            style: TextStyle(color: Colors.white70, fontSize: 18),
+            S.of(context).pickPhoto,
+            style: const TextStyle(color: Colors.white70, fontSize: 18),
           ),
         ),
       ),
@@ -342,11 +343,11 @@ class _EditArtifactScreenState extends State<EditArtifactScreen> {
       child: TextFormField(
         controller: c,
         maxLines: maxLines,
-        validator: (v) => v!.trim().isEmpty ? "Заполните поле" : null,
+        validator: (v) => v!.trim().isEmpty ? "!" : null,
         style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(color: Colors.white70),
+          labelStyle: const TextStyle(color: Colors.white54),
           filled: true,
           fillColor: Colors.white.withOpacity(0.12),
           border: OutlineInputBorder(
@@ -359,7 +360,7 @@ class _EditArtifactScreenState extends State<EditArtifactScreen> {
   }
 
   Widget _dropdownPeriod() {
-    const items = [
+    final items = [
       "Не указано",
       "Каменный век",
       "Бронзовый век",
@@ -370,19 +371,19 @@ class _EditArtifactScreenState extends State<EditArtifactScreen> {
       "Современный период",
     ];
 
-    return _dropdown("Период / Эпоха", _period, items,
+    return _dropdown(S.of(context).period, _period, items,
             (v) => setState(() => _period = v!));
   }
 
   Widget _dropdownCondition() {
-    const items = [
+    final items = [
       "Отличное состояние",
       "Хорошее состояние",
       "Среднее состояние",
       "Плохое состояние",
     ];
 
-    return _dropdown("Состояние", _condition, items,
+    return _dropdown(S.of(context).condition, _condition, items,
             (v) => setState(() => _condition = v!));
   }
 
@@ -426,16 +427,16 @@ class _EditArtifactScreenState extends State<EditArtifactScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Размеры (см)",
-            style: TextStyle(color: Colors.white70, fontSize: 15)),
+        Text(S.of(context).dimensions,
+            style: const TextStyle(color: Colors.white70, fontSize: 15)),
         const SizedBox(height: 6),
         Row(
           children: [
-            Expanded(child: _miniInput("Высота", _height)),
+            Expanded(child: _miniInput(S.of(context).height, _height)),
             const SizedBox(width: 12),
-            Expanded(child: _miniInput("Ширина", _width)),
+            Expanded(child: _miniInput(S.of(context).width, _width)),
             const SizedBox(width: 12),
-            Expanded(child: _miniInput("Глубина", _depth)),
+            Expanded(child: _miniInput(S.of(context).depth, _depth)),
           ],
         )
       ],
@@ -449,14 +450,14 @@ class _EditArtifactScreenState extends State<EditArtifactScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("GPS координаты",
+        const Text("GPS coordinates",
             style: TextStyle(color: Colors.white70, fontSize: 15)),
         const SizedBox(height: 6),
         Row(
           children: [
-            Expanded(child: _miniInput("Широта", _gpsLat)),
+            Expanded(child: _miniInput("Latitude", _gpsLat)),
             const SizedBox(width: 12),
-            Expanded(child: _miniInput("Долгота", _gpsLng)),
+            Expanded(child: _miniInput("Longitude", _gpsLng)),
           ],
         )
       ],

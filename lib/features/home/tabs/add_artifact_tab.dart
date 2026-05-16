@@ -11,6 +11,7 @@ import 'package:ArcheoAI/features/artifacts/domain/artifact_model.dart';
 import 'package:ArcheoAI/features/artifacts/provider/artifact_provider.dart';
 import 'package:ArcheoAI/features/auth/provider/auth_provider.dart'; // <-- ИСПРАВЛЕНИЕ: Добавлен импорт
 import 'package:provider/provider.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class AddArtifactTab extends StatefulWidget {
   const AddArtifactTab({super.key});
@@ -101,11 +102,11 @@ class _AddArtifactTabState extends State<AddArtifactTab> {
 
   Future<void> _saveArtifact() async {
     if (_imageFile == null && _imageBytes == null) {
-      FlashMessage.error(context, "Фотография артефакта обязательна");
+      FlashMessage.error(context, "Artifact photo is required");
       return;
     }
     if (_title.text.isEmpty || _description.text.isEmpty) {
-      FlashMessage.error(context, "Название и описание обязательны");
+      FlashMessage.error(context, "Title and description are required");
       return;
     }
 
@@ -143,10 +144,10 @@ class _AddArtifactTabState extends State<AddArtifactTab> {
         imageFile: _imageFile,
         imageBytes: _imageBytes,
       );
-      FlashMessage.success(context, "Артефакт успешно добавлен!");
+      FlashMessage.success(context, "Artifact added successfully!");
       _resetForm();
     } catch (e) {
-      FlashMessage.error(context, "Ошибка: $e");
+      FlashMessage.error(context, "Error: $e");
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -184,9 +185,9 @@ class _AddArtifactTabState extends State<AddArtifactTab> {
   }
 
   Widget _buildHeader() {
-    return const Text(
-      "Добавить новый\nартефакт",
-      style: TextStyle(
+    return Text(
+      S.of(context).addArtifact,
+      style: const TextStyle(
         color: Colors.white,
         fontSize: 32,
         fontWeight: FontWeight.bold,
@@ -241,11 +242,11 @@ class _AddArtifactTabState extends State<AddArtifactTab> {
         children: [
           _buildImagePicker(),
           const SizedBox(height: 20),
-          GlassTextField(controller: _title, hint: 'Название артефакта*', icon: Icons.title),
+          GlassTextField(controller: _title, hint: '${S.of(context).title}*', icon: Icons.title),
           const SizedBox(height: 16),
           GlassTextField(
             controller: _description,
-            hint: 'Подробное описание*',
+            hint: '${S.of(context).description}*',
             icon: Icons.description_outlined,
             maxLines: 5,
           ),
@@ -254,25 +255,25 @@ class _AddArtifactTabState extends State<AddArtifactTab> {
       // --- ШАГ 2: Детали ---
       Column(
         children: [
-          GlassTextField(controller: _category, hint: 'Категория (напр. Керамика)', icon: Icons.category_outlined),
+          GlassTextField(controller: _category, hint: S.of(context).category, icon: Icons.category_outlined),
           const SizedBox(height: 16),
-          GlassTextField(controller: _period, hint: 'Период / Эпоха', icon: Icons.history_edu_outlined),
+          GlassTextField(controller: _period, hint: S.of(context).period, icon: Icons.history_edu_outlined),
           const SizedBox(height: 16),
-          GlassTextField(controller: _material, hint: 'Материал (напр. Глина)', icon: Icons.handyman_outlined),
+          GlassTextField(controller: _material, hint: S.of(context).material, icon: Icons.handyman_outlined),
           const SizedBox(height: 16),
-          GlassTextField(controller: _condition, hint: 'Состояние (напр. Отличное)', icon: Icons.verified_outlined),
+          GlassTextField(controller: _condition, hint: S.of(context).condition, icon: Icons.verified_outlined),
         ],
       ),
       // --- ШАГ 3: Обнаружение ---
       Column(
         children: [
-          GlassTextField(controller: _foundLocation, hint: 'Место находки', icon: Icons.place_outlined),
+          GlassTextField(controller: _foundLocation, hint: S.of(context).location, icon: Icons.place_outlined),
           const SizedBox(height: 16),
-          GlassTextField(controller: _finderId, hint: 'Кем найден', icon: Icons.person_search_outlined),
+          GlassTextField(controller: _finderId, hint: S.of(context).foundBy, icon: Icons.person_search_outlined),
           const SizedBox(height: 16),
           _buildDatePicker(),
           const SizedBox(height: 16),
-           GlassTextField(controller: _museumSection, hint: 'Раздел музея', icon: Icons.maps_home_work_outlined),
+           GlassTextField(controller: _museumSection, hint: S.of(context).museumSection, icon: Icons.maps_home_work_outlined),
         ],
       ),
       // --- ШАГ 4: Размеры и заметки ---
@@ -280,17 +281,17 @@ class _AddArtifactTabState extends State<AddArtifactTab> {
         children: [
           Row(
             children: [
-              Expanded(child: GlassTextField(controller: _height, hint: 'Высота (см)', icon: Icons.straighten_outlined, keyboardType: TextInputType.number)),
+              Expanded(child: GlassTextField(controller: _height, hint: S.of(context).height, icon: Icons.straighten_outlined, keyboardType: TextInputType.number)),
               const SizedBox(width: 16),
-              Expanded(child: GlassTextField(controller: _width, hint: 'Ширина (см)', icon: Icons.swap_horiz_outlined, keyboardType: TextInputType.number)),
+              Expanded(child: GlassTextField(controller: _width, hint: S.of(context).width, icon: Icons.swap_horiz_outlined, keyboardType: TextInputType.number)),
                const SizedBox(width: 16),
-              Expanded(child: GlassTextField(controller: _depth, hint: 'Глубина (см)', icon: Icons.swap_vert_outlined, keyboardType: TextInputType.number)),
+              Expanded(child: GlassTextField(controller: _depth, hint: S.of(context).depth, icon: Icons.swap_vert_outlined, keyboardType: TextInputType.number)),
             ],
           ),
           const SizedBox(height: 16),
-          GlassTextField(controller: _restorationStatus, hint: 'Статус реставрации', icon: Icons.build_circle_outlined),
+          GlassTextField(controller: _restorationStatus, hint: S.of(context).restorationStatus, icon: Icons.build_circle_outlined),
           const SizedBox(height: 16),
-          GlassTextField(controller: _contextNotes, hint: 'Контекст и доп. заметки', icon: Icons.note_alt_outlined, maxLines: 4),
+          GlassTextField(controller: _contextNotes, hint: S.of(context).notes, icon: Icons.note_alt_outlined, maxLines: 4),
         ],
       )
     ];
@@ -317,10 +318,10 @@ class _AddArtifactTabState extends State<AddArtifactTab> {
                     : Image.file(_imageFile!, fit: BoxFit.cover))
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.add_a_photo_outlined, color: Colors.white70, size: 50),
-                      SizedBox(height: 12),
-                      Text("Нажмите, чтобы\nвыбрать фото*", textAlign: TextAlign.center, style: TextStyle(color: Colors.white70, fontSize: 16)),
+                    children: [
+                      const Icon(Icons.add_a_photo_outlined, color: Colors.white70, size: 50),
+                      const SizedBox(height: 12),
+                      Text(S.of(context).pickPhoto, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white70, fontSize: 16)),
                     ],
                   ),
           ),
@@ -357,7 +358,7 @@ class _AddArtifactTabState extends State<AddArtifactTab> {
                 const Icon(Icons.calendar_month_outlined, color: Colors.white70),
                 const SizedBox(width: 12),
                 Text(
-                  _foundDate == null ? 'Дата находки' : DateFormat('dd.MM.yyyy').format(_foundDate!),
+                  _foundDate == null ? S.of(context).foundDate : DateFormat('dd.MM.yyyy').format(_foundDate!),
                   style: TextStyle(color: _foundDate == null ? Colors.white70 : Colors.white, fontSize: 16),
                 ),
                 const Spacer(),
@@ -378,7 +379,7 @@ class _AddArtifactTabState extends State<AddArtifactTab> {
           ElevatedButton.icon(
             onPressed: () => setState(() => _currentStep--),
             icon: const Icon(Icons.arrow_back),
-            label: const Text("Назад"),
+            label: Text(S.of(context).back),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white.withOpacity(0.2),
               foregroundColor: Colors.white,
@@ -390,7 +391,7 @@ class _AddArtifactTabState extends State<AddArtifactTab> {
         ElevatedButton.icon(
           onPressed: _currentStep == 3 ? _saveArtifact : () => setState(() => _currentStep++),
           icon: Icon(_currentStep == 3 ? Icons.save_alt_outlined : Icons.arrow_forward),
-          label: Text(_currentStep == 3 ? "Сохранить" : "Далее"),
+          label: Text(_currentStep == 3 ? S.of(context).save : S.of(context).next),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.orange.shade400,
             foregroundColor: Colors.white,

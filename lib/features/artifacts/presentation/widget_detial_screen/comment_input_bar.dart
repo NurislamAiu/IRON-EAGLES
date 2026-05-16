@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:ArcheoAI/core/localization/app_localizations.dart';
+
 class CommentInputBar extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
@@ -37,8 +39,8 @@ class CommentInputBar extends StatelessWidget {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: enabled
-                        ? "Написать комментарий..."
-                        : "Войдите, чтобы писать",
+                        ? S.of(context).writeCommentHint
+                        : S.of(context).loginToWrite,
                     hintStyle: TextStyle(
                       color: Colors.white.withOpacity(0.45),
                     ),

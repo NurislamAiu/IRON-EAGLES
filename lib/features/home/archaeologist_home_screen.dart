@@ -5,7 +5,8 @@ import 'package:ArcheoAI/features/home/tabs/expedition_tab.dart';
 import 'package:ArcheoAI/features/home/tabs/moderator_tab.dart';
 import 'package:provider/provider.dart';
 
-import '../auth/provider/auth_provider.dart';
+import 'package:ArcheoAI/features/auth/provider/auth_provider.dart';
+import '../../core/localization/app_localizations.dart';
 
 // Tabs
 import 'tabs/home_tab.dart';
@@ -47,9 +48,9 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
       ];
 
       items = [
-        _NavItemData(Icons.home_filled, "Главная"),
-        _NavItemData(Icons.groups, "Клубы"),
-        _NavItemData(Icons.person, "Профиль"),
+        _NavItemData(Icons.home_filled, S.of(context).home),
+        _NavItemData(Icons.groups, S.of(context).clubs),
+        _NavItemData(Icons.person, S.of(context).profile),
       ];
     } else if (isAdmin) {
       // ----------- АДМИН -----------
@@ -62,11 +63,11 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
       ];
 
       items = [
-        _NavItemData(Icons.home_filled, "Главная"),
-        _NavItemData(Icons.groups, "Клубы"),
-        _NavItemData(Icons.admin_panel_settings, "Админ"),
-        _NavItemData(Icons.explore, "Проекты"),
-        _NavItemData(Icons.person, "Профиль"),
+        _NavItemData(Icons.home_filled, S.of(context).home),
+        _NavItemData(Icons.groups, S.of(context).clubs),
+        _NavItemData(Icons.admin_panel_settings, S.of(context).admin),
+        _NavItemData(Icons.explore, S.of(context).projects),
+        _NavItemData(Icons.person, S.of(context).profile),
       ];
     } else {
       // ----------- ОБЫЧНЫЙ ПОЛЬЗОВАТЕЛЬ -----------
@@ -79,11 +80,11 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
       ];
 
       items = [
-        _NavItemData(Icons.home_filled, "Главная"),
-        _NavItemData(Icons.groups, "Клубы"),
-        _NavItemData(Icons.add_circle, "Создать"),
-        _NavItemData(Icons.explore, "Проекты"),
-        _NavItemData(Icons.person, "Профиль"),
+        _NavItemData(Icons.home_filled, S.of(context).home),
+        _NavItemData(Icons.groups, S.of(context).clubs),
+        _NavItemData(Icons.add_circle, S.of(context).create),
+        _NavItemData(Icons.explore, S.of(context).projects),
+        _NavItemData(Icons.person, S.of(context).profile),
       ];
     }
 

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../provider/artifact_provider.dart';
 import '../domain/artifact_model.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class ArtifactListScreen extends StatefulWidget {
   const ArtifactListScreen({super.key});
@@ -24,11 +25,15 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<ArtifactProvider>();
     final list = provider.artifacts;
+    final locale = S.of(context).locale;
     final filtered = _search.text.isEmpty
         ? list
         : list
-        .where((a) =>
-        a.title.toLowerCase().contains(_search.text.toLowerCase()))
+        .where((a) {
+          final title = a.getDisplayTitle(locale).toLowerCase();
+          final query = _search.text.toLowerCase();
+          return title.contains(query);
+        })
         .toList();
 
     return Scaffold(
@@ -43,9 +48,9 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  const Text(
-                    'Артефакты музея',
-                    style: TextStyle(
+                  Text(
+                    S.of(context).museumArtifacts,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -59,10 +64,10 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
                     child: provider.isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : filtered.isEmpty
-                        ? const Center(
+                        ? Center(
                       child: Text(
-                        'Ничего не найдено',
-                        style: TextStyle(color: Colors.white70),
+                        S.of(context).noArtifacts,
+                        style: const TextStyle(color: Colors.white70),
                       ),
                     )
                         : ListView.builder(
@@ -98,6 +103,7 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
   }
 
   Widget _artifactCard(Artifact artifact) {
+    final locale = S.of(context).locale;
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -135,7 +141,7 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    artifact.title,
+                    artifact.getDisplayTitle(locale),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -144,7 +150,7 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    artifact.foundLocation,
+                    artifact.getDisplayLocation(locale),
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 14,
@@ -152,7 +158,7 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Добавил: ${artifact.addedBy}',
+                    '${S.of(context).addedBy}: ${artifact.addedBy}',
                     style: const TextStyle(
                       color: Colors.white54,
                       fontSize: 12,
@@ -173,7 +179,7 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
       onChanged: (_) => setState(() {}),
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
-        hintText: 'Поиск по названию...',
+        hintText: S.of(context).searchByTitle,
         hintStyle: const TextStyle(color: Colors.white54),
         filled: true,
         fillColor: Colors.white.withOpacity(0.1),

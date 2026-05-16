@@ -3,6 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
 
+import 'package:ArcheoAI/core/localization/app_localizations.dart';
+
 class ArtifactLocationMap extends StatefulWidget {
   final String location;
 
@@ -41,7 +43,7 @@ class _ArtifactLocationMapState extends State<ArtifactLocationMap> with SingleTi
       }
     } catch (e) {
       // Handle exceptions from geocoding (e.g., network issues, invalid address)
-      print("Geocoding error: $e");
+      debugPrint("Geocoding error: $e");
     }
     return null;
   }
@@ -55,7 +57,7 @@ class _ArtifactLocationMapState extends State<ArtifactLocationMap> with SingleTi
           return const Center(child: CircularProgressIndicator(color: Colors.white));
         }
         if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
-          return _buildErrorState();
+          return _buildErrorState(context);
         }
 
         final coordinates = snapshot.data!;
@@ -114,7 +116,7 @@ class _ArtifactLocationMapState extends State<ArtifactLocationMap> with SingleTi
     );
   }
 
-  Widget _buildErrorState() {
+  Widget _buildErrorState(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -124,7 +126,7 @@ class _ArtifactLocationMapState extends State<ArtifactLocationMap> with SingleTi
             const Icon(Icons.map_outlined, color: Colors.white38, size: 60),
             const SizedBox(height: 16),
             Text(
-              "Не удалось определить местоположение",
+              S.of(context).mapError,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16),
             ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ArcheoAI/core/widgets/flash_message.dart';
 import '../../artifacts/domain/artifact_model.dart';
 import '../../artifacts/presentation/artifact_detail_screen.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class ModeratorTab extends StatelessWidget {
   const ModeratorTab({super.key});
@@ -16,10 +17,10 @@ class ModeratorTab extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 20),
-          const TabBar(
+          TabBar(
             tabs: [
-              Tab(text: "Публикации"),
-              Tab(text: "Редактирование"),
+              Tab(text: S.of(context).publications),
+              Tab(text: S.of(context).editing),
             ],
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white54,
@@ -67,7 +68,7 @@ class _PublishRequestsTab extends StatelessWidget {
         print("📥 PUBLISH REQUEST COUNT: ${docs.length}");
 
         if (docs.isEmpty) {
-          return _empty("Нет заявок на публикацию");
+          return _empty(S.of(context).noPublishRequests);
         }
 
         return ListView(
@@ -93,8 +94,8 @@ class _PublishRequestsTab extends StatelessWidget {
 
             return _moderationCard(
               context: context,
-              title: artifact.title,
-              subtitle: artifact.category,
+              title: artifact.getDisplayTitle(S.of(context).locale),
+              subtitle: artifact.getDisplayCategory(S.of(context).locale),
               imageUrl: artifact.imageUrl,
               onAccept: () => _publish(context, d.id, artifact),
               onReject: () => _reject(context, d.id),
@@ -127,7 +128,7 @@ class _PublishRequestsTab extends StatelessWidget {
       "status": "approved",
     });
 
-    FlashMessage.success(context, "Артефакт опубликован!");
+    FlashMessage.success(context, S.of(context).artifactPublished);
   }
 
   Future<void> _reject(BuildContext context, String docId) async {
@@ -138,7 +139,7 @@ class _PublishRequestsTab extends StatelessWidget {
         .doc(docId)
         .update({"status": "rejected"});
 
-    FlashMessage.error(context, "Отклонено");
+    FlashMessage.error(context, S.of(context).rejected);
   }
 }
 
@@ -169,7 +170,7 @@ class _EditRequestsTab extends StatelessWidget {
         print("✏ EDIT REQUEST COUNT: ${docs.length}");
 
         if (docs.isEmpty) {
-          return _empty("Нет запросов на редактирование");
+          return _empty(S.of(context).noEditRequests);
         }
 
         return ListView(
@@ -193,7 +194,7 @@ class _EditRequestsTab extends StatelessWidget {
 
                 if (!snap.exists) {
                   print("❌ Artifact not found in artifacts/$artifactId");
-                  FlashMessage.error(context, "Артефакт не найден");
+                  FlashMessage.error(context, S.of(context).artifactNotFound);
                   return;
                 }
 
@@ -210,19 +211,19 @@ class _EditRequestsTab extends StatelessWidget {
                   );
                 } catch (e) {
                   print("❌ PARSE ERROR: $e");
-                  FlashMessage.error(context, "Ошибка данных артефакта");
+                  FlashMessage.error(context, S.of(context).parseError);
                 }
               },
               child: Card(
                 color: Colors.white.withOpacity(0.12),
                 margin: const EdgeInsets.only(bottom: 16),
                 child: ListTile(
-                  title: const Text(
-                    "Запрос на редактирование",
-                    style: TextStyle(color: Colors.white),
+                  title: Text(
+                    S.of(context).editRequest,
+                    style: const TextStyle(color: Colors.white),
                   ),
                   subtitle: Text(
-                    "Артефакт ID: $artifactId\nОт: $userEmail\nСтатус: $status",
+                    "Artifact ID: $artifactId\nFrom: $userEmail\nStatus: $status",
                     style: const TextStyle(color: Colors.white70),
                   ),
                   trailing: Row(
@@ -258,7 +259,7 @@ class _EditRequestsTab extends StatelessWidget {
         .doc(id)
         .update({"status": "approved"});
 
-    FlashMessage.success(context, "Редактирование разрешено");
+    FlashMessage.success(context, S.of(context).editAllowed);
   }
 
   Future<void> _rejectEdit(String id, BuildContext context) async {
@@ -269,7 +270,7 @@ class _EditRequestsTab extends StatelessWidget {
         .doc(id)
         .update({"status": "rejected"});
 
-    FlashMessage.error(context, "Отклонено");
+    FlashMessage.error(context, S.of(context).rejected);
   }
 }
 

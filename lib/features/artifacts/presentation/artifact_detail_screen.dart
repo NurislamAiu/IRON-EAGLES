@@ -18,6 +18,7 @@ import '../domain/artifact_model.dart';
 import '../provider/achievement_provider.dart';
 import '../provider/artifact_provider.dart';
 import '../provider/favorite_provider.dart';
+import '../../../core/localization/app_localizations.dart';
 import 'widget_detial_screen/comment_input_bar.dart';
 import 'widget_detial_screen/comments_section.dart';
 
@@ -37,6 +38,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
 
   bool get _showMapTab => widget.artifact.foundLocation.isNotEmpty;
   bool get _show3dTab => widget.artifact.modelUrl.isNotEmpty; // 👈 Проверяем наличие модели
+  bool get _showErasTab => widget.artifact.ancientImageUrl != null && widget.artifact.ancientImageUrl!.isNotEmpty;
 
   @override
   void initState() {
@@ -44,6 +46,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
     int tabCount = 2; // Описание, Детали
     if (_showMapTab) tabCount++;
     if (_show3dTab) tabCount++;
+    if (_showErasTab) tabCount++;
     tabCount++; // Комментарии
 
     _tabController = TabController(length: tabCount, vsync: this);
@@ -62,11 +65,11 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
   }
 
   String _formatDate(dynamic ts) {
-    if (ts == null) return "Неизвестно";
+    if (ts == null) return S.of(context).unknown;
     DateTime? date;
     if (ts is Timestamp) date = ts.toDate();
     if (ts is DateTime) date = ts;
-    return date != null ? DateFormat("dd.MM.yyyy", 'ru').format(date) : "Неизвестно";
+    return date != null ? DateFormat("dd.MM.yyyy", S.of(context).locale.languageCode).format(date) : S.of(context).unknown;
   }
 
   @override
@@ -235,13 +238,14 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
   }
 
   Widget _buildHeaderContent() {
+    final locale = S.of(context).locale;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.artifact.title,
+            widget.artifact.getDisplayTitle(locale),
             style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
@@ -249,7 +253,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
             spacing: 8.0,
             runSpacing: 8.0,
             children: [
-              if (widget.artifact.category.isNotEmpty) _buildInfoChip(Icons.category_outlined, widget.artifact.category),
+              if (widget.artifact.category.isNotEmpty) _buildInfoChip(Icons.category_outlined, widget.artifact.getDisplayCategory(locale)),
             ],
           ),
           const SizedBox(height: 16),
@@ -260,11 +264,12 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
 
   Widget _buildTabBar() {
     final tabs = [
-      const Tab(text: 'Описание'),
-      const Tab(text: 'Детали'),
-      if (_showMapTab) const Tab(text: 'Карта'),
+      Tab(text: S.of(context).history),
+      Tab(text: S.of(context).details),
+      if (_showMapTab) Tab(text: S.of(context).map),
       if (_show3dTab) const Tab(text: '3D'),
-      const Tab(text: 'Комментарии'),
+      if (_showErasTab) Tab(text: S.of(context).eras),
+      Tab(text: S.of(context).comments),
     ];
 
     return TabBar(
@@ -287,6 +292,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
       _buildDetailsTab(scrollController),
       if (_showMapTab) _buildMapTab(),
       if (_show3dTab) _build3dTab(),
+      if (_showErasTab) _buildErasTab(scrollController),
       _buildCommentsTab(scrollController),
     ];
     return Expanded(
@@ -302,7 +308,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
       controller: sc,
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
       child: Text(
-        widget.artifact.description,
+        widget.artifact.getDisplayDescription(S.of(context).locale),
         style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16, height: 1.6),
       ),
     );
@@ -310,28 +316,29 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
 
   Widget _buildDetailsTab(ScrollController sc) {
     final a = widget.artifact;
+    final locale = S.of(context).locale;
     return SingleChildScrollView(
       controller: sc,
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle("Основная информация"),
-          if (a.museumSection.isNotEmpty) _buildInfoRow(Icons.maps_home_work, "Раздел музея", a.museumSection),
-          if (a.condition.isNotEmpty) _buildInfoRow(Icons.verified_outlined, "Состояние", a.condition),
-          if (a.material.isNotEmpty) _buildInfoRow(Icons.handyman_outlined, "Материал", a.material),
+          _buildSectionTitle(S.of(context).mainInfo),
+          if (a.museumSection.isNotEmpty) _buildInfoRow(Icons.maps_home_work, S.of(context).museumSection, a.getDisplayMuseumSection(locale)),
+          if (a.condition.isNotEmpty) _buildInfoRow(Icons.verified_outlined, S.of(context).condition, a.getDisplayCondition(locale)),
+          if (a.material.isNotEmpty) _buildInfoRow(Icons.handyman_outlined, S.of(context).material, a.getDisplayMaterial(locale)),
           
-          _buildSectionTitle("Обнаружение"),
+          _buildSectionTitle(S.of(context).discovery),
           _buildExpeditionRow(),
-          if (a.finderId.isNotEmpty) _buildInfoRow(Icons.person_search_outlined, "Нашёл", a.finderId),
-          if (a.foundDate != null) _buildInfoRow(Icons.calendar_month_outlined, "Дата находки", _formatDate(a.foundDate)),
-          if (a.foundLocation.isNotEmpty) _buildInfoRow(Icons.place_outlined, "Место находки", a.foundLocation),
+          if (a.finderId.isNotEmpty) _buildInfoRow(Icons.person_search_outlined, S.of(context).foundBy, a.finderId),
+          if (a.foundDate != null) _buildInfoRow(Icons.calendar_month_outlined, S.of(context).foundDate, _formatDate(a.foundDate)),
+          if (a.foundLocation.isNotEmpty) _buildInfoRow(Icons.place_outlined, S.of(context).location, a.getDisplayLocation(locale)),
 
           if (a.height != null || a.width != null || a.depth != null) ...[
-            _buildSectionTitle("Размеры"),
-            if (a.height != null) _buildInfoRow(Icons.straighten_outlined, "Высота", "${a.height} см"),
-            if (a.width != null) _buildInfoRow(Icons.swap_horiz_outlined, "Ширина", "${a.width} см"),
-            if (a.depth != null) _buildInfoRow(Icons.swap_vert_outlined, "Глубина", "${a.depth} см"),
+            _buildSectionTitle(S.of(context).dimensions),
+            if (a.height != null) _buildInfoRow(Icons.straighten_outlined, S.of(context).height, "${a.height} cm"),
+            if (a.width != null) _buildInfoRow(Icons.swap_horiz_outlined, S.of(context).width, "${a.width} cm"),
+            if (a.depth != null) _buildInfoRow(Icons.swap_vert_outlined, S.of(context).depth, "${a.depth} cm"),
           ],
         ],
       ),
@@ -344,12 +351,12 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
 
     final expeditions = context.read<ExpeditionProvider>().myExpeditions;
     final expedition = expeditions.firstWhere((e) => e.id == expId, orElse: () => Expedition(
-      id: '', name: 'Неизвестная экспедиция', description: '', leaderEmail: '', memberEmails: [], startDate: DateTime.now()
+      id: '', name: 'Unknown expedition', description: '', leaderEmail: '', memberEmails: [], startDate: DateTime.now()
     ));
 
     return Column(
       children: [
-        _buildInfoRow(Icons.verified_outlined, "Кредит (Экспедиция)", expedition.name),
+        _buildInfoRow(Icons.verified_outlined, S.of(context).credit, expedition.name),
         const SizedBox(height: 4),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -358,9 +365,9 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.orangeAccent.withOpacity(0.3)),
           ),
-          child: const Text(
-            "Официальная находка экспедиции",
-            style: TextStyle(color: Colors.orangeAccent, fontSize: 11, fontWeight: FontWeight.bold),
+          child: Text(
+            S.of(context).officialExpedition,
+            style: const TextStyle(color: Colors.orangeAccent, fontSize: 11, fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(height: 12),
@@ -393,7 +400,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
     if (widget.artifact.modelUrl.isEmpty) {
       return Center(
         child: Text(
-          "3D модель пока не доступна",
+          S.of(context).noModel,
           style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16),
         ),
       );
@@ -411,6 +418,17 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
           // Simple trigger when 3D model is loaded
           context.read<AchievementProvider>().updateProgress(context, '3d_master');
         },
+      ),
+    );
+  }
+
+  Widget _buildErasTab(ScrollController sc) {
+    return SingleChildScrollView(
+      controller: sc,
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+      child: TimeTravelerView(
+        ancientUrl: widget.artifact.ancientImageUrl!,
+        modernUrl: widget.artifact.imageUrl,
       ),
     );
   }
@@ -480,12 +498,12 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
   Future<void> _addComment() async {
     final user = context.read<AuthProviders>().user;
     if (user == null) {
-      FlashMessage.info(context, "Чтобы оставить комментарий, войдите в аккаунт");
+      FlashMessage.info(context, S.of(context).loginToComment);
       return;
     }
     final text = _commentController.text.trim();
     if (text.isEmpty) return;
-    await _commentService.addComment(widget.artifact.id, user.email ?? "Неизвестный", text);
+    await _commentService.addComment(widget.artifact.id, user.email ?? S.of(context).unknown, text);
     
     // Trigger Achievement
     if (mounted) {
@@ -511,11 +529,11 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xff2c1e19),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text("Удалить артефакт?", style: TextStyle(color: Colors.white)),
-        content: const Text("Это действие нельзя отменить.", style: TextStyle(color: Colors.white70)),
+        title: Text(S.of(context).deleteArtifact, style: const TextStyle(color: Colors.white)),
+        content: Text(S.of(context).cannotUndo, style: const TextStyle(color: Colors.white70)),
         actions: [
           TextButton(
-            child: const Text("Отмена", style: TextStyle(color: Colors.white70)),
+            child: Text(S.of(context).cancel, style: const TextStyle(color: Colors.white70)),
             onPressed: () => Navigator.pop(context),
           ),
           ElevatedButton(
@@ -523,7 +541,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
               backgroundColor: Colors.redAccent,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            child: const Text("Удалить", style: TextStyle(color: Colors.white)),
+            child: Text(S.of(context).deleteAction, style: const TextStyle(color: Colors.white)),
             onPressed: () async {
               Navigator.pop(context);
               await _deleteArtifact(context);
@@ -538,11 +556,11 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
     try {
       await context.read<ArtifactProvider>().deleteArtifact(widget.artifact.id);
       if (mounted) {
-        FlashMessage.success(context, "Артефакт удалён");
+        FlashMessage.success(context, S.of(context).artifactDeleted);
         Navigator.pop(context);
       }
     } catch (e) {
-      if (mounted) FlashMessage.error(context, "Ошибка удаления: $e");
+      if (mounted) FlashMessage.error(context, "${S.of(context).errorOccurred}: $e");
     }
   }
 }
