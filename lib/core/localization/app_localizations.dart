@@ -197,7 +197,12 @@ class S {
       'scannerPolygon': 'POLYGON GENERATION',
       'addName': 'Add name',
       'saved': 'Saved',
-      'nameLabel': 'Name'
+      'nameLabel': 'Name',
+      'artifactPath': 'Artifact Journey',
+      'origin': 'Origin',
+      'find': 'Find',
+      'isTyping': 'is typing',
+      'areTyping': 'people are typing'
     },
     'ru': {
       'appTitle': 'ArcheoAI',
@@ -387,7 +392,12 @@ class S {
       'scannerPolygon': 'ГЕНЕРАЦИЯ ПОЛИГОНОВ',
       'addName': 'Добавьте имя',
       'saved': 'Сохранено',
-      'nameLabel': 'Имя'
+      'nameLabel': 'Имя',
+      'artifactPath': 'Путь артефакта',
+      'origin': 'Исток',
+      'find': 'Находка',
+      'isTyping': 'печатает...',
+      'areTyping': 'человека печатают...'
     },
   };
 
