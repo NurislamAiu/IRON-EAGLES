@@ -186,10 +186,5 @@
   "scannerPolygon": "ГЕНЕРАЦИЯ ПОЛИГОНОВ",
   "addName": "Добавьте имя",
   "saved": "Сохранено",
-  "nameLabel": "Имя",
-  "artifactPath": "Путь артефакта",
-  "origin": "Исток",
-  "find": "Находка",
-  "isTyping": "печает...",
-  "areTyping": "человека печатают..."
+  "nameLabel": "Имя"
 }

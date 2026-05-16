@@ -6,9 +6,11 @@ import '../data/expedition_service.dart';
 class ExpeditionProvider extends ChangeNotifier {
   final ExpeditionService _service = ExpeditionService();
   List<Expedition> _myExpeditions = [];
+  List<ChatMessage> _allMessages = []; // For now keeping chat in local/memory as requested only server for expeditions
   bool _isLoading = true;
 
   List<Expedition> get myExpeditions => _myExpeditions;
+  List<ChatMessage> get allMessages => _allMessages;
   bool get isLoading => _isLoading;
 
   ExpeditionProvider() {
@@ -117,12 +119,7 @@ class ExpeditionProvider extends ChangeNotifier {
     }
   }
 
-  // --- CHAT LOGIC (Firebase based) ---
-
-  Stream<List<ChatMessage>> streamMessages(String expeditionId) {
-    return _service.streamMessages(expeditionId);
-  }
-
+  // --- CHAT LOGIC (Temporary memory based) ---
   Future<void> sendMessage({
     required String expeditionId,
     required String text,
@@ -135,25 +132,11 @@ class ExpeditionProvider extends ChangeNotifier {
       text: text,
       timestamp: DateTime.now(),
     );
-    try {
-      await _service.sendMessage(newMessage);
-    } catch (e) {
-      debugPrint("Error sending message: $e");
-      rethrow;
-    }
+    _allMessages.add(newMessage);
+    notifyListeners();
   }
 
-  // --- TYPING STATUS ---
-
-  Future<void> setTypingStatus(String expeditionId, String email, bool isTyping) async {
-    try {
-      await _service.setTypingStatus(expeditionId, email, isTyping);
-    } catch (e) {
-      debugPrint("Error setting typing status: $e");
-    }
-  }
-
-  Stream<List<String>> streamTypingUsers(String expeditionId) {
-    return _service.streamTypingUsers(expeditionId);
+  List<ChatMessage> getMessagesForExpedition(String expId) {
+    return _allMessages.where((m) => m.expeditionId == expId).toList();
   }
 }

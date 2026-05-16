@@ -186,10 +186,5 @@
   "scannerPolygon": "POLYGON GENERATION",
   "addName": "Add name",
   "saved": "Saved",
-  "nameLabel": "Name",
-  "artifactPath": "Artifact Journey",
-  "origin": "Origin",
-  "find": "Find",
-  "isTyping": "is typing",
-  "areTyping": "people are typing"
+  "nameLabel": "Name"
 }
