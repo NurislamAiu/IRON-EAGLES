@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../auth/provider/auth_provider.dart';
 import '../provider/community_provider.dart';
 import '../domain/community_model.dart';
@@ -190,12 +191,18 @@ class _CommunitiesTabState extends State<CommunitiesTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (community.imageUrl.isNotEmpty)
-                Image.network(
-                  community.imageUrl,
+                CachedNetworkImage(
+                  imageUrl: community.imageUrl,
                   height: 110,
                   width: 100,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
+                  placeholder: (context, url) => Container(
+                    height: 110,
+                    width: 100,
+                    color: Colors.white.withOpacity(0.05),
+                    child: const Center(child: CircularProgressIndicator(strokeWidth: 2, color: Colors.orangeAccent)),
+                  ),
+                  errorWidget: (context, url, error) => Container(
                     height: 110,
                     width: 100,
                     color: Colors.white.withOpacity(0.05),
