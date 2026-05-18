@@ -12,6 +12,7 @@ import 'package:ArcheoAI/features/artifacts/presentation/artifact_list_screen.da
 import 'package:ArcheoAI/features/auth/presentation/login_screen.dart';
 import 'package:ArcheoAI/features/auth/presentation/register_screen.dart';
 import 'package:ArcheoAI/features/auth/presentation/role_selection_screen.dart';
+import 'package:ArcheoAI/features/auth/presentation/legal_screen.dart';
 import 'package:ArcheoAI/features/auth/provider/auth_provider.dart';
 import 'package:ArcheoAI/features/home/archaeologist_home_screen.dart';
 import 'package:ArcheoAI/features/home/tabs/add_artifact_tab.dart';
@@ -41,6 +42,7 @@ class AppRouter {
           '/home',
           '/artifact',
           '/profile',
+          '/legal',
         ];
 
         bool isAllowed = allowed.any((p) => goingTo.startsWith(p));
@@ -56,7 +58,7 @@ class AppRouter {
       if (role == 'archaeologist') {
         // Если не авторизован → пускаем только login/register
         if (!logged) {
-          if (goingTo.startsWith('/login') || goingTo == '/register' || goingTo == '/') {
+          if (goingTo.startsWith('/login') || goingTo == '/register' || goingTo.startsWith('/legal') || goingTo == '/') {
             return null;
           }
           return '/login';
@@ -129,6 +131,15 @@ class AppRouter {
       GoRoute(
         path: '/favorites',
         pageBuilder: (_, __) => _buildFadeTransition(const FavoritesScreen()),
+      ),
+
+      GoRoute(
+        path: '/legal',
+        pageBuilder: (context, state) {
+          final title = state.uri.queryParameters['title'] ?? "";
+          final content = state.uri.queryParameters['content'] ?? "";
+          return _buildFadeTransition(LegalScreen(title: title, content: content));
+        },
       ),
 
       GoRoute(

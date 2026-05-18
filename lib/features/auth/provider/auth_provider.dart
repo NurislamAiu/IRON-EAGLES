@@ -79,4 +79,16 @@ class AuthProviders extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  /// 🗑️ Delete account
+  Future<void> deleteAccount() async {
+    await _authService.deleteUserAccount();
+    _user = null;
+    _role = null;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('role');
+
+    notifyListeners();
+  }
 }

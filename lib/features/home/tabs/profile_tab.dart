@@ -147,7 +147,7 @@ class _ProfileTabState extends State<ProfileTab>
 
                   if (hasName)
                     Text(
-                      name!,
+                      name,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.white,
@@ -306,12 +306,67 @@ class _ProfileTabState extends State<ProfileTab>
                     color: Colors.brown.shade700,
                   ),
 
+                  const SizedBox(height: 12),
+
+                  _glassButton(
+                    icon: Icons.delete_forever,
+                    text: S.of(context).deleteAccount,
+                    onTap: () => _confirmDeleteAccount(context),
+                    color: Colors.red.shade900.withOpacity(0.6),
+                  ),
+
                   const SizedBox(height: 80),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _confirmDeleteAccount(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xff2c1e19),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(S.of(context).deleteAccount, style: const TextStyle(color: Colors.white)),
+        content: Text(
+          S.of(context).deleteAccountConfirm,
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(S.of(context).cancel, style: const TextStyle(color: Colors.white54)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              try {
+                await context.read<AuthProviders>().deleteAccount();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(S.of(context).deleteAccountSuccess)),
+                  );
+                  context.push('/');
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("${S.of(context).deleteAccountError}: $e")),
+                  );
+                }
+              }
+            },
+            child: Text(S.of(context).deleteAction, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+        ],
       ),
     );
   }
