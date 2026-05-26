@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart'; // <-- 1. ИМПОРТ
 import 'package:ArcheoAI/features/artifacts/provider/favorite_provider.dart';
 import 'package:provider/provider.dart';
@@ -33,26 +34,32 @@ void main() async {
   runApp(const MuseumApp());
 }
 
-class MuseumApp extends StatelessWidget {
+class MuseumApp extends StatefulWidget {
   const MuseumApp({super.key});
+
+  @override
+  State<MuseumApp> createState() => _MuseumAppState();
+}
+
+class _MuseumAppState extends State<MuseumApp> {
+  late final AuthProviders _authProvider;
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    _authProvider = AuthProviders();
+    _router = AppRouter.createRouter(_authProvider);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // 🧍 Авторизация (должен быть первым)
-        ChangeNotifierProvider(create: (_) => AuthProviders()),
+        ChangeNotifierProvider.value(value: _authProvider),
         ChangeNotifierProvider(create: (_) => FavoriteProvider()),
-        // Add this to your MultiProvider list:
         ChangeNotifierProvider(create: (_) => ExpeditionProvider()),
-
-        // 🏺 Артефакты (зависит от AuthProviders)
-        ChangeNotifierProxyProvider<AuthProviders, ArtifactProvider>(
-          create: (context) => ArtifactProvider(context.read<AuthProviders>()),
-          update: (context, auth, previous) => ArtifactProvider(auth),
-        ),
-
-        // 🏆 Достижения
+        ChangeNotifierProvider(create: (_) => ArtifactProvider()),
         ChangeNotifierProvider(create: (_) => AchievementProvider()),
         ChangeNotifierProvider(create: (_) => BlogProvider()),
         ChangeNotifierProvider(create: (_) => CommunityProvider()),
@@ -78,7 +85,7 @@ class MuseumApp extends StatelessWidget {
               colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6B4F3A)),
               useMaterial3: true,
             ),
-            routerConfig: AppRouter.router,
+            routerConfig: _router,
           );
         },
       ),

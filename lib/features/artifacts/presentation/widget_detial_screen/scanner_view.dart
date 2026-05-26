@@ -27,10 +27,17 @@ class _ScannerViewState extends State<ScannerView> {
   }
 
   Future<void> _initCamera() async {
-    _cameras = await availableCameras();
-    if (_cameras != null && _cameras!.isNotEmpty) {
-      _controller = CameraController(_cameras![0], ResolutionPreset.high);
-      await _controller!.initialize();
+    try {
+      _cameras = await availableCameras();
+      if (_cameras != null && _cameras!.isNotEmpty) {
+        _controller = CameraController(_cameras![0], ResolutionPreset.high);
+        await _controller!.initialize();
+      } else {
+        debugPrint("No cameras found - likely a simulator");
+      }
+    } catch (e) {
+      debugPrint("Camera Error: $e");
+    } finally {
       if (mounted) setState(() {});
     }
   }
@@ -73,20 +80,32 @@ class _ScannerViewState extends State<ScannerView> {
 
   @override
   Widget build(BuildContext context) {
-    if (_controller == null || !_controller!.value.isInitialized) {
-      return const Scaffold(backgroundColor: Colors.black, body: Center(child: CircularProgressIndicator()));
+    // If we have cameras but they are not initialized yet
+    if (_cameras != null && _cameras!.isNotEmpty && (_controller == null || !_controller!.value.isInitialized)) {
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: CircularProgressIndicator(color: Colors.cyanAccent)),
+      );
     }
+
+    // If NO cameras are found (Simulator)
+    final bool isSimulator = _cameras == null || _cameras!.isEmpty;
 
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // 1. Camera Preview
-          CameraPreview(_controller!),
+          // 1. Camera Preview or Mock for Simulator
+          if (!isSimulator && _controller != null && _controller!.value.isInitialized)
+            CameraPreview(_controller!)
+          else
+            _buildSimulatorMock(),
 
           // 2. HUD Overlay (Grid)
           _buildHUDOverlay(),
+
+          // 3. Technical UI
 
           // 3. Technical UI
           SafeArea(
@@ -205,6 +224,29 @@ class _ScannerViewState extends State<ScannerView> {
           Text(S.of(context).scannerPolygon, style: const TextStyle(color: Colors.white38, fontSize: 10)),
         ],
       ),
+    );
+  }
+
+  Widget _buildSimulatorMock() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Image.asset("assets/images/museum_bg.jpg", fit: BoxFit.cover),
+        Container(color: Colors.black54),
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.videocam_off_outlined, color: Colors.white24, size: 80),
+              const SizedBox(height: 16),
+              Text(
+                _cameras == null ? "Initializing Sensors..." : "Camera unavailable (Simulator Mode)",
+                style: const TextStyle(color: Colors.white38),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

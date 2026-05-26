@@ -14,7 +14,7 @@ class ArtifactService {
   final _storage = FirebaseStorage.instance;
 
   // =====================================================================
-  // 🟢 1. ADD ARTIFACT (уже есть)
+  // 🟢 1. ADD ARTIFACT
   // =====================================================================
   Future<void> addArtifact({
     required Artifact artifact,

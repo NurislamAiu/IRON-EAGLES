@@ -217,6 +217,11 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () => _showSafetyMenu(context, blog.authorEmail),
+                          child: Icon(Icons.more_vert, color: Colors.white.withOpacity(0.3), size: 20),
+                        ),
                         if (blog.isEdited)
                           const Padding(
                             padding: EdgeInsets.only(left: 6.0),
@@ -287,6 +292,45 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  void _showSafetyMenu(BuildContext context, String author) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xff1a1412),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2))),
+            ListTile(
+              leading: const Icon(Icons.flag_outlined, color: Colors.orangeAccent),
+              title: const Text("Пожаловаться на запись", style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Спасибо! Запись будет проверена в течение 24 часов.")),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.block_outlined, color: Colors.redAccent),
+              title: Text("Заблокировать $author", style: const TextStyle(color: Colors.white)),
+              subtitle: const Text("Вы больше не будете видеть записи этого автора", style: TextStyle(color: Colors.white38, fontSize: 12)),
+              onTap: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Автор $author заблокирован.")),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }
