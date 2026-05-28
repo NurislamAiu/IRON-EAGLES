@@ -115,16 +115,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             ),
           ),
           
-          // Кнопка "Назад"
-          Positioned(
-            top: 50,
-            left: 20,
-            child: IconButton(
-              onPressed: () => context.go('/'),
-              icon: Icon(Icons.arrow_back_ios, color: Colors.white.withOpacity(0.8)),
-            ),
-          ),
-
           // Анимированная форма входа
           FadeTransition(
             opacity: _fade,

@@ -192,14 +192,6 @@ class _ProfileTabState extends State<ProfileTab>
 
                   const SizedBox(height: 24),
 
-                  _glassButton(
-                    icon: Icons.settings,
-                    text: S.of(context).settings,
-                    onTap: () => context.push('/settings'),
-                  ),
-
-                  const SizedBox(height: 16),
-
                   Consumer<FavoriteProvider>(
                     builder: (context, favProvider, child) {
                       return GestureDetector(
@@ -272,11 +264,134 @@ class _ProfileTabState extends State<ProfileTab>
                     ),
                   ),
 
+                  const SizedBox(height: 16),
+
+                  _glassCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          S.of(context).language,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 19,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Consumer<LanguageProvider>(
+                          builder: (context, langProvider, child) {
+                            return Row(
+                              children: [
+                                _langOption(context, langProvider, 'ru', S.of(context).russian),
+                                const SizedBox(width: 12),
+                                _langOption(context, langProvider, 'en', S.of(context).english),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  _glassButton(
+                    icon: Icons.logout,
+                    text: S.of(context).logout,
+                    onTap: () {
+                      context.read<AuthProviders>().logout();
+                      context.push('/');
+                    },
+                    color: Colors.brown.shade700,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  _glassButton(
+                    icon: Icons.delete_forever,
+                    text: S.of(context).deleteAccount,
+                    onTap: () => _confirmDeleteAccount(context),
+                    color: Colors.red.shade900.withOpacity(0.6),
+                  ),
+
                   const SizedBox(height: 80),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeleteAccount(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xff2c1e19),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(S.of(context).deleteAccount, style: const TextStyle(color: Colors.white)),
+        content: Text(
+          S.of(context).deleteAccountConfirm,
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(S.of(context).cancel, style: const TextStyle(color: Colors.white54)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              try {
+                await context.read<AuthProviders>().deleteAccount();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(S.of(context).deleteAccountSuccess)),
+                  );
+                  context.push('/');
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("${S.of(context).deleteAccountError}: $e")),
+                  );
+                }
+              }
+            },
+            child: Text(S.of(context).deleteAction, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _langOption(BuildContext context, LanguageProvider lp, String code, String label) {
+    final selected = lp.locale.languageCode == code;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => lp.setLocale(Locale(code)),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: selected ? Colors.orangeAccent.withOpacity(0.2) : Colors.white.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: selected ? Colors.orangeAccent : Colors.white10),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: selected ? Colors.orangeAccent : Colors.white70,
+                fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ),
         ),
       ),
     );

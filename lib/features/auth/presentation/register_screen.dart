@@ -21,6 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   final _password = TextEditingController();
   final _confirm = TextEditingController();
   bool _loading = false;
+  bool _agreedToTerms = false;
 
   late AnimationController _controller;
   late Animation<double> _fade;
@@ -158,7 +159,9 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                           icon: Icons.lock_person_outlined,
                           obscure: true,
                         ),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 12),
+                        _buildTermsCheckbox(),
+                        const SizedBox(height: 16),
                         _buildRegisterButton(),
                         const SizedBox(height: 12),
                         _buildLegalAgreement(),
@@ -193,8 +196,9 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
             ),
           ),
           const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               _legalLink(
                 S.of(context).userAgreement,
@@ -259,15 +263,46 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     );
   }
 
+  Widget _buildTermsCheckbox() {
+    return Theme(
+      data: ThemeData(unselectedWidgetColor: Colors.white54),
+      child: CheckboxListTile(
+        value: _agreedToTerms,
+        onChanged: (val) => setState(() => _agreedToTerms = val ?? false),
+        title: Wrap(
+          children: [
+            const Text("Я согласен с ", style: TextStyle(color: Colors.white70, fontSize: 13)),
+            GestureDetector(
+              onTap: () => context.push(
+                Uri(
+                  path: '/legal',
+                  queryParameters: {
+                    'title': S.of(context).userAgreement,
+                    'content': S.of(context).userAgreementContent,
+                  },
+                ).toString(),
+              ),
+              child: const Text("Условиями использования", style: TextStyle(color: Colors.orangeAccent, fontSize: 13, decoration: TextDecoration.underline)),
+            ),
+          ],
+        ),
+        controlAffinity: ListTileControlAffinity.leading,
+        contentPadding: EdgeInsets.zero,
+        activeColor: Colors.orangeAccent,
+        checkColor: Colors.black,
+      ),
+    );
+  }
+
   Widget _buildRegisterButton() {
     return SizedBox(
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: _loading ? null : _register,
+        onPressed: (_loading || !_agreedToTerms) ? null : _register,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white.withOpacity(0.8),
-          foregroundColor: Colors.black,
+          backgroundColor: _agreedToTerms ? Colors.white.withOpacity(0.8) : Colors.white24,
+          foregroundColor: _agreedToTerms ? Colors.black : Colors.white54,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),

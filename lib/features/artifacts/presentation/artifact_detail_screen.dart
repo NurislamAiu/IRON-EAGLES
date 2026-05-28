@@ -55,13 +55,6 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
         setState(() {});
       }
     });
-
-    // Trigger History Scholar achievement
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        context.read<AchievementProvider>().updateProgress(context, 'scholar');
-      }
-    });
   }
 
   @override

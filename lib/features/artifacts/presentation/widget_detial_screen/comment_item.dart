@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import '../../../auth/provider/ugc_provider.dart';
-import '../../../auth/provider/auth_provider.dart';
-import '../../../../core/localization/app_localizations.dart';
 
 class CommentItem extends StatelessWidget {
   final Map<String, dynamic> c;
@@ -12,15 +8,6 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ugcProvider = context.watch<UgcProvider>();
-    final author = c["author"] ?? "Аноним";
-    final currentUserEmail = context.read<AuthProviders>().user?.email ?? '';
-
-    // If the author is blocked, we don't show the comment
-    if (ugcProvider.isBlocked(author)) {
-      return const SizedBox.shrink();
-    }
-
     final ts = c["time"];
     final date = ts is DateTime ? ts : ts?.toDate();
     final author = c["author"] ?? "Аноним";
@@ -62,16 +49,6 @@ class CommentItem extends StatelessWidget {
                         fontSize: 14,
                       ),
                     ),
-                    const Spacer(),
-                    if (author != currentUserEmail && author != 'Аноним')
-                      PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert, color: Colors.white38, size: 18),
-                        onSelected: (val) => _handleAction(context, val, author),
-                        itemBuilder: (ctx) => [
-                          PopupMenuItem(value: 'report', child: Text(S.of(context).report)),
-                          PopupMenuItem(value: 'block', child: Text(S.of(context).blockUser)),
-                        ],
-                      ),
                     Text(
                       formatted,
                       style: TextStyle(
@@ -108,26 +85,5 @@ class CommentItem extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  void _handleAction(BuildContext context, String action, String email) {
-    final ugc = context.read<UgcProvider>();
-    if (action == 'block') {
-      ugc.blockUser(email);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context).userBlocked)),
-      );
-    } else if (action == 'report') {
-      ugc.reportContent(
-        authorEmail: email,
-        reason: "User Report",
-        contentType: "COMMENT",
-        contentId: "comment_${c['time']}",
-        contentText: c['text'],
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context).contentReported)),
-      );
-    }
   }
 }

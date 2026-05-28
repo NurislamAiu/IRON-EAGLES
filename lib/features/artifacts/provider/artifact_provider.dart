@@ -9,9 +9,8 @@ import '../domain/artifact_model.dart';
 
 class ArtifactProvider extends ChangeNotifier {
   final ArtifactService _service = ArtifactService();
-  final AuthProviders authProvider;
 
-  ArtifactProvider(this.authProvider);
+  ArtifactProvider();
 
   List<Artifact> _artifacts = [];
   bool _loading = false;
