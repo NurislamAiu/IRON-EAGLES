@@ -16,6 +16,7 @@ import 'package:ArcheoAI/features/auth/presentation/legal_screen.dart';
 import 'package:ArcheoAI/features/auth/provider/auth_provider.dart';
 import 'package:ArcheoAI/features/home/archaeologist_home_screen.dart';
 import 'package:ArcheoAI/features/home/tabs/add_artifact_tab.dart';
+import 'package:ArcheoAI/features/settings/presentation/settings_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -131,6 +132,11 @@ class AppRouter {
       GoRoute(
         path: '/favorites',
         pageBuilder: (_, __) => _buildFadeTransition(const FavoritesScreen()),
+      ),
+
+      GoRoute(
+        path: '/settings',
+        pageBuilder: (_, __) => _buildFadeTransition(const SettingsScreen()),
       ),
 
       GoRoute(

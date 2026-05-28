@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ArcheoAI/core/localization/app_localizations.dart';
+import '../../provider/achievement_provider.dart';
 
 class ScannerView extends StatefulWidget {
   const ScannerView({super.key});
@@ -24,6 +26,13 @@ class _ScannerViewState extends State<ScannerView> {
   void initState() {
     super.initState();
     _initCamera();
+
+    // Trigger Digital Surveyor achievement
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<AchievementProvider>().updateProgress(context, 'scanner');
+      }
+    });
   }
 
   Future<void> _initCamera() async {

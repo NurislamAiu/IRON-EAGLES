@@ -6,6 +6,8 @@ import '../../auth/provider/auth_provider.dart';
 import '../provider/community_provider.dart';
 import '../../blogs/provider/blog_provider.dart';
 import '../../blogs/domain/blog_post_model.dart';
+import '../../auth/provider/ugc_provider.dart';
+import '../../../core/localization/app_localizations.dart';
 
 
 class CommunityDetailScreen extends StatefulWidget {
@@ -30,7 +32,9 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
     final isOwner = community.creatorEmail == userEmail;
 
     final blogProvider = context.watch<BlogProvider>();
-    final posts = blogProvider.getCommunityPosts(community.id);
+    final ugcProvider = context.watch<UgcProvider>();
+    final posts = blogProvider.getCommunityPosts(community.id)
+        .where((p) => !ugcProvider.isBlocked(p.authorEmail)).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xff1a1412),
@@ -136,7 +140,9 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
 
   Widget _buildSimplePostCard(BuildContext context, BlogPost blog) {
     final bool isAdmin = blog.authorEmail.toLowerCase().contains('admin');
-    
+    final user = context.read<AuthProviders>().user;
+    final currentUserEmail = user?.email ?? '';
+
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
@@ -231,13 +237,28 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Text(
-                      blog.title,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          height: 1.3),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            blog.title,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                height: 1.3),
+                          ),
+                        ),
+                        if (blog.authorEmail != currentUserEmail)
+                          PopupMenuButton<String>(
+                            icon: const Icon(Icons.more_vert, color: Colors.white38),
+                            onSelected: (val) => _handlePostAction(context, val, blog),
+                            itemBuilder: (ctx) => [
+                              PopupMenuItem(value: 'report', child: Text(S.of(context).report)),
+                              PopupMenuItem(value: 'block', child: Text(S.of(context).blockUser)),
+                            ],
+                          ),
+                      ],
                     ),
                     const SizedBox(height: 12),
                     Text(
@@ -289,6 +310,27 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
         ],
       ),
     );
+  }
+
+  void _handlePostAction(BuildContext context, String action, BlogPost blog) {
+    final ugc = context.read<UgcProvider>();
+    if (action == 'block') {
+      ugc.blockUser(blog.authorEmail);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(S.of(context).userBlocked)),
+      );
+    } else if (action == 'report') {
+      ugc.reportContent(
+        authorEmail: blog.authorEmail,
+        reason: "Post Report",
+        contentType: "POST",
+        contentId: blog.id,
+        contentText: blog.content,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(S.of(context).contentReported)),
+      );
+    }
   }
 
   void _showAddPostDialog(BuildContext context, String communityId, String email) {

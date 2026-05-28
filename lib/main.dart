@@ -16,6 +16,7 @@ import 'features/artifacts/provider/expedition_provider.dart';
 import 'features/blogs/provider/blog_provider.dart';
 import 'features/communities/provider/community_provider.dart';
 import 'core/providers/language_provider.dart';
+import 'features/auth/provider/ugc_provider.dart';
 import 'core/localization/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -57,6 +58,7 @@ class MuseumApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BlogProvider()),
         ChangeNotifierProvider(create: (_) => CommunityProvider()),
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider(create: (_) => UgcProvider()),
       ],
       child: Consumer<LanguageProvider>(
         builder: (context, langProvider, child) {
