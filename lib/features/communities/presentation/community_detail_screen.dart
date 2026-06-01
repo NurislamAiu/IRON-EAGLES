@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../auth/provider/auth_provider.dart';
+import '../../auth/provider/safety_provider.dart';
 import '../provider/community_provider.dart';
 import '../../blogs/provider/blog_provider.dart';
 import '../../blogs/domain/blog_post_model.dart';
-
 
 class CommunityDetailScreen extends StatefulWidget {
   final String communityId;
@@ -113,7 +113,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
             ),
           ),
           if (posts.isEmpty)
-            SliverFillRemaining(
+            const SliverFillRemaining(
               child: Center(
                 child: Text("В этом сообществе пока нет записей.", style: TextStyle(color: Colors.white38)),
               ),
@@ -135,6 +135,9 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
   }
 
   Widget _buildSimplePostCard(BuildContext context, BlogPost blog) {
+    final safety = context.watch<UserSafetyProvider>();
+    if (safety.isBlocked(blog.authorEmail)) return const SizedBox.shrink();
+
     final bool isAdmin = blog.authorEmail.toLowerCase().contains('admin');
     
     return Container(
@@ -222,17 +225,6 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                           onTap: () => _showSafetyMenu(context, blog.authorEmail),
                           child: Icon(Icons.more_vert, color: Colors.white.withOpacity(0.3), size: 20),
                         ),
-                        if (blog.isEdited)
-                          const Padding(
-                            padding: EdgeInsets.only(left: 6.0),
-                            child: Text(
-                              "(изменено)",
-                              style: TextStyle(
-                                  color: Colors.white38,
-                                  fontSize: 11,
-                                  fontStyle: FontStyle.italic),
-                            ),
-                          ),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -273,17 +265,17 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.favorite, color: Colors.white54, size: 20),
+                        const Icon(Icons.favorite, color: Colors.white54, size: 20),
                         const SizedBox(width: 6),
-                        Text('${blog.likes.length}', style: TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold)),
+                        Text('${blog.likes.length}', style: const TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold)),
                       ],
                     ),
                     const SizedBox(width: 16),
                     Row(
                       children: [
-                        Icon(Icons.chat_bubble_outline, color: Colors.white54, size: 20),
+                        const Icon(Icons.chat_bubble_outline, color: Colors.white54, size: 20),
                         const SizedBox(width: 6),
-                        Text('${blog.comments.length}', style: TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold)),
+                        Text('${blog.comments.length}', style: const TextStyle(color: Colors.white54, fontSize: 14, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
@@ -301,7 +293,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
       context: context,
       backgroundColor: const Color(0xff1a1412),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => SafeArea(
+      builder: (ctx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -309,29 +301,60 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> {
             Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2))),
             ListTile(
               leading: const Icon(Icons.flag_outlined, color: Colors.orangeAccent),
-              title: const Text("Пожаловаться на запись", style: TextStyle(color: Colors.white)),
+              title: const Text("Пожаловаться на контент", style: TextStyle(color: Colors.white)),
               onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Спасибо! Запись будет проверена в течение 24 часов.")),
-                );
+                Navigator.pop(ctx);
+                _showReportDialog(context);
               },
             ),
             ListTile(
               leading: const Icon(Icons.block_outlined, color: Colors.redAccent),
               title: Text("Заблокировать $author", style: const TextStyle(color: Colors.white)),
-              subtitle: const Text("Вы больше не будете видеть записи этого автора", style: TextStyle(color: Colors.white38, fontSize: 12)),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Автор $author заблокирован.")),
-                );
+              subtitle: const Text("Мгновенно скрыть весь контент от этого пользователя", style: TextStyle(color: Colors.white38, fontSize: 12)),
+              onTap: () async {
+                Navigator.pop(ctx);
+                await context.read<UserSafetyProvider>().blockUser(author);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Автор $author заблокирован и скрыт из ленты.")),
+                  );
+                }
               },
             ),
             const SizedBox(height: 20),
           ],
         ),
       ),
+    );
+  }
+
+  void _showReportDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xff2c1e19),
+        title: const Text("Причина жалобы", style: TextStyle(color: Colors.white)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _reportOption(context, "Спам"),
+            _reportOption(context, "Оскорбление"),
+            _reportOption(context, "Враждебные высказывания"),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _reportOption(BuildContext context, String label) {
+    return ListTile(
+      title: Text(label, style: const TextStyle(color: Colors.white70)),
+      onTap: () {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Жалоба отправлена. Мы проверим контент в течение 24 часов.")),
+        );
+      },
     );
   }
 

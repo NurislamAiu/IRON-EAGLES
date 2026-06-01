@@ -22,6 +22,7 @@ import '../provider/favorite_provider.dart';
 import '../../../core/localization/app_localizations.dart';
 import 'widget_detial_screen/comment_input_bar.dart';
 import 'widget_detial_screen/comments_section.dart';
+import '../../esp32_monitor/presentation/esp32_monitor_screen.dart';
 
 class ArtifactDetailScreen extends StatefulWidget {
   final Artifact artifact;
@@ -38,6 +39,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
   late final TabController _tabController;
   final ScrollController _scrollController = ScrollController();
   final FlutterTts _flutterTts = FlutterTts();
+  bool _ttsInitialized = false;
 
   bool get _showMapTab => widget.artifact.foundLocation.isNotEmpty;
   bool get _show3dTab => widget.artifact.modelUrl.isNotEmpty;
@@ -51,18 +53,29 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
     if (_show3dTab) tabCount++;
 
     _tabController = TabController(length: tabCount, vsync: this);
-    _initTts();
   }
 
-  void _initTts() async {
-    await _flutterTts.setLanguage(S.of(context).locale.languageCode == 'ru' ? "ru-RU" : "en-US");
-    await _flutterTts.setPitch(1.0);
-    await _flutterTts.setSpeechRate(0.5);
-    
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _updateTtsLanguage();
+    if (!_ttsInitialized) {
+      _setupTtsHandlers();
+      _ttsInitialized = true;
+    }
+  }
+
+  void _setupTtsHandlers() {
     _flutterTts.setStartHandler(() => setState(() => _isPlayingAudio = true));
     _flutterTts.setCompletionHandler(() => setState(() => _isPlayingAudio = false));
     _flutterTts.setCancelHandler(() => setState(() => _isPlayingAudio = false));
     _flutterTts.setErrorHandler((_) => setState(() => _isPlayingAudio = false));
+  }
+
+  void _updateTtsLanguage() async {
+    await _flutterTts.setLanguage(S.of(context).locale.languageCode == 'ru' ? "ru-RU" : "en-US");
+    await _flutterTts.setPitch(1.0);
+    await _flutterTts.setSpeechRate(0.5);
   }
 
   @override
@@ -439,6 +452,19 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
             _buildDetailRow(Icons.straighten_outlined, s.height, "${a.height} cm"),
             _buildDetailRow(Icons.swap_horiz_outlined, s.width, "${a.width} cm"),
           ],
+
+          _buildSectionHeader(locale.languageCode == 'ru' ? "Мониторинг" : "Monitoring"),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(Icons.sensors_rounded, color: Colors.orangeAccent.withOpacity(0.7), size: 22),
+            title: Text(locale.languageCode == 'ru' ? "ESP32 Климат" : "ESP32 Climate Monitor", style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
+            subtitle: Text(locale.languageCode == 'ru' ? "Живой мониторинг датчиков" : "Live sensor monitoring", style: const TextStyle(color: Colors.white54, fontSize: 13)),
+            trailing: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white24, size: 16),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => Esp32MonitorScreen(initialUrl: a.esp32Url)),
+            ),
+          ),
         ],
       ),
     );

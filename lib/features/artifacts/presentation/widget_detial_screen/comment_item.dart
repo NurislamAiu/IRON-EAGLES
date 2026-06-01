@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../../../auth/provider/safety_provider.dart';
 
 class CommentItem extends StatelessWidget {
   final Map<String, dynamic> c;
@@ -9,9 +11,14 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final safety = context.watch<UserSafetyProvider>();
+    final author = c["author"] ?? "Аноним";
+    
+    // Если пользователь заблокирован — скрываем комментарий полностью
+    if (safety.isBlocked(author)) return const SizedBox.shrink();
+
     final ts = c["time"];
     final date = ts is DateTime ? ts : ts?.toDate();
-    final author = c["author"] ?? "Аноним";
     final text = c["text"] ?? "";
 
     final formatted = date == null
@@ -43,10 +50,7 @@ class CommentItem extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        author,
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14),
-                      ),
+                      Text(author, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
                       Row(
                         children: [
                           Text(formatted, style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 11)),
@@ -67,10 +71,7 @@ class CommentItem extends StatelessWidget {
                       borderRadius: const BorderRadius.only(topRight: Radius.circular(16), bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)),
                       border: Border.all(color: Colors.white.withOpacity(0.03)),
                     ),
-                    child: Text(
-                      text,
-                      style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 14, height: 1.4),
-                    ),
+                    child: Text(text, style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 14, height: 1.4)),
                   ),
                 ],
               ),
@@ -86,7 +87,7 @@ class CommentItem extends StatelessWidget {
       context: context,
       backgroundColor: const Color(0xff1a1412),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => SafeArea(
+      builder: (ctx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -96,27 +97,58 @@ class CommentItem extends StatelessWidget {
               leading: const Icon(Icons.flag_outlined, color: Colors.orangeAccent),
               title: const Text("Пожаловаться на контент", style: TextStyle(color: Colors.white)),
               onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Спасибо! Мы проверим этот комментарий в течение 24 часов.")),
-                );
+                Navigator.pop(ctx);
+                _showReportDialog(context);
               },
             ),
             ListTile(
               leading: const Icon(Icons.block_outlined, color: Colors.redAccent),
               title: Text("Заблокировать $author", style: const TextStyle(color: Colors.white)),
-              subtitle: const Text("Вы больше не будете видеть контент от этого пользователя", style: TextStyle(color: Colors.white38, fontSize: 12)),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Пользователь $author заблокирован.")),
-                );
+              subtitle: const Text("Мгновенно скрыть весь контент от этого пользователя", style: TextStyle(color: Colors.white38, fontSize: 12)),
+              onTap: () async {
+                Navigator.pop(ctx);
+                await context.read<UserSafetyProvider>().blockUser(author);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Пользователь $author заблокирован и скрыт из ленты.")),
+                  );
+                }
               },
             ),
             const SizedBox(height: 20),
           ],
         ),
       ),
+    );
+  }
+
+  void _showReportDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xff2c1e19),
+        title: const Text("Причина жалобы", style: TextStyle(color: Colors.white)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _reportOption(context, "Спам"),
+            _reportOption(context, "Оскорбление"),
+            _reportOption(context, "Неприемлемый контент"),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _reportOption(BuildContext context, String label) {
+    return ListTile(
+      title: Text(label, style: const TextStyle(color: Colors.white70)),
+      onTap: () {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Жалоба отправлена модераторам. Проверка займет до 24 часов.")),
+        );
+      },
     );
   }
 }

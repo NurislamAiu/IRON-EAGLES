@@ -52,7 +52,12 @@
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>NSCameraUsageDescription</key>
-	<string>This app needs camera access to take photos of artifacts</string>
+	<string>Camera is used to scan ESP32 QR code and take photos of artifacts.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs photos access to upload artifact images</string>
 	<key>NSMicrophoneUsageDescription</key>

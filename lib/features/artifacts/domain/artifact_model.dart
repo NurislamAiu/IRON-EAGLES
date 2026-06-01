@@ -43,6 +43,8 @@ class Artifact {
 
   final double? gpsLat;
   final double? gpsLng;
+  final String esp32Url;
+  final String slug;
 
   Artifact({
     required this.id,
@@ -87,6 +89,8 @@ class Artifact {
 
     this.gpsLat,
     this.gpsLng,
+    this.esp32Url = '',
+    this.slug = '',
   });
 
   // Helper to safely get fields during Hot Reload or from incomplete data
@@ -142,6 +146,8 @@ class Artifact {
       'depth': depth,
       'gpsLat': gpsLat,
       'gpsLng': gpsLng,
+      'esp32Url': esp32Url,
+      'slug': slug,
     };
   }
 
@@ -185,6 +191,94 @@ class Artifact {
       depth: (data['depth'] is num) ? (data['depth'] as num).toDouble() : null,
       gpsLat: (data['gpsLat'] is num) ? (data['gpsLat'] as num).toDouble() : null,
       gpsLng: (data['gpsLng'] is num) ? (data['gpsLng'] as num).toDouble() : null,
+      esp32Url: data['esp32Url']?.toString() ?? '',
+      slug: data['slug']?.toString() ?? '',
+    );
+  }
+
+  Artifact copyWith({
+    String? id,
+    String? title,
+    String? titleEn,
+    String? description,
+    String? descriptionEn,
+    String? foundLocation,
+    String? foundLocationEn,
+    String? imageUrl,
+    String? modelUrl,
+    String? addedBy,
+    DateTime? createdAt,
+    double? originLat,
+    double? originLng,
+    String? originName,
+    String? originNameEn,
+    String? ancientImageUrl,
+    String? expeditionId,
+    String? category,
+    String? categoryEn,
+    String? period,
+    String? periodEn,
+    String? museumSection,
+    String? museumSectionEn,
+    String? condition,
+    String? conditionEn,
+    String? finderId,
+    DateTime? foundDate,
+    String? material,
+    String? materialEn,
+    String? restorationStatus,
+    String? restorationStatusEn,
+    String? contextNotes,
+    String? contextNotesEn,
+    double? height,
+    double? width,
+    double? depth,
+    double? gpsLat,
+    double? gpsLng,
+    String? esp32Url,
+    String? slug,
+  }) {
+    return Artifact(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      titleEn: titleEn ?? this.titleEn,
+      description: description ?? this.description,
+      descriptionEn: descriptionEn ?? this.descriptionEn,
+      foundLocation: foundLocation ?? this.foundLocation,
+      foundLocationEn: foundLocationEn ?? this.foundLocationEn,
+      imageUrl: imageUrl ?? this.imageUrl,
+      modelUrl: modelUrl ?? this.modelUrl,
+      addedBy: addedBy ?? this.addedBy,
+      createdAt: createdAt ?? this.createdAt,
+      originLat: originLat ?? this.originLat,
+      originLng: originLng ?? this.originLng,
+      originName: originName ?? this.originName,
+      originNameEn: originNameEn ?? this.originNameEn,
+      ancientImageUrl: ancientImageUrl ?? this.ancientImageUrl,
+      expeditionId: expeditionId ?? this.expeditionId,
+      category: category ?? this.category,
+      categoryEn: categoryEn ?? this.categoryEn,
+      period: period ?? this.period,
+      periodEn: periodEn ?? this.periodEn,
+      museumSection: museumSection ?? this.museumSection,
+      museumSectionEn: museumSectionEn ?? this.museumSectionEn,
+      condition: condition ?? this.condition,
+      conditionEn: conditionEn ?? this.conditionEn,
+      finderId: finderId ?? this.finderId,
+      foundDate: foundDate ?? this.foundDate,
+      material: material ?? this.material,
+      materialEn: materialEn ?? this.materialEn,
+      restorationStatus: restorationStatus ?? this.restorationStatus,
+      restorationStatusEn: restorationStatusEn ?? this.restorationStatusEn,
+      contextNotes: contextNotes ?? this.contextNotes,
+      contextNotesEn: contextNotesEn ?? this.contextNotesEn,
+      height: height ?? this.height,
+      width: width ?? this.width,
+      depth: depth ?? this.depth,
+      gpsLat: gpsLat ?? this.gpsLat,
+      gpsLng: gpsLng ?? this.gpsLng,
+      esp32Url: esp32Url ?? this.esp32Url,
+      slug: slug ?? this.slug,
     );
   }
 }

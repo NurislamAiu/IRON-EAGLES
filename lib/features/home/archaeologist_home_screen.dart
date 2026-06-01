@@ -1,6 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ArcheoAI/core/services/sound_service.dart';
+import 'package:ArcheoAI/features/artifacts/presentation/artifact_detail_screen.dart';
+import 'package:ArcheoAI/features/artifacts/domain/artifact_model.dart';
+import 'package:ArcheoAI/features/artifacts/provider/artifact_provider.dart';
+import 'package:ArcheoAI/features/esp32_monitor/presentation/esp32_monitor_screen.dart';
+import 'package:ArcheoAI/core/widgets/flash_message.dart';
 import 'package:ArcheoAI/features/home/tabs/expedition_tab.dart';
 import 'package:ArcheoAI/features/home/tabs/moderator_tab.dart';
 import 'package:provider/provider.dart';
@@ -95,6 +100,11 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
 
     return Scaffold(
       extendBody: true,
+      floatingActionButton: _index == 0 ? FloatingActionButton(
+        onPressed: _scanArtifactQr,
+        backgroundColor: Colors.orangeAccent,
+        child: const Icon(Icons.qr_code_scanner, color: Colors.black),
+      ) : null,
       body: Stack(
         children: [
           // 🌌 Фон с градиентом
@@ -116,6 +126,97 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
       // 🧭 Bottom Navigation
       bottomNavigationBar: _buildBottomNavBar(items),
     );
+  }
+
+  Future<void> _scanArtifactQr() async {
+    final scannedValue = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (context) => const QrScannerPage()),
+    );
+
+    if (scannedValue == null || scannedValue.isEmpty) return;
+    if (!mounted) return;
+
+    final value = scannedValue.trim();
+    final artifactProvider = context.read<ArtifactProvider>();
+    final artifacts = artifactProvider.artifacts;
+
+    // 1. Проверка на URL (ESP32 или Deep Link)
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      try {
+        final uri = Uri.parse(value);
+        final baseUrl = '${uri.scheme}://${uri.host}${uri.hasPort ? ':${uri.port}' : ''}';
+        final pathSegments = uri.pathSegments;
+
+        if (pathSegments.isEmpty) {
+          // Это просто ESP32 URL без артефакта, например http://172.18.100.4
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => Esp32MonitorScreen(initialUrl: baseUrl),
+            ),
+          );
+          return;
+        }
+
+        final artifactSlug = pathSegments.first;
+        Artifact? foundArtifact;
+
+        // Поиск по slug
+        for (final artifact in artifacts) {
+          if (artifact.slug == artifactSlug) {
+            foundArtifact = artifact;
+            break;
+          }
+        }
+
+        // Fallback: если slug не найден, попробовать искать по id
+        if (foundArtifact == null) {
+          for (final artifact in artifacts) {
+            if (artifact.id == artifactSlug) {
+              foundArtifact = artifact;
+              break;
+            }
+          }
+        }
+
+        if (foundArtifact != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ArtifactDetailScreen(
+                artifact: foundArtifact!.copyWith(esp32Url: baseUrl),
+              ),
+            ),
+          );
+        } else {
+          FlashMessage.error(context, "Артефакт не найден");
+        }
+        return;
+      } catch (e) {
+        debugPrint("QR Parse error: $e");
+      }
+    }
+
+    // 2. Fallback для старых QR (только ID или slug)
+    Artifact? foundArtifact;
+    for (final artifact in artifacts) {
+      if (artifact.id == value || artifact.slug == value) {
+        foundArtifact = artifact;
+        break;
+      }
+    }
+
+    if (foundArtifact != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ArtifactDetailScreen(artifact: foundArtifact!),
+        ),
+      );
+    } else {
+      FlashMessage.error(context, "Артефакт не найден");
+    }
   }
 
   Widget _buildBottomNavBar(List<_NavItemData> items) {
