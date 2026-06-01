@@ -157,25 +157,18 @@ class _AchievementCard extends StatelessWidget {
       case 'menu_book': return Icons.menu_book;
       case 'comment': return Icons.comment;
       case 'view_in_ar': return Icons.view_in_ar;
+      case 'sensors': return Icons.sensors;
       default: return Icons.emoji_events;
     }
   }
 
   String _getTranslatedTitle(BuildContext context, String id, String fallback) {
-    switch (id) {
-      case 'scholar': return S.of(context).scholarTitle;
-      case 'critic': return S.of(context).criticTitle;
-      case '3d_master': return S.of(context).masterTitle;
-      default: return fallback;
-    }
+    final translated = S.of(context).get('${id}Title');
+    return translated != '${id}Title' ? translated : fallback;
   }
 
   String _getTranslatedDesc(BuildContext context, String id, String fallback) {
-    switch (id) {
-      case 'scholar': return S.of(context).scholarDesc;
-      case 'critic': return S.of(context).criticDesc;
-      case '3d_master': return S.of(context).masterDesc;
-      default: return fallback;
-    }
+    final translated = S.of(context).get('${id}Desc');
+    return translated != '${id}Desc' ? translated : fallback;
   }
 }

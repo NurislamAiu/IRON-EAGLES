@@ -301,6 +301,7 @@ class _ProfileTabState extends State<ProfileTab>
                     text: S.of(context).logout,
                     onTap: () {
                       context.read<AuthProviders>().logout();
+                      context.push('/');
                     },
                     color: Colors.brown.shade700,
                   ),

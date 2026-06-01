@@ -6,6 +6,8 @@ import '../domain/expedition_model.dart';
 import '../domain/chat_message_model.dart';
 import '../provider/expedition_provider.dart';
 import '../../auth/provider/auth_provider.dart';
+import '../../auth/provider/ugc_provider.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class ExpeditionChatScreen extends StatefulWidget {
   final Expedition expedition;
@@ -117,7 +119,10 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
                         return const Center(child: CircularProgressIndicator(color: Colors.orangeAccent));
                       }
                       
-                      final messages = snapshot.data ?? [];
+                      final ugc = context.watch<UgcProvider>();
+                      final messages = (snapshot.data ?? [])
+                          .where((m) => !ugc.isBlocked(m.senderEmail))
+                          .toList();
                       
                       if (messages.isEmpty) {
                         return _buildEmptyChat();
@@ -196,28 +201,72 @@ class _ExpeditionChatScreenState extends State<ExpeditionChatScreen> {
   Widget _buildMessageBubble(ChatMessage msg, bool isMe) {
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
-        decoration: BoxDecoration(
-          color: isMe ? Colors.orange.shade800.withOpacity(0.8) : Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: Radius.circular(isMe ? 16 : 0),
-            bottomRight: Radius.circular(isMe ? 0 : 16),
+      child: GestureDetector(
+        onLongPress: isMe ? null : () => _showChatActions(context, msg),
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+          decoration: BoxDecoration(
+            color: isMe ? Colors.orange.shade800.withOpacity(0.8) : Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(16),
+              topRight: const Radius.circular(16),
+              bottomLeft: Radius.circular(isMe ? 16 : 0),
+              bottomRight: Radius.circular(isMe ? 0 : 16),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (!isMe)
+                Text(msg.senderEmail, style: const TextStyle(color: Colors.orangeAccent, fontSize: 10, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text(msg.text, style: const TextStyle(color: Colors.white, fontSize: 15)),
+            ],
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (!isMe)
-              Text(msg.senderEmail, style: const TextStyle(color: Colors.orangeAccent, fontSize: 10, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text(msg.text, style: const TextStyle(color: Colors.white, fontSize: 15)),
-          ],
-        ),
+      ),
+    );
+  }
+
+  void _showChatActions(BuildContext context, ChatMessage msg) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xff2c1e19),
+      builder: (ctx) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.report, color: Colors.white70),
+            title: Text(S.of(context).report, style: const TextStyle(color: Colors.white)),
+            onTap: () {
+              Navigator.pop(ctx);
+              context.read<UgcProvider>().reportContent(
+                authorEmail: msg.senderEmail,
+                reason: "Chat Report",
+                contentType: "CHAT",
+                contentId: msg.id,
+                contentText: msg.text,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(S.of(context).contentReported)),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.block, color: Colors.redAccent),
+            title: Text(S.of(context).blockUser, style: const TextStyle(color: Colors.redAccent)),
+            onTap: () {
+              Navigator.pop(ctx);
+              context.read<UgcProvider>().blockUser(msg.senderEmail);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(S.of(context).userBlocked)),
+              );
+            },
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }

@@ -23,5 +23,12 @@ class AchievementData {
       icon: 'view_in_ar',
       goal: 1,
     ),
+    Achievement(
+      id: 'scanner',
+      title: 'Digital Surveyor',
+      description: 'Open the 3D scanner for the first time.',
+      icon: 'sensors',
+      goal: 1,
+    ),
   ];
 }

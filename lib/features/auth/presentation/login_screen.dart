@@ -151,6 +151,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         const SizedBox(height: 30),
                         _buildLoginButton(),
                         const SizedBox(height: 12),
+                        _buildLegalAgreement(),
+                        const SizedBox(height: 12),
                         _buildRegisterButton(),
                       ],
                     ),
@@ -163,6 +165,65 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           // Оверлей загрузки
           if (_loading) _buildLoadingOverlay(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLegalAgreement() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Column(
+        children: [
+          Text(
+            S.of(context).agreementTerms,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.6),
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _legalLink(
+                S.of(context).userAgreement,
+                S.of(context).userAgreementContent,
+              ),
+              Text(
+                " & ",
+                style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 12),
+              ),
+              _legalLink(
+                S.of(context).privacyPolicy,
+                S.of(context).privacyPolicyContent,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _legalLink(String title, String content) {
+    return InkWell(
+      onTap: () => context.push(
+        Uri(
+          path: '/legal',
+          queryParameters: {
+            'title': title,
+            'content': content,
+          },
+        ).toString(),
+      ),
+      child: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          decoration: TextDecoration.underline,
+        ),
       ),
     );
   }

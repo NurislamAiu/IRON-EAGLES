@@ -187,7 +187,9 @@ Please read this User Agreement ("Agreement") carefully before using the ArcheoA
 - save your progress, bookmarks, and personal notes within the Application;
 - request deletion of your account and associated personal data at any time.
 
-3.2. You agree NOT to:
+3.3. User-Generated Content (UGC): The Application may allow users to post comments, posts, and other content. You agree that such content must comply with our safety guidelines. We strictly prohibit any offensive, abusive, or inappropriate content. We provide mechanisms for users to report and block both content and other users. The Developer will act on any objectionable content reports within 24 hours by removing the content and potentially ejecting the user who provided the offending content.
+
+3.4. You agree NOT to:
 - use the Application for any unlawful purpose or in violation of any local, national, or international law;
 - attempt to gain unauthorized access to the Application, its servers, or related systems;
 - decompile, reverse-engineer, disassemble, or otherwise attempt to derive the source code of the Application;
@@ -427,6 +429,9 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
       'criticDesc': 'Leave 3 comments on artifacts.',
       'masterTitle': 'Technophile',
       'masterDesc': 'Examine a 3D model for the first time.',
+      'scannerTitle': 'Digital Surveyor',
+      'scannerDesc': 'Open the 3D scanner for the first time.',
+      'account': 'Account',
       'filterAll': 'All',
       'filterSaka': 'Saka Era',
       'filterEgypt': 'Ancient Egypt',
@@ -462,7 +467,13 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
       'deleteAccount': 'Delete Account',
       'deleteAccountConfirm': 'Are you sure you want to delete your account? This action is permanent and all your data will be lost.',
       'deleteAccountSuccess': 'Account deleted successfully',
-      'deleteAccountError': 'Error deleting account'
+      'deleteAccountError': 'Error deleting account',
+      'report': 'Report',
+      'block': 'Block',
+      'blockUser': 'Block User',
+      'reportContent': 'Report Content',
+      'contentReported': 'Thank you. We will review this content within 24 hours.',
+      'userBlocked': 'User blocked.',
     },
     'ru': {
       'appTitle': 'ArcheoAI',
@@ -631,6 +642,9 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
       'criticDesc': 'Оставьте 3 комментария к артефактам.',
       'masterTitle': 'Технофил',
       'masterDesc': 'Изучите 3D модель в первый раз.',
+      'scannerTitle': 'Цифровой геодезист',
+      'scannerDesc': 'Откройте 3D-сканер в первый раз.',
+      'account': 'Аккаунт',
       'filterAll': 'Все',
       'filterSaka': 'Эпоха саков',
       'filterEgypt': 'Древний Египет',
@@ -666,7 +680,13 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
       'deleteAccount': 'Удалить аккаунт',
       'deleteAccountConfirm': 'Вы уверены, что хотите удалить свой аккаунт? Это действие необратимо, и все ваши данные будут потеряны.',
       'deleteAccountSuccess': 'Аккаунт успешно удалён',
-      'deleteAccountError': 'Ошибка при удалении аккаунта'
+      'deleteAccountError': 'Ошибка при удалении аккаунта',
+      'report': 'Пожаловаться',
+      'block': 'Заблокировать',
+      'blockUser': 'Заблокировать пользователя',
+      'reportContent': 'Сообщить о нарушении',
+      'contentReported': 'Спасибо. Мы проверим этот контент в течение 24 часов.',
+      'userBlocked': 'Пользователь заблокирован.',
     },
   };
 
@@ -874,6 +894,12 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
   String get deleteAccountConfirm => get('deleteAccountConfirm');
   String get deleteAccountSuccess => get('deleteAccountSuccess');
   String get deleteAccountError => get('deleteAccountError');
+  String get report => get('report');
+  String get block => get('block');
+  String get blockUser => get('blockUser');
+  String get reportContent => get('reportContent');
+  String get contentReported => get('contentReported');
+  String get userBlocked => get('userBlocked');
 }
 
 class SDelegate extends LocalizationsDelegate<S> {
