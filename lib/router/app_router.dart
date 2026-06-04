@@ -19,25 +19,25 @@ import 'package:ArcheoAI/features/settings/presentation/settings_screen.dart';
 class AppRouter {
   static GoRouter createRouter(AuthProviders authProvider) {
     return GoRouter(
-      initialLocation: '/',
+      initialLocation: '/login',
       debugLogDiagnostics: true,
+      refreshListenable: authProvider,
       redirect: (context, state) {
         final auth = authProvider;
         final logged = auth.isLoggedIn;
-        final role = auth.role;
         final goingTo = state.uri.toString();
 
-        if (role == null && goingTo != '/') return '/';
-
-        if (role == 'archaeologist' || role == 'admin') {
-          if (!logged) {
-            if (goingTo.startsWith('/login') || goingTo == '/register' || goingTo.startsWith('/legal') || goingTo == '/') {
-              return null;
-            }
-            return '/login';
+        if (!logged) {
+          if (goingTo.startsWith('/login') || goingTo == '/register' || goingTo.startsWith('/legal')) {
+            return null;
           }
-          if (logged && (goingTo.startsWith('/login') || goingTo == '/register')) return '/home';
+          return '/login';
         }
+
+        if (logged && (goingTo.startsWith('/login') || goingTo == '/register')) {
+          return '/home';
+        }
+
         return null;
       },
       routes: [

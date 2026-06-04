@@ -164,9 +164,22 @@ class _AiArchaeologistScreenState extends State<AiArchaeologistScreen> {
               ),
               if (_isTyping) _buildTypingIndicator(),
               _buildInputArea(),
+              _buildAiDisclaimer(),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAiDisclaimer() {
+    return Container(
+      color: Colors.black,
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+      child: const Text(
+        "AI-generated content can be inaccurate. Please cross-reference with official museum records.",
+        textAlign: TextAlign.center,
+        style: TextStyle(color: Colors.white24, fontSize: 10),
       ),
     );
   }

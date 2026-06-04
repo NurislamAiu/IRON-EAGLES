@@ -1,6 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../../../../core/localization/app_localizations.dart';
+import '../../../auth/provider/ugc_provider.dart';
 
 class CommentItem extends StatelessWidget {
   final Map<String, dynamic> c;
@@ -9,14 +12,15 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final ts = c["time"];
     final date = ts is DateTime ? ts : ts?.toDate();
-    final author = c["author"] ?? "Аноним";
+    final author = c["author"] ?? s.anonymous;
     final text = c["text"] ?? "";
 
     final formatted = date == null
         ? "..."
-        : DateFormat("dd.MM.yyyy HH:mm", 'ru').format(date);
+        : DateFormat("dd.MM.yyyy HH:mm", s.locale.languageCode).format(date);
 
     final Color avatarColor = Colors.primaries[author.hashCode % Colors.primaries.length];
 
@@ -82,11 +86,12 @@ class CommentItem extends StatelessWidget {
   }
 
   void _showSafetyMenu(BuildContext context, String author) {
+    final s = S.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xff1a1412),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => SafeArea(
+      builder: (ctx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -94,22 +99,29 @@ class CommentItem extends StatelessWidget {
             Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2))),
             ListTile(
               leading: const Icon(Icons.flag_outlined, color: Colors.orangeAccent),
-              title: const Text("Пожаловаться на контент", style: TextStyle(color: Colors.white)),
+              title: Text(s.reportContent, style: const TextStyle(color: Colors.white)),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(ctx);
+                context.read<UgcProvider>().reportContent(
+                  authorEmail: author,
+                  reason: "User Report",
+                  contentType: "COMMENT",
+                  contentId: c['id'] ?? "",
+                  contentText: c['text'] ?? "",
+                );
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Спасибо! Мы проверим этот комментарий в течение 24 часов.")),
+                  SnackBar(content: Text(s.contentReported)),
                 );
               },
             ),
             ListTile(
               leading: const Icon(Icons.block_outlined, color: Colors.redAccent),
-              title: Text("Заблокировать $author", style: const TextStyle(color: Colors.white)),
-              subtitle: const Text("Вы больше не будете видеть контент от этого пользователя", style: TextStyle(color: Colors.white38, fontSize: 12)),
+              title: Text("${s.blockUser} $author", style: const TextStyle(color: Colors.white)),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(ctx);
+                context.read<UgcProvider>().blockUser(author);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Пользователь $author заблокирован.")),
+                  SnackBar(content: Text(s.userBlocked)),
                 );
               },
             ),

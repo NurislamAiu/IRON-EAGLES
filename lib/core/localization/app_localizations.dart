@@ -320,7 +320,6 @@ class S {
       'connecting': 'Connecting...',
       'scanQrCode': 'Scan QR Code',
       'simulatorScannerNote': 'Note: Camera scanning requires a real device. On simulator, please use manual entry.',
-      'exploreTreasures': 'Explore ancient treasures',
     },
     'ru': {
       'appTitle': 'ArcheoAI',
@@ -631,7 +630,6 @@ class S {
       'connecting': 'Подключение...',
       'scanQrCode': 'Сканировать QR-код',
       'simulatorScannerNote': 'Примечание: Сканирование камерой требует реального устройства. На симуляторе используйте ручной ввод.',
-      'exploreTreasures': 'Исследуйте древние сокровища',
     },
     'kk': {
       'appTitle': 'ArcheoAI',
@@ -944,7 +942,6 @@ class S {
       'connecting': 'Қосылуда...',
       'scanQrCode': 'QR-кодты сканерлеу',
       'simulatorScannerNote': 'Ескерту: Камерамен сканерлеу үшін нақты құрылғы қажет. Симуляторда қолмен енгізуді пайдаланыңыз.',
-      'exploreTreasures': 'Ежелгі қазыналарды зерттеңіз',
     },
   };
 
@@ -1258,7 +1255,6 @@ class S {
   String get connecting => get('connecting');
   String get scanQrCode => get('scanQrCode');
   String get simulatorScannerNote => get('simulatorScannerNote');
-  String get exploreTreasures => get('exploreTreasures');
 }
 
 class SDelegate extends LocalizationsDelegate<S> {

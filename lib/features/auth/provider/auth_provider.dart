@@ -23,7 +23,7 @@ class AuthProviders extends ChangeNotifier {
   Future<void> _init() async {
     // Загружаем роль из SharedPreferences
     final prefs = await SharedPreferences.getInstance();
-    _role = prefs.getString('role');
+    _role = prefs.getString('role') ?? 'archaeologist';
 
     // Firebase слушатель
     FirebaseAuth.instance.authStateChanges().listen((firebaseUser) {
