@@ -50,12 +50,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> with SingleTi
   Future<void> _selectRole(BuildContext context, String role) async {
     final auth = context.read<AuthProviders>();
     await auth.setRole(role);
-
-    if (role == 'archaeologist') {
-      context.go('/login?email=user1@gmail.com&password=44585939');
-    } else if (role == 'visitor') {
-      context.go('/home');
-    }
+    context.go('/login?email=user1@gmail.com&password=44585939');
   }
 
   @override
@@ -79,7 +74,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> with SingleTi
                   FadeTransition(
                     opacity: _fadeAnimation,
                     child: Text(
-                      S.of(context).selectRole,
+                      S.of(context).welcome,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 34,
@@ -92,30 +87,17 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> with SingleTi
                   const SizedBox(height: 16),
                   FadeTransition(
                     opacity: _fadeAnimation,
-                    child: Text(
-                      S.of(context).roleSelectionSubtitle,
+                    child: const Text(
+                      "ArcheoAI",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 42,
+                        color: Colors.orangeAccent,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   const SizedBox(height: 60),
-                  SlideTransition(
-                    position: _slideAnimation,
-                    child: FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: _buildRoleCard(
-                        context,
-                        icon: Icons.travel_explore,
-                        title: S.of(context).iAmVisitor,
-                        description: S.of(context).exploreMuseum,
-                        onTap: () => _selectRole(context, 'visitor'),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
                   SlideTransition(
                     position: _slideAnimation,
                     child: FadeTransition(

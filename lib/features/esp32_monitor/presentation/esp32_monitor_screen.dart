@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../domain/sensor_data.dart';
+import '../../../core/localization/app_localizations.dart';
 
 enum MonitorStatus { disconnected, connecting, connected, error }
 
@@ -109,10 +110,11 @@ class _Esp32MonitorScreenState extends State<Esp32MonitorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Scaffold(
       backgroundColor: const Color(0xff0a0e21),
       appBar: AppBar(
-        title: const Text('ESP32 Climate Monitor', style: TextStyle(color: Colors.white)),
+        title: Text(s.esp32Monitor, style: const TextStyle(color: Colors.white)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -122,15 +124,15 @@ class _Esp32MonitorScreenState extends State<Esp32MonitorScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildInputCard(),
+            _buildInputCard(s),
             const SizedBox(height: 24),
-            _buildStatusCard(),
+            _buildStatusCard(s),
             const SizedBox(height: 24),
             Row(
               children: [
-                Expanded(child: _buildValueCard('Temperature', '${_data?.temperature?.toStringAsFixed(1) ?? '--'} °C', Icons.thermostat_rounded, Colors.orangeAccent)),
+                Expanded(child: _buildValueCard(s.temperature, '${_data?.temperature?.toStringAsFixed(1) ?? '--'} °C', Icons.thermostat_rounded, Colors.orangeAccent)),
                 const SizedBox(width: 16),
-                Expanded(child: _buildValueCard('Humidity', '${_data?.humidity?.toStringAsFixed(1) ?? '--'} %', Icons.water_drop_rounded, Colors.blueAccent)),
+                Expanded(child: _buildValueCard(s.humidity, '${_data?.humidity?.toStringAsFixed(1) ?? '--'} %', Icons.water_drop_rounded, Colors.blueAccent)),
               ],
             ),
             const SizedBox(height: 32),
@@ -146,7 +148,7 @@ class _Esp32MonitorScreenState extends State<Esp32MonitorScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Disconnect', style: TextStyle(fontWeight: FontWeight.bold)),
+                child: Text(s.disconnect, style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
           ],
         ),
@@ -154,7 +156,7 @@ class _Esp32MonitorScreenState extends State<Esp32MonitorScreen> {
     );
   }
 
-  Widget _buildInputCard() {
+  Widget _buildInputCard(S s) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -165,7 +167,7 @@ class _Esp32MonitorScreenState extends State<Esp32MonitorScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('ESP32 Address', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          Text(s.esp32Address, style: const TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 12),
           TextField(
             controller: _urlController,
@@ -186,7 +188,7 @@ class _Esp32MonitorScreenState extends State<Esp32MonitorScreen> {
                 child: ElevatedButton.icon(
                   onPressed: () => _startPolling(_urlController.text),
                   icon: const Icon(Icons.sensors_rounded),
-                  label: const Text('Connect'),
+                  label: Text(s.connect),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orangeAccent,
                     foregroundColor: Colors.black,
@@ -212,17 +214,17 @@ class _Esp32MonitorScreenState extends State<Esp32MonitorScreen> {
     );
   }
 
-  Widget _buildStatusCard() {
+  Widget _buildStatusCard(S s) {
     Color statusColor;
     String statusText;
     switch (_status) {
       case MonitorStatus.connected:
         statusColor = Colors.greenAccent;
-        statusText = 'Connected';
+        statusText = s.connected;
         break;
       case MonitorStatus.connecting:
         statusColor = Colors.orangeAccent;
-        statusText = 'Connecting...';
+        statusText = s.connecting;
         break;
       case MonitorStatus.error:
         statusColor = Colors.redAccent;
@@ -231,7 +233,7 @@ class _Esp32MonitorScreenState extends State<Esp32MonitorScreen> {
       case MonitorStatus.disconnected:
       default:
         statusColor = Colors.white24;
-        statusText = 'Disconnected';
+        statusText = s.disconnected;
     }
 
     return Container(
@@ -297,24 +299,49 @@ class _QrScannerPageState extends State<QrScannerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+    // Check if we are on a simulator
+    final bool isSimulator = Theme.of(context).platform == TargetPlatform.iOS || Theme.of(context).platform == TargetPlatform.android;
+    
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Scan QR Code', style: TextStyle(color: Colors.white)),
+        title: Text(s.scanQrCode, style: const TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: MobileScanner(
-        onDetect: (capture) {
-          if (_popped) return;
-          final List<Barcode> barcodes = capture.barcodes;
-          for (final barcode in barcodes) {
-            if (barcode.rawValue != null) {
-              _popped = true;
-              Navigator.of(context).pop(barcode.rawValue);
-              break;
-            }
-          }
-        },
+      body: Stack(
+        children: [
+          MobileScanner(
+            onDetect: (capture) {
+              if (_popped) return;
+              final List<Barcode> barcodes = capture.barcodes;
+              for (final barcode in barcodes) {
+                if (barcode.rawValue != null) {
+                  _popped = true;
+                  Navigator.of(context).pop(barcode.rawValue);
+                  break;
+                }
+              }
+            },
+          ),
+          // Helper overlay for users to know it might not work on simulator
+          if (const bool.fromEnvironment('dart.vm.product') == false)
+            Positioned(
+              bottom: 50,
+              left: 20,
+              right: 20,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                color: Colors.black54,
+                child: Text(
+                  s.simulatorScannerNote,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

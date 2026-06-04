@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../core/services/ai_service.dart';
 import '../../../core/services/ai_chat_service.dart';
 import '../../auth/provider/auth_provider.dart';
+import '../../../core/localization/app_localizations.dart';
 
 class AiArchaeologistScreen extends StatefulWidget {
   const AiArchaeologistScreen({super.key});
@@ -28,18 +29,22 @@ class _AiArchaeologistScreenState extends State<AiArchaeologistScreen> {
   @override
   void initState() {
     super.initState();
-    _initTts();
-    _loadHistory();
+    // Use microtask to ensure context is ready for S.of(context)
+    Future.microtask(() {
+      _initTts();
+      _loadHistory();
+    });
   }
 
   Future<void> _loadHistory() async {
     final user = context.read<AuthProviders>().user;
+    final s = S.of(context);
     if (user != null && user.email != null) {
       final history = await _chatService.loadChatHistory(user.email!);
       if (mounted) {
         setState(() {
           _messages = history.isEmpty 
-            ? [{'role': 'ai', 'text': 'Здравствуйте! Я ваш ИИ-археолог. Задайте мне любой вопрос об истории, артефактах или раскопках. Чем я могу помочь вам сегодня?'}]
+            ? [{'role': 'ai', 'text': s.aiWelcome}]
             : history;
           _isLoading = false;
         });
@@ -47,14 +52,19 @@ class _AiArchaeologistScreenState extends State<AiArchaeologistScreen> {
       }
     } else {
       setState(() {
-        _messages = [{'role': 'ai', 'text': 'Здравствуйте! Я ваш ИИ-археолог. Как гость, ваша история не будет сохранена. Пожалуйста, войдите, чтобы сохранять чаты.'}];
+        _messages = [{'role': 'ai', 'text': s.aiGuestWelcome}];
         _isLoading = false;
       });
     }
   }
 
   void _initTts() {
-    _flutterTts.setLanguage("ru-RU");
+    final langCode = S.of(context).locale.languageCode;
+    String ttsLang = "en-US";
+    if (langCode == 'ru') ttsLang = "ru-RU";
+    if (langCode == 'kk') ttsLang = "kk-KZ";
+    
+    _flutterTts.setLanguage(ttsLang);
     _flutterTts.setPitch(1.0);
     _flutterTts.setSpeechRate(0.5);
     _flutterTts.setStartHandler(() => setState(() => _isSpeaking = true));
@@ -162,6 +172,7 @@ class _AiArchaeologistScreenState extends State<AiArchaeologistScreen> {
   }
 
   Widget _buildAppBar() {
+    final s = S.of(context);
     return ClipRRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -169,10 +180,10 @@ class _AiArchaeologistScreenState extends State<AiArchaeologistScreen> {
           backgroundColor: Colors.white.withOpacity(0.05),
           elevation: 0,
           centerTitle: true,
-          title: const Column(
+          title: Column(
             children: [
-              Text("ИИ Археолог", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-              Text("Online Assistant", style: TextStyle(color: Colors.greenAccent, fontSize: 10, fontWeight: FontWeight.w500)),
+              Text(s.aiArchaeologist, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+              Text(s.onlineAssistant, style: const TextStyle(color: Colors.greenAccent, fontSize: 10, fontWeight: FontWeight.w500)),
             ],
           ),
           leading: IconButton(
@@ -197,6 +208,7 @@ class _AiArchaeologistScreenState extends State<AiArchaeologistScreen> {
 
   Widget _buildMessageBubble(Map<String, String> msg) {
     final bool isAi = msg['role'] == 'ai';
+    final s = S.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
@@ -247,7 +259,7 @@ class _AiArchaeologistScreenState extends State<AiArchaeologistScreen> {
                         GestureDetector(
                           onTap: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Спасибо! Ответ ИИ будет проверен.")),
+                              SnackBar(content: Text(s.aiThanks)),
                             );
                           },
                           child: Icon(Icons.flag_outlined, size: 16, color: Colors.white.withOpacity(0.4)),
@@ -280,7 +292,7 @@ class _AiArchaeologistScreenState extends State<AiArchaeologistScreen> {
         children: [
           _buildAvatar(Icons.auto_awesome, Colors.orangeAccent),
           const SizedBox(width: 10),
-          const Text("Археолог печатает...", style: TextStyle(color: Colors.white38, fontSize: 12, fontStyle: FontStyle.italic)),
+          Text(S.of(context).archaeologistTyping, style: const TextStyle(color: Colors.white38, fontSize: 12, fontStyle: FontStyle.italic)),
         ],
       ),
     );
@@ -307,11 +319,11 @@ class _AiArchaeologistScreenState extends State<AiArchaeologistScreen> {
                   child: TextField(
                     controller: _messageController,
                     style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      hintText: "Спросите об истории...",
-                      hintStyle: TextStyle(color: Colors.white24),
+                    decoration: InputDecoration(
+                      hintText: S.of(context).askHistory,
+                      hintStyle: const TextStyle(color: Colors.white24),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     ),
                     onSubmitted: (_) => _sendMessage(),
                   ),
@@ -334,21 +346,22 @@ class _AiArchaeologistScreenState extends State<AiArchaeologistScreen> {
   }
 
   void _showClearDialog() {
+    final s = S.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xff1a1412),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text("Очистить чат?", style: TextStyle(color: Colors.white)),
-        content: const Text("Вся история общения с ИИ будет удалена.", style: TextStyle(color: Colors.white70)),
+        title: Text(s.clearChat, style: const TextStyle(color: Colors.white)),
+        content: Text(s.clearChatHistory, style: const TextStyle(color: Colors.white70)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Отмена")),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(s.cancel)),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _clearChat();
             }, 
-            child: const Text("Удалить", style: TextStyle(color: Colors.redAccent))
+            child: Text(s.deleteLabel, style: const TextStyle(color: Colors.redAccent))
           ),
         ],
       ),
@@ -357,10 +370,11 @@ class _AiArchaeologistScreenState extends State<AiArchaeologistScreen> {
 
   Future<void> _clearChat() async {
     final user = context.read<AuthProviders>().user;
+    final s = S.of(context);
     if (user?.email != null) {
       await _chatService.clearHistory(user!.email!);
       setState(() {
-        _messages = [{'role': 'ai', 'text': 'История очищена. О чем хотите поговорить?'}];
+        _messages = [{'role': 'ai', 'text': s.historyCleared}];
       });
     }
   }

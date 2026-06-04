@@ -142,15 +142,15 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             children: [
               const Icon(Icons.bolt, color: Colors.orangeAccent, size: 20),
               const SizedBox(width: 8),
-              const Text(
-                "Ежедневные задания",
-                style: TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold, fontSize: 14),
+              Text(
+                s.dailyQuests,
+                style: const TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          _buildQuestItem("Изучить 3D-экспонат", true),
-          _buildQuestItem("Спросить ИИ-археолога о находках", false),
+          _buildQuestItem(s.quest3D, true),
+          _buildQuestItem(s.questAI, false),
         ],
       ),
     );

@@ -29,13 +29,7 @@ class AppRouter {
 
         if (role == null && goingTo != '/') return '/';
 
-        if (role == 'visitor') {
-          final allowed = ['/', '/home', '/artifact', '/profile', '/legal', '/favorites', '/settings', '/achievements'];
-          bool isAllowed = allowed.any((p) => goingTo.startsWith(p));
-          return isAllowed ? null : '/home';
-        }
-
-        if (role == 'archaeologist') {
+        if (role == 'archaeologist' || role == 'admin') {
           if (!logged) {
             if (goingTo.startsWith('/login') || goingTo == '/register' || goingTo.startsWith('/legal') || goingTo == '/') {
               return null;

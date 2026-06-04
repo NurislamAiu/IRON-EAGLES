@@ -135,7 +135,7 @@ class _ArtifactListScreenState extends State<ArtifactListScreen> {
                       ),
                     ),
                     Text(
-                      'Explore the ancient treasures',
+                      s.exploreTreasures,
                       style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 14),
                     ),
                   ],

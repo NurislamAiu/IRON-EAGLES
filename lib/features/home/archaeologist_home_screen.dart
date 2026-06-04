@@ -37,27 +37,13 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
 
     /// ====== РОЛИ ======
     final bool isAdmin = email == "admin@gmail.com";
-    final bool isAuthenticated = email != null;
 
     /// ====== ФОРМИРУЕМ СПИСКИ ЭКРАНОВ ПО РОЛИ ======
 
     List<Widget> screens;
     List<_NavItemData> items;
 
-    if (!isAuthenticated) {
-      // ----------- ГОСТЬ -----------
-      screens = const [
-        HomeTab(),
-        CommunitiesTab(),
-        ProfileTab(),
-      ];
-
-      items = [
-        _NavItemData(Icons.home_filled, S.of(context).home),
-        _NavItemData(Icons.groups, S.of(context).clubs),
-        _NavItemData(Icons.person, S.of(context).profile),
-      ];
-    } else if (isAdmin) {
+    if (isAdmin) {
       // ----------- АДМИН -----------
       screens = [
         const HomeTab(),
@@ -75,7 +61,7 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
         _NavItemData(Icons.person, S.of(context).profile),
       ];
     } else {
-      // ----------- ОБЫЧНЫЙ ПОЛЬЗОВАТЕЛЬ -----------
+      // ----------- ОБЫЧНЫЙ ПОЛЬЗОВАТЕЛЬ (АРХЕОЛОГ) -----------
       screens = [
         const HomeTab(),
         const CommunitiesTab(),

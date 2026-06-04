@@ -33,6 +33,7 @@ class S {
       'language': 'Language',
       'russian': 'Russian',
       'english': 'English',
+      'kazakh': 'Kazakh',
       'museumArtifacts': 'Museum Artifacts',
       'history': 'History',
       'details': 'Details',
@@ -154,265 +155,10 @@ class S {
       'userAgreement': 'User Agreement',
       'privacyPolicy': 'Privacy Policy',
       'agreementTerms': 'By registering, you agree to our Terms of Use and Privacy Policy.',
-      'userAgreementContent': '''
-USER AGREEMENT (TERMS OF USE)
-
-Last updated: May 18, 2026
-
-Please read this User Agreement ("Agreement") carefully before using the ArcheoAI mobile application ("Application", "App", "Service"). By downloading, installing, registering an account, or otherwise using the Application, you ("User", "you") confirm that you have read, understood, and agreed to be bound by all terms set out below. If you do not agree with any part of this Agreement, you must not use the Application.
-
-1. GENERAL PROVISIONS
-
-1.1. This Agreement is a legally binding contract between you and the developer of ArcheoAI ("Developer", "we", "us", "our"), operating under the Bundle ID kz.haileybury.archeoai.
-
-1.2. The Application is an educational product dedicated to the cultural and archaeological heritage of Kazakhstan. It uses artificial intelligence technologies to provide users with interactive content, descriptions of artifacts, historical references, and other educational materials.
-
-1.3. The Developer reserves the right to modify this Agreement at any time. The current version is always available within the Application. Continued use of the Application after changes have been published constitutes your acceptance of the new terms.
-
-2. ELIGIBILITY AND ACCOUNT REGISTRATION
-
-2.1. The Application may be used by persons aged 13 and older. Users under the age of 18 must obtain consent from a parent or legal guardian before using the Application.
-
-2.2. To access certain features, you must create an account by providing a valid email address, a password, and, optionally, a display name. You agree to provide accurate, current, and complete information during registration.
-
-2.3. You are solely responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account. You agree to notify us immediately of any unauthorized use of your account.
-
-2.4. One person may register only one account. Creating multiple accounts to bypass restrictions, manipulate ratings, or abuse Application features is prohibited.
-
-3. USER RIGHTS AND OBLIGATIONS
-
-3.1. You have the right to:
-- access educational content provided in the Application;
-- use AI-based features for interactive learning and exploration of archaeological topics;
-- save your progress, bookmarks, and personal notes within the Application;
-- request deletion of your account and associated personal data at any time.
-
-3.3. User-Generated Content (UGC): The Application may allow users to post comments, posts, and other content. You agree that such content must comply with our safety guidelines. We strictly prohibit any offensive, abusive, or inappropriate content. We provide mechanisms for users to report and block both content and other users. The Developer will act on any objectionable content reports within 24 hours by removing the content and potentially ejecting the user who provided the offending content.
-
-3.4. You agree NOT to:
-- use the Application for any unlawful purpose or in violation of any local, national, or international law;
-- attempt to gain unauthorized access to the Application, its servers, or related systems;
-- decompile, reverse-engineer, disassemble, or otherwise attempt to derive the source code of the Application;
-- upload, share, or transmit any content that is offensive, defamatory, obscene, threatening, discriminatory, or otherwise harmful;
-- use automated scripts, bots, or scrapers to collect data from the Application;
-- impersonate any person or entity, or misrepresent your affiliation with any person or entity;
-- interfere with or disrupt the integrity or performance of the Application or third-party services connected to it;
-- use the Application to distribute spam, malware, viruses, or any other harmful code;
-- exploit the Application for commercial purposes without prior written permission from the Developer.
-
-4. INTELLECTUAL PROPERTY
-
-4.1. All content within the Application, including but not limited to text, graphics, images, illustrations, photographs, 3D models, audio, video, AI-generated outputs, source code, design, logos, and trademarks, is the exclusive property of the Developer or its licensors and is protected by intellectual property laws of the Republic of Kazakhstan and international treaties.
-
-4.2. You are granted a limited, non-exclusive, non-transferable, revocable license to use the Application for personal, non-commercial, educational purposes only.
-
-4.3. Any reproduction, distribution, modification, public display, or creation of derivative works based on the Application content without the express written consent of the Developer is strictly prohibited.
-
-4.4. User-generated content (notes, bookmarks, comments, if applicable) remains your property, but by submitting it to the Application you grant the Developer a worldwide, royalty-free, non-exclusive license to store, display, and process such content solely for the purpose of operating the Application.
-
-5. ARTIFICIAL INTELLIGENCE FEATURES
-
-5.1. The Application uses artificial intelligence models to generate descriptions, answer questions, and provide interactive learning experiences related to archaeological artifacts and Kazakh cultural heritage.
-
-5.2. AI-generated content is provided for educational and informational purposes only. While we strive for accuracy, AI outputs may contain errors, inaccuracies, or interpretations that do not reflect established scientific consensus. The Developer does not guarantee the accuracy, completeness, or reliability of AI-generated content.
-
-5.3. You acknowledge that AI responses should not be used as a substitute for professional academic research, peer-reviewed publications, or expert consultation.
-
-5.4. Queries submitted to AI features may be transmitted to third-party AI service providers (such as Anthropic) for processing. Such transmission is subject to our Privacy Policy and the privacy policies of the respective providers.
-
-6. ACCOUNT TERMINATION AND DELETION
-
-6.1. You may delete your account at any time directly within the Application via the "Delete Account" option in the profile settings. Upon deletion, your personal data will be permanently removed from our servers within a reasonable technical period, except for information we are required to retain by law.
-
-6.2. The Developer reserves the right to suspend or terminate your account, without prior notice or liability, in the event of a violation of this Agreement, fraudulent activity, or for any other reason at the Developer's sole discretion.
-
-6.3. Upon termination, your right to use the Application will immediately cease. Provisions related to intellectual property, disclaimers of warranty, limitation of liability, and dispute resolution shall survive termination.
-
-7. DISCLAIMERS AND LIMITATION OF LIABILITY
-
-7.1. The Application is provided on an "as is" and "as available" basis, without warranties of any kind, either express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, non-infringement, or accuracy of content.
-
-7.2. The Developer does not warrant that the Application will be uninterrupted, error-free, secure, or free from viruses or other harmful components.
-
-7.3. To the maximum extent permitted by applicable law, the Developer shall not be liable for any direct, indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of, or inability to use, the Application, including but not limited to loss of data, loss of profits, or business interruption.
-
-7.4. The Developer is not responsible for any damages or losses resulting from third-party services integrated with the Application (cloud providers, AI providers, payment processors, etc.).
-
-8. THIRD-PARTY SERVICES
-
-8.1. The Application integrates with the following third-party services: Firebase (Google LLC) for authentication and data storage, Apple services for App Store distribution and in-app functionality, and AI providers for generative content. Your use of these services is also governed by their respective terms and privacy policies.
-
-9. CHANGES TO THE APPLICATION
-
-9.1. The Developer reserves the right to modify, suspend, or discontinue, temporarily or permanently, the Application or any feature thereof at any time, with or without notice. The Developer shall not be liable to you or any third party for any such modification, suspension, or discontinuance.
-
-10. GOVERNING LAW AND DISPUTE RESOLUTION
-
-10.1. This Agreement shall be governed by and construed in accordance with the laws of the Republic of Kazakhstan, without regard to its conflict of laws principles.
-
-10.2. Any disputes arising out of or in connection with this Agreement shall be resolved through good-faith negotiations between the parties. If a resolution cannot be reached, the dispute shall be submitted to the competent courts at the place of registration of the Developer.
-
-11. CONTACT INFORMATION
-
-For any questions, comments, or complaints regarding this Agreement or the Application, please contact us at: [your support email].
-
-By tapping "I agree" or by creating an account, you acknowledge that you have read, understood, and accepted the terms of this User Agreement.
-''',
-      'privacyPolicyContent': '''
-PRIVACY POLICY
-
-Last updated: May 18, 2026
-
-This Privacy Policy describes how the ArcheoAI mobile application ("Application", "App", "we", "us", "our"), Bundle ID kz.haileybury.archeoai, collects, uses, stores, protects, and discloses personal information of its users ("User", "you", "your"). By using the Application, you consent to the practices described in this Policy.
-
-1. INFORMATION WE COLLECT
-
-1.1. Information you provide directly:
-- Email address — required for account registration and authentication;
-- Password — stored in encrypted form by Firebase Authentication, never accessible to the Developer in plain text;
-- Display name (optional) — used to personalize your experience within the Application;
-- Profile picture (optional) — if you choose to upload one;
-- User-generated content — notes, bookmarks, saved artifacts, and queries you submit to AI features.
-
-1.2. Information collected automatically:
-- Device information — device model, operating system version, language settings, time zone, unique device identifiers;
-- Usage data — features accessed, screens viewed, session duration, frequency of use, interaction events;
-- Technical logs — crash reports, error logs, performance diagnostics, IP address;
-- Approximate location — derived from IP address (no precise GPS data is collected unless explicitly requested for a specific feature).
-
-1.3. Information from third parties:
-- Authentication providers — if you sign in using third-party providers (such as Google or Apple Sign-In), we receive basic profile information authorized by you through those providers.
-
-1.4. Information NOT collected:
-- We do not collect precise GPS location;
-- We do not collect contacts, photos, or files from your device without explicit permission;
-- We do not collect financial or payment information directly (any in-app purchases are processed by Apple);
-- We do not collect sensitive personal data such as race, religion, political views, health, or biometric data.
-
-2. PURPOSES OF DATA PROCESSING
-
-We use the collected information for the following purposes:
-- to create and manage your user account;
-- to provide and personalize educational content;
-- to enable AI-based interactive features (queries, recommendations, explanations);
-- to save your progress, bookmarks, and preferences across sessions;
-- to communicate with you regarding updates, security notifications, or service-related messages;
-- to monitor and analyze usage patterns in order to improve the Application;
-- to detect, prevent, and address technical issues, fraud, and security incidents;
-- to comply with legal obligations and respond to lawful requests from competent authorities.
-
-3. LEGAL BASIS FOR PROCESSING
-
-We process your personal data based on:
-- your explicit consent, given when you register an account and accept this Policy;
-- the necessity to perform the contract with you (provision of the Application);
-- our legitimate interests in improving and securing the Application;
-- compliance with applicable legal obligations.
-
-4. DATA STORAGE AND SECURITY
-
-4.1. Your data is stored on secure cloud servers operated by Google Firebase (Google LLC), which complies with internationally recognized security standards (ISO 27001, SOC 1/2/3).
-
-4.2. Data may be stored on servers located outside the Republic of Kazakhstan, including in the United States and the European Union. By using the Application, you consent to the international transfer of your data.
-
-4.3. We implement appropriate technical and organizational measures to protect your data, including:
-- encryption of data in transit (HTTPS/TLS);
-- encryption of credentials at rest;
-- access control and authentication for administrative systems;
-- regular security audits and dependency updates.
-
-4.4. Despite our efforts, no method of transmission or storage over the Internet is 100% secure. We cannot guarantee absolute security and you acknowledge that you provide your data at your own risk.
-
-5. DATA RETENTION
-
-5.1. We retain your personal data for as long as your account remains active, or as long as necessary to provide you with the Application.
-
-5.2. If you delete your account, your personal data will be permanently deleted from our active systems within 30 days. Backup copies may persist for up to 90 additional days, after which they will also be deleted.
-
-5.3. Some data may be retained for a longer period if required by law (for example, for tax, audit, or anti-fraud purposes).
-
-6. DATA SHARING AND DISCLOSURE
-
-6.1. We do NOT sell, rent, or trade your personal data to third parties for marketing purposes.
-
-6.2. We may share your data with:
-- Service providers — Firebase (authentication, database, storage, analytics), AI providers (such as Anthropic for AI-based features), crash reporting tools — strictly for the purposes of operating the Application;
-- Legal authorities — when required by law, court order, or to protect our rights, property, or safety, or that of our users or the public;
-- Successors — in the event of a merger, acquisition, reorganization, or sale of assets, your data may be transferred to the successor entity, subject to the same level of protection described in this Policy.
-
-6.3. All third-party service providers are contractually obligated to handle your data in accordance with applicable data protection laws.
-
-7. AI FEATURES AND DATA PROCESSING
-
-7.1. When you use AI-based features (such as asking questions about artifacts), the content of your query may be transmitted to third-party AI service providers (e.g., Anthropic Claude API) for processing.
-
-7.2. We do not transmit personal identifiers (such as your email or name) together with AI queries unless strictly necessary.
-
-7.3. AI providers may temporarily process your query content to generate responses but, according to their terms, do not use such content to train their models without your consent.
-
-8. YOUR RIGHTS
-
-In accordance with the Law of the Republic of Kazakhstan "On Personal Data and Its Protection" (and, where applicable, the EU GDPR), you have the right to:
-- access — request a copy of the personal data we hold about you;
-- rectification — correct inaccurate or incomplete data;
-- erasure — request deletion of your data ("right to be forgotten"); this can be initiated directly within the Application via "Delete Account";
-- restriction — limit the processing of your data in certain circumstances;
-- portability — receive your data in a structured, machine-readable format;
-- objection — object to the processing of your data based on legitimate interests;
-- withdrawal of consent — withdraw your previously given consent at any time;
-- complaint — lodge a complaint with the competent data protection authority of the Republic of Kazakhstan.
-
-To exercise these rights, contact us at: [your support email]. We will respond within 30 calendar days.
-
-9. ACCOUNT DELETION
-
-9.1. You can delete your account at any time through the Application:
-Profile → Settings → Delete Account → confirm deletion.
-
-9.2. Upon confirmation, the following data will be permanently deleted:
-- your authentication record (email, encrypted password);
-- your profile information (display name, avatar);
-- your user-generated content (notes, bookmarks, history);
-- your usage logs associated with your account identifier.
-
-9.3. Anonymized and aggregated data that no longer identifies you may be retained for analytical and statistical purposes.
-
-10. CHILDREN'S PRIVACY
-
-10.1. The Application is not directed to children under the age of 13. We do not knowingly collect personal data from children under 13. If we become aware that we have collected such data, we will delete it promptly.
-
-10.2. Users aged 13 to 17 must obtain consent from a parent or legal guardian before using the Application.
-
-11. COOKIES AND SIMILAR TECHNOLOGIES
-
-The Application itself does not use browser cookies. However, embedded analytics and AI services may use device-level identifiers and similar technologies to function properly and measure performance.
-
-12. INTERNATIONAL USERS
-
-If you access the Application from outside the Republic of Kazakhstan, please be aware that your data may be transferred to, stored, and processed in countries where data protection laws may differ. By using the Application, you consent to such transfers.
-
-13. CHANGES TO THIS PRIVACY POLICY
-
-13.1. We may update this Privacy Policy from time to time to reflect changes in our practices, technologies, or legal requirements.
-
-13.2. The updated version will be published within the Application with an updated "Last updated" date. For material changes, we will notify you through the Application or by email.
-
-13.3. Your continued use of the Application after the publication of changes constitutes your acceptance of the updated Policy.
-
-14. CONTACT INFORMATION
-
-If you have any questions, concerns, or requests regarding this Privacy Policy or the processing of your personal data, please contact us:
-
-Email: [your support email]
-Developer: [your name / organization]
-Bundle ID: kz.haileybury.archeoai
-
-By tapping "I agree" or by using the Application, you acknowledge that you have read, understood, and accepted the terms of this Privacy Policy.
-''',
+      'userAgreementContent': 'By using ArcheoAI, you agree to comply with community guidelines. We maintain a ZERO TOLERANCE policy for inappropriate content (insults, spam, hate speech). Any user can report such content. Violators will be blocked and their content removed within 24 hours.',
+      'privacyPolicyContent': 'This is the Privacy Policy. It describes what data is collected and how it is protected.',
       'alreadyHaveAccount': 'Already have an account? Login',
-      'roleVisitor': 'Visitor',
       'roleArchaeologist': 'Archaeologist',
-      'selectRole': 'Select your role',
       'exploreMuseum': 'Explore the museum and its secrets',
       'manageArtifacts': 'Add and manage historical finds',
       'fillAllFields': 'Fill in all fields',
@@ -420,8 +166,6 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
       'registrationSuccess': 'Registration successful!',
       'registrationError': 'Registration error',
       'confirmPassword': 'Confirm Password',
-      'roleSelectionSubtitle': 'So we can provide you with the best experience',
-      'iAmVisitor': 'I am a Visitor',
       'iAmArchaeologist': 'I am an Archaeologist',
       'scholarTitle': 'History Scholar',
       'scholarDesc': 'View 5 different artifacts.',
@@ -456,6 +200,8 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
       'scannerGenerating': 'Generating 3D model...',
       'scannerInstruction': 'Walk around the object taking photos',
       'scannerPolygon': 'POLYGON GENERATION',
+      'initSensors': 'Initializing Sensors...',
+      'cameraUnavailable': 'Camera unavailable (Simulator Mode)',
       'addName': 'Add name',
       'saved': 'Saved',
       'nameLabel': 'Name',
@@ -474,6 +220,107 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
       'reportContent': 'Report Content',
       'contentReported': 'Thank you. We will review this content within 24 hours.',
       'userBlocked': 'User blocked.',
+      'dailyQuests': 'Daily Quests',
+      'quest3D': 'Examine a 3D artifact',
+      'questAI': 'Ask the AI archaeologist about finds',
+      'announce': 'Announce',
+      'exploreTreasures': 'Explore the ancient treasures',
+      'myArtifacts': 'My Artifacts',
+      'pendingPublication': 'Pending (Publication)',
+      'pendingEdit': 'Pending (Edit)',
+      'editRejected': 'Edit Rejected',
+      'requestEdit': 'Request Edit',
+      'requestSent': 'Request sent to moderators',
+      'noMyArtifacts': 'You don\'t have any artifacts yet',
+      'edit': 'Edit',
+      'notSpecified': 'Not specified',
+      'stoneAge': 'Stone Age',
+      'bronzeAge': 'Bronze Age',
+      'ironAge': 'Iron Age',
+      'antiquity': 'Antiquity',
+      'middleAges': 'Middle Ages',
+      'modernEra': 'Modern Era',
+      'contemporary': 'Contemporary',
+      'excellentCondition': 'Excellent',
+      'goodCondition': 'Good',
+      'fairCondition': 'Fair',
+      'poorCondition': 'Poor',
+      'gpsCoords': 'GPS Coordinates',
+      'latitude': 'Latitude',
+      'longitude': 'Longitude',
+      'locationHint': 'Location (city, region, monument)',
+      'canAddGps': 'GPS location can be added here',
+      'timeTravel': 'Time Travel',
+      'past': 'Past',
+      'today': 'Today',
+      'photoRequired': 'Artifact photo is required',
+      'titleDescRequired': 'Title and description are required',
+      'artifactAdded': 'Artifact added successfully!',
+      'parsingError': 'Parsing error',
+      'requestModeration': 'Request sent to moderators',
+      'newInvitations': 'NEW INVITATIONS',
+      'inviteToProject': 'Invitation to project',
+      'from': 'from',
+      'startLabel': 'Start',
+      'editLabel': 'Edit',
+      'deleteLabel': 'Delete',
+      'announcement': 'Announcement',
+      'chatLabel': 'Chat',
+      'deleteProjectConfirmMsg': 'Are you sure you want to delete expedition \'{name}\'?',
+      'editExpedition': 'Edit Expedition',
+      'searchArchaeologist': 'Find archaeologist by email',
+      'aiRecognition': 'AI Artifact Recognition',
+      'comingSoon': 'Coming soon...\nWe are training the neural network!',
+      'close': 'Close',
+      'achievementUnlocked': 'ACHIEVEMENT UNLOCKED!',
+      'ok': 'OK',
+      'aiArchaeologist': 'AI Archaeologist',
+      'aiThanks': 'Thank you! The AI response will be reviewed.',
+      'archaeologistTyping': 'Archaeologist is typing...',
+      'askHistory': 'Ask about history...',
+      'clearChat': 'Clear chat?',
+      'clearChatHistory': 'All history of conversation with AI will be deleted.',
+      'anonymous': 'Anonymous',
+      'noAnnouncements': 'No announcements',
+      'expeditionAnnouncements': 'Expedition Announcements',
+      'iAgreeWith': 'I agree with',
+      'aiWelcome': 'Hello! I am your AI archaeologist. Ask me any question about history, artifacts, or excavations. How can I help you today?',
+      'aiGuestWelcome': 'Hello! I am your AI archaeologist. As a guest, your history will not be saved. Please log in to save chats.',
+      'historyCleared': 'History cleared. What would you like to talk about?',
+      'audio': 'Audio',
+      'aiAudioGuide': 'AI Audio Guide',
+      'listenToHistory': 'Listen to the history of this artifact',
+      'aiVoicing': 'AI is voicing the description...',
+      'officialExpeditionLabel': 'Official Expedition',
+      'threeDModel': '3D Model',
+      'onlineAssistant': 'Online Assistant',
+      'scannerVersion': 'ARCHAEOLOGY SCAN V2.4',
+      'artifactIdLabel': 'Artifact ID',
+      'fromLabel': 'From',
+      'statusLabel': 'Status',
+      'encyclopedia': 'Knowledge Base',
+      'kurgan': 'Kurgan',
+      'kurganDesc': 'A type of tumulus or burial mound, often found in Central Asia and Eastern Europe.',
+      'petroglyph': 'Petroglyph',
+      'petroglyphDesc': 'Images created by removing part of a rock surface by incising, picking, or carving.',
+      'sakas': 'Sakas',
+      'sakasDesc': 'A group of nomadic Indo-Iranian peoples who historically inhabited the northern and eastern Eurasian Steppe.',
+      'animalStyle': 'Animal Style',
+      'animalStyleDesc': 'An approach to decoration found from China to Central Europe in the Iron Age, characterized by animal motifs.',
+      'dromos': 'Dromos',
+      'dromosDesc': 'An entrance passage or avenue leading to a building or tomb.',
+      'esp32Monitor': 'ESP32 Climate Monitor',
+      'esp32Address': 'ESP32 Address',
+      'connect': 'Connect',
+      'disconnect': 'Disconnect',
+      'disconnected': 'Disconnected',
+      'temperature': 'Temperature',
+      'humidity': 'Humidity',
+      'connected': 'Connected',
+      'connecting': 'Connecting...',
+      'scanQrCode': 'Scan QR Code',
+      'simulatorScannerNote': 'Note: Camera scanning requires a real device. On simulator, please use manual entry.',
+      'exploreTreasures': 'Explore ancient treasures',
     },
     'ru': {
       'appTitle': 'ArcheoAI',
@@ -499,6 +346,7 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
       'language': 'Язык',
       'russian': 'Русский',
       'english': 'Английский',
+      'kazakh': 'Казахский',
       'museumArtifacts': 'Артефакты музея',
       'history': 'История',
       'details': 'Детали',
@@ -623,9 +471,7 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
       'userAgreementContent': 'Используя ArcheoAI, вы соглашаетесь соблюдать правила сообщества. Мы придерживаемся политики НУЛЕВОЙ ТЕРПИМОСТИ к неприемлемому контенту (оскорблениям, спаму, враждебным высказываниям). Любой пользователь может пожаловаться на такой контент. Нарушители будут заблокированы, а их контент удален в течение 24 часов.',
       'privacyPolicyContent': 'Это Политика конфиденциальности. Здесь следует описать, какие данные вы собираете, как они используются и как вы защищаете конфиденциальность пользователей.',
       'alreadyHaveAccount': 'Уже есть аккаунт? Войти',
-      'roleVisitor': 'Посетитель',
       'roleArchaeologist': 'Археолог',
-      'selectRole': 'Выберите вашу роль',
       'exploreMuseum': 'Исследуйте музей и его секреты',
       'manageArtifacts': 'Добавляйте и управляйте находками',
       'fillAllFields': 'Заполните все поля',
@@ -633,8 +479,6 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
       'registrationSuccess': 'Регистрация успешна!',
       'registrationError': 'Ошибка регистрации',
       'confirmPassword': 'Подтвердите пароль',
-      'roleSelectionSubtitle': 'Чтобы мы могли предоставить вам наилучший опыт',
-      'iAmVisitor': 'Я Посетитель',
       'iAmArchaeologist': 'Я Археолог',
       'scholarTitle': 'Исследователь истории',
       'scholarDesc': 'Посмотрите 5 различных артефактов.',
@@ -687,6 +531,420 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
       'reportContent': 'Сообщить о нарушении',
       'contentReported': 'Спасибо. Мы проверим этот контент в течение 24 часов.',
       'userBlocked': 'Пользователь заблокирован.',
+      'dailyQuests': 'Ежедневные задания',
+      'quest3D': 'Изучить 3D-экспонат',
+      'questAI': 'Спросить ИИ-археолога о находках',
+      'announce': 'Объявить',
+      'exploreTreasures': 'Исследуйте древние сокровища',
+      'myArtifacts': 'Мои находки',
+      'pendingPublication': 'Ожидает (публикация)',
+      'pendingEdit': 'Ожидает (ред.)',
+      'editRejected': 'Редактирование отклонено',
+      'requestEdit': 'Редактирование',
+      'requestSent': 'Запрос отправлен модерации',
+      'noMyArtifacts': 'У вас пока нет артефактов',
+      'edit': 'Редактировать',
+      'notSpecified': 'Не указано',
+      'stoneAge': 'Каменный век',
+      'bronzeAge': 'Бронзовый век',
+      'ironAge': 'Железный век',
+      'antiquity': 'Античность',
+      'middleAges': 'Средневековье',
+      'modernEra': 'Новое время',
+      'contemporary': 'Современный период',
+      'excellentCondition': 'Отличное состояние',
+      'goodCondition': 'Хорошее состояние',
+      'fairCondition': 'Среднее состояние',
+      'poorCondition': 'Плохое состояние',
+      'gpsCoords': 'GPS координаты',
+      'latitude': 'Широта',
+      'longitude': 'Долгота',
+      'locationHint': 'Место (город, область, памятник)',
+      'canAddGps': 'Можно будет добавить геолокацию GPS',
+      'timeTravel': 'Путешествие во времени',
+      'past': 'Прошлое',
+      'today': 'Сегодня',
+      'photoRequired': 'Требуется фото артефакта',
+      'titleDescRequired': 'Название и описание обязательны',
+      'artifactAdded': 'Артефакт успешно добавлен!',
+      'parsingError': 'Ошибка парсинга',
+      'requestModeration': 'Запрос отправлен модерации',
+      'newInvitations': 'НОВЫЕ ПРИГЛАШЕНИЯ',
+      'inviteToProject': 'Приглашение в проект',
+      'from': 'от',
+      'startLabel': 'Старт',
+      'editLabel': 'Изменить',
+      'deleteLabel': 'Удалить',
+      'announcement': 'Объявление',
+      'chatLabel': 'Чат',
+      'deleteProjectConfirmMsg': 'Вы уверены, что хотите удалить экспедицию \'{name}\'?',
+      'editExpedition': 'Редактировать экспедицию',
+      'searchArchaeologist': 'Найдите археолога по email.',
+      'aiRecognition': 'AI-распознавание артефактов',
+      'comingSoon': 'Скоро будет доступно...\nМы обучаем нейросеть!',
+      'close': 'Закрыть',
+      'achievementUnlocked': 'ДОСТИЖЕНИЕ ПОЛУЧЕНО!',
+      'ok': 'ОК',
+      'aiArchaeologist': 'ИИ Археолог',
+      'aiThanks': 'Спасибо! Ответ ИИ будет проверен.',
+      'archaeologistTyping': 'Археолог печатает...',
+      'askHistory': 'Спросите об истории...',
+      'clearChat': 'Очистить чат?',
+      'clearChatHistory': 'Вся история общения с ИИ будет удалена.',
+      'anonymous': 'Аноним',
+      'noAnnouncements': 'Нет объявлений',
+      'expeditionAnnouncements': 'Объявления экспедиции',
+      'iAgreeWith': 'Я согласен с',
+      'aiWelcome': 'Здравствуйте! Я ваш ИИ-археолог. Задайте мне любой вопрос об истории, артефактах или раскопках. Чем я могу помочь вам сегодня?',
+      'aiGuestWelcome': 'Здравствуйте! Я ваш ИИ-археолог. Как гость, ваша история не будет сохранена. Пожалуйста, войдите, чтобы сохранять чаты.',
+      'historyCleared': 'История очищена. О чем хотите поговорить?',
+      'audio': 'Аудио',
+      'aiAudioGuide': 'ИИ Аудиогид',
+      'listenToHistory': 'Слушайте историю этого артефакта',
+      'aiVoicing': 'ИИ озвучивает описание...',
+      'officialExpeditionLabel': 'Официальная экспедиция',
+      'threeDModel': '3D Модель',
+      'onlineAssistant': 'Онлайн-помощник',
+      'scannerVersion': 'АРХЕОЛОГИЧЕСКИЙ СКАНЕР V2.4',
+      'artifactIdLabel': 'ID артефакта',
+      'fromLabel': 'От',
+      'statusLabel': 'Статус',
+      'encyclopedia': 'База знаний',
+      'kurgan': 'Курган',
+      'kurganDesc': 'Тип погребального кургана, часто встречающийся в Центральной Азии и Восточной Европе.',
+      'petroglyph': 'Петроглифы',
+      'petroglyphDesc': 'Изображения, созданные путем удаления части поверхности скалы путем высекания, выбивания или резьбы.',
+      'sakas': 'Саки',
+      'sakasDesc': 'Группа кочевых индоиранских народов, которые исторически населяли северную и восточную часть Евразийской степи.',
+      'animalStyle': 'Звериный стиль',
+      'animalStyleDesc': 'Подход к декору, встречающийся от Китая до Центральной Европы в железном веке, характеризующийся анималистическими мотивами.',
+      'dromos': 'Дромос',
+      'dromosDesc': 'Входной проход или аллея, ведущая к зданию или гробнице.',
+      'esp32Monitor': 'Монитор климата ESP32',
+      'esp32Address': 'Адрес ESP32',
+      'connect': 'Подключиться',
+      'disconnect': 'Отключиться',
+      'disconnected': 'Отключено',
+      'temperature': 'Температура',
+      'humidity': 'Влажность',
+      'connected': 'Подключено',
+      'connecting': 'Подключение...',
+      'scanQrCode': 'Сканировать QR-код',
+      'simulatorScannerNote': 'Примечание: Сканирование камерой требует реального устройства. На симуляторе используйте ручной ввод.',
+      'exploreTreasures': 'Исследуйте древние сокровища',
+    },
+    'kk': {
+      'appTitle': 'ArcheoAI',
+      'home': 'Басты бет',
+      'clubs': 'Клубтар',
+      'create': 'Құру',
+      'projects': 'Жобалар',
+      'profile': 'Профиль',
+      'welcome': 'Қош келдіңіз',
+      'searchHint': 'Артефакттарды іздеу...',
+      'featured': 'Таңдаулы',
+      'allArtifacts': 'Барлық артефакттар',
+      'noArtifacts': 'Артефакттар табылмады',
+      'login': 'Кіру',
+      'register': 'Тіркелу',
+      'logout': 'Шығу',
+      'editProfile': 'Профильді өңдеу',
+      'statistics': 'Статистика',
+      'artifactsAdded': 'Қосылған артефакттар',
+      'favorites': 'Таңдаулылар',
+      'achievements': 'Жетістіктер',
+      'settings': 'Баптаулар',
+      'language': 'Тіл',
+      'russian': 'Орыс тілі',
+      'english': 'Ағылшын тілі',
+      'kazakh': 'Қазақ тілі',
+      'museumArtifacts': 'Мұражай артефакттары',
+      'history': 'Тарих',
+      'details': 'Толығырақ',
+      'map': 'Карта',
+      'comments': 'Пікірлер',
+      'save': 'Сақтау',
+      'cancel': 'Бас тарту',
+      'addArtifact': 'Жаңа артефакт\nқосу',
+      'next': 'Келесі',
+      'back': 'Артқа',
+      'title': 'Атауы',
+      'description': 'Сипаттамасы',
+      'category': 'Санат',
+      'period': 'Кезең',
+      'material': 'Материал',
+      'condition': 'Күйі',
+      'location': 'Табылған жері',
+      'foundBy': 'Тапқан адам',
+      'foundDate': 'Табылған күні',
+      'dimensions': 'Өлшемдері',
+      'height': 'Биіктігі',
+      'width': 'Ені',
+      'depth': 'Тереңдігі',
+      'notes': 'Ескертулер',
+      'pickPhoto': 'Фото таңдау үшін басыңыз',
+      'museumSection': 'Мұражай бөлімі',
+      'restorationStatus': 'Реставрация күйі',
+      'mainInfo': 'Негізгі ақпарат',
+      'discovery': 'Табылуы',
+      'eras': 'Дәуірлер',
+      'threeD': '3D',
+      'noModel': '3D модель қолжетімсіз',
+      'editArtifact': 'Артефактты өңдеу',
+      'saveChanges': 'Өзгерістерді сақтау',
+      'deleteArtifact': 'Артефактты жою?',
+      'deleteAction': 'Жою',
+      'cannotUndo': 'Бұл әрекетті болдырмау мүмкін емес.',
+      'officialExpedition': 'Ресми экспедиция олжасы',
+      'credit': 'Кредит (Экспедиция)',
+      'communityPosts': 'Қауымдастық жазбалары',
+      'noPosts': 'Бұл қауымдастықта әлі жазбалар жоқ.',
+      'officialAnnouncement': 'РЕСМИ ХАБАРЛАНДЫРУ',
+      'clubAnnouncement': 'КЛУБ ХАБАРЛАНДЫРУЫ',
+      'publishedBy': 'Кімнен',
+      'newPost': 'Жаңа жазба',
+      'postTitle': 'Тақырыбы',
+      'postContent': 'Мазмұны',
+      'publish': 'Жариялау',
+      'join': 'Қосылу',
+      'leave': 'Шығу',
+      'teamChat': 'Командалық чат',
+      'noMessages': 'Хабарламалар жоқ.\nТалқылауды бастаңыз!',
+      'writeToTeam': 'Командаға жазу...',
+      'admin': 'Админ',
+      'moderator': 'Модератор',
+      'newExpedition': 'Жаңа экспедиция',
+      'expeditions': 'Экспедициялар',
+      'yourProjects': 'Сіздің археологиялық жобаларыңыз',
+      'noProjects': 'Белсенді жобалар жоқ',
+      'createProjectMsg': 'Командаңыз үшін жаңа экспедиция құрыңыз немесе әріптестеріңізден шақыру күтіңіз.',
+      'start': 'Бастау',
+      'invite': 'Шақыру',
+      'delete': 'Жою',
+      'noDescription': 'Сипаттамасы жоқ...',
+      'chat': 'Чат',
+      'participants': 'Қатысушылар',
+      'deleteProject': 'Жобаны жою?',
+      'deleteProjectConfirm': 'Экспедицияны біржола жойғыңыз келетініне сенімдісіз бе?',
+      'inviteColleague': 'Әріптесті шақыру',
+      'inviteEmailLabel': 'Командаңызға қосу үшін археологтың email-ын енгізіңіз.',
+      'emailLabel': 'Археологтың Email-ы',
+      'inviteSent': 'Шақыру жіберілді!',
+      'startExpedition': 'Экспедицияны бастау',
+      'projectName': 'Жоба атауы*',
+      'projectDescription': 'Сипаттамасы (міндетті емес)',
+      'enterName': 'Атауын енгізіңіз',
+      'communityNotFound': 'Қауымдастық табылмады',
+      'publications': 'Жарияланымдар',
+      'editing': 'Өңдеу',
+      'noPublishRequests': 'Жариялауға сұраныстар жоқ',
+      'noEditRequests': 'Өңдеуге сұраныстар жоқ',
+      'artifactPublished': 'Артефакт жарияланды!',
+      'rejected': 'Қабылданбады',
+      'editRequest': 'Өңдеу сұранысы',
+      'editAllowed': 'Өңдеуге рұқсат берілді',
+      'parseError': 'Артефакт деректерінің қатесі',
+      'artifactNotFound': 'Артефакт табылмады',
+      'noFavorites': 'Сізде әлі таңдаулы артефакттар жоқ',
+      'communities': 'Қауымдастықтар',
+      'searchCommunities': 'Қауымдастықтарды іздеу...',
+      'myCommunities': 'Менің қауымдастықтарым',
+      'allCommunities': 'Барлық қауымдастықтар',
+      'participantsCount': 'қатысушы',
+      'newCommunity': 'Жаңа қауымдастық',
+      'communityPromo': 'Зерттеушілерді қызығушылықтары бойынша біріктіріңіз.\nОлжалармен бөлісіп, теорияларды талқылаңыз.',
+      'communityName': 'Қауымдастық атауы',
+      'communityHint': 'мысалы, Египтологтар',
+      'descriptionHint': 'Қауымдастығыңыз не туралы?',
+      'cover': 'Мұқаба',
+      'addCover': 'Мұқаба қосу',
+      'recommendSize': 'Ұсынылатын өлшем 800x400 (міндетті емес)',
+      'createCommunityAction': 'Қауымдастық құру',
+      'fillFields': 'Тақырыбы мен сипаттамасын толтырыңыз',
+      'communityCreated': 'Қауымдастық сәтті құрылды!',
+      'loginTitle': 'Археологтың кіруі',
+      'email': 'Email',
+      'password': 'Құпия сөз',
+      'enterEmailPass': 'Email мен құпия сөзді енгізіңіз',
+      'welcomeBack': 'Қош келдіңіз!',
+      'invalidEmail': 'Email форматы қате.',
+      'userNotFound': 'Қате email немесе құпия сөз.',
+      'userDisabled': 'Бұл аккаунт бұғатталған.',
+      'tooManyRequests': 'Кіру әрекеттері тым көп. Кейінікер қайталап көріңіз.',
+      'errorOccurred': 'Қате орын алды. Қайталап көріңіз.',
+      'loginError': 'Кіру қатесі',
+      'createAccount': 'Аккаунт құру',
+      'registerTitle': 'Археологты тіркеу',
+      'registerAction': 'Тіркелу',
+      'userAgreement': 'Пайдаланушы келісімі',
+      'privacyPolicy': 'Құпиялылық саясаты',
+      'agreementTerms': 'Тіркелу арқылы сіз біздің Пайдалану шарттарымыз бен Құпиялылық саясатымызға келісесіз.',
+      'userAgreementContent': 'ArcheoAI пайдалану арқылы сіз қауымдастық ережелерін сақтауға келісесіз. Біз орынсыз мазмұнға (балағаттау, спам, өшпенділік тілі) МҮЛДЕМ ТӨЗБЕУ саясатын ұстанамыз. Кез келген пайдаланушы мұндай мазмұн туралы хабарлай алады. Тәртіп бұзушылар бұғатталады, ал олардың мазмұны 24 сағат ішінде жойылады.',
+      'privacyPolicyContent': 'Бұл Құпиялылық саясаты. Ол қандай деректер жиналатынын және олардың қалай қорғалатынын сипаттайды.',
+      'alreadyHaveAccount': 'Аккаунтыңыз бар ма? Кіру',
+      'roleArchaeologist': 'Археолог',
+      'exploreMuseum': 'Мұражай мен оның құпияларын зерттеңіз',
+      'manageArtifacts': 'Тарихи олжаларды қосыңыз және басқарыңыз',
+      'fillAllFields': 'Барлық өрістерді толтырыңыз',
+      'passwordsDoNotMatch': 'Құпия сөздер сәйкес келмейді',
+      'registrationSuccess': 'Тіркелу сәтті аяқталды!',
+      'registrationError': 'Тіркелу қатесі',
+      'confirmPassword': 'Құпия сөзді растаңыз',
+      'iAmArchaeologist': 'Мен Археологпын',
+      'scholarTitle': 'Тарих зерттеушісі',
+      'scholarDesc': '5 түрлі артефактты қараңыз.',
+      'criticTitle': 'Өнертанушы',
+      'criticDesc': 'Артефакттарға 3 пікір қалдырыңыз.',
+      'masterTitle': 'Технофил',
+      'masterDesc': '3D модельді алғаш рет зерттеңіз.',
+      'scannerTitle': 'Сандық геодезист',
+      'scannerDesc': '3D сканерді алғаш рет ашыңыз.',
+      'account': 'Тіркелгі',
+      'filterAll': 'Барлығы',
+      'filterSaka': 'Сақ дәуірі',
+      'filterEgypt': 'Ежелгі Египет',
+      'filterAntiquity': 'Антикалық дәуір',
+      'filterMedieval': 'Орта ғасырлар',
+      'filterSteppe': 'Көшпелілер',
+      'unknown': 'Белгісіз',
+      'addedBy': 'Қосқан адам',
+      'searchByTitle': 'Тақырыбы бойынша іздеу...',
+      'loginToComment': 'Пікір қалдыру үшін жүйеге кіріңіз',
+      'artifactDeleted': 'Артефакт жойылды',
+      'mapError': 'Орналасқан жерді анықтау мүмкін болмады',
+      'loadingComments': 'Пікірлер жүктелуде...',
+      'noCommentsYet': 'Әлі пікірлер жоқ',
+      'writeCommentHint': 'Пікір жазыңыз...',
+      'loginToWrite': 'Жазу үшін жүйеге кіріңіз',
+      'edited': 'өңделген',
+      'emailAlreadyInUse': 'Бұл email бұрыннан тіркелген.',
+      'weakPassword': 'Құпия сөз тым әлсіз. Кемінде 6 таңба пайдаланыңыз.',
+      'scannerFocus': 'Объектіге фокустаңыз',
+      'scannerPoints': 'Түсірілген нүктелер',
+      'scannerGenerating': '3D модель жасалуда...',
+      'scannerInstruction': 'Фотоға түсіре отырып, объектіні айналып шығыңыз',
+      'scannerPolygon': 'ПОЛИГОНДАРДЫ ГЕНЕРАЦИЯЛАУ',
+      'initSensors': 'Датчиктер инициализациялануда...',
+      'cameraUnavailable': 'Камера қолжетімсіз (Симулятор режимі)',
+      'addName': 'Есім қосыңыз',
+      'saved': 'Сақталды',
+      'nameLabel': 'Есім',
+      'artifactPath': 'Артефакт жолы',
+      'origin': 'Шығу тегі',
+      'find': 'Олжа',
+      'isTyping': 'жазып жатыр...',
+      'areTyping': 'адам жазып жатыр...',
+      'deleteAccount': 'Аккаунтты жою',
+      'deleteAccountConfirm': 'Аккаунтыңызды жойғыңыз келетініне сенімдісіз бе? Бұл әрекет қайтымсыз.',
+      'deleteAccountSuccess': 'Аккаунт сәтті жойылды',
+      'deleteAccountError': 'Аккаунтты жою қатесі',
+      'report': 'Шағымдану',
+      'block': 'Бұғаттау',
+      'blockUser': 'Пайдаланушыны бұғаттау',
+      'reportContent': 'Мазмұн туралы хабарлау',
+      'contentReported': 'Рахмет. Біз бұл мазмұнды 24 сағат ішінде тексереміз.',
+      'userBlocked': 'Пайдаланушы бұғатталды.',
+      'dailyQuests': 'Күнделікті тапсырмалар',
+      'quest3D': '3D артефактты зерттеу',
+      'questAI': 'ИИ археологынан олжалар туралы сұрау',
+      'announce': 'Хабарлау',
+      'exploreTreasures': 'Ежелгі қазыналарды зерттеңіз',
+      'myArtifacts': 'Менің артефакттарым',
+      'pendingPublication': 'Күтуде (Жариялау)',
+      'pendingEdit': 'Күтуде (Өңдеу)',
+      'editRejected': 'Өңдеу қабылданбады',
+      'requestEdit': 'Өңдеуге сұраныс',
+      'requestSent': 'Сұраныс модераторларға жіберілді',
+      'noMyArtifacts': 'Сізде әлі артефакттар жоқ',
+      'edit': 'Өңдеу',
+      'notSpecified': 'Көрсетілмеген',
+      'stoneAge': 'Тас дәуірі',
+      'bronzeAge': 'Қола дәуірі',
+      'ironAge': 'Темір дәуірі',
+      'antiquity': 'Антикалық дәуір',
+      'middleAges': 'Орта ғасырлар',
+      'modernEra': 'Жаңа заман',
+      'contemporary': 'Қазіргі заман',
+      'excellentCondition': 'Өте жақсы',
+      'goodCondition': 'Жақсы',
+      'fairCondition': 'Орташа',
+      'poorCondition': 'Нашар',
+      'gpsCoords': 'GPS координаттары',
+      'latitude': 'Ендік',
+      'longitude': 'Бойлық',
+      'locationHint': 'Орны (қала, облыс, ескерткіш)',
+      'canAddGps': 'GPS геолокациясын қосуға болады',
+      'timeTravel': 'Уақыт саяхаты',
+      'past': 'Өткен шақ',
+      'today': 'Бүгін',
+      'photoRequired': 'Артефакт фотосы қажет',
+      'titleDescRequired': 'Атауы мен сипаттамасы міндетті',
+      'artifactAdded': 'Артефакт сәтті қосылды!',
+      'parsingError': 'Парсинг қатесі',
+      'requestModeration': 'Сұраныс модераторларға жіберілді',
+      'newInvitations': 'ЖАҢА ШАҚЫРУЛАР',
+      'inviteToProject': 'Жобаға шақыру',
+      'from': 'кімнен',
+      'startLabel': 'Бастау',
+      'editLabel': 'Өңдеу',
+      'deleteLabel': 'Жою',
+      'announcement': 'Хабарландыру',
+      'chatLabel': 'Чат',
+      'deleteProjectConfirmMsg': '\'{name}\' экспедициясын жойғыңыз келетініне сенімдісіз бе?',
+      'editExpedition': 'Экспедицияны өңдеу',
+      'searchArchaeologist': 'Археологты email арқылы табыңыз',
+      'aiRecognition': 'AI арқылы артефактты тану',
+      'comingSoon': 'Жақында қолжетімді болады...\nБіз нейрожеліні оқытып жатырмыз!',
+      'close': 'Жабу',
+      'achievementUnlocked': 'ЖЕТІСТІК АШЫЛДЫ!',
+      'ok': 'ОК',
+      'aiArchaeologist': 'ИИ Археолог',
+      'aiThanks': 'Рахмет! ИИ жауабы тексеріледі.',
+      'archaeologistTyping': 'Археолог жазып жатыр...',
+      'askHistory': 'Тарих туралы сұраңыз...',
+      'clearChat': 'Чатты тазалау?',
+      'clearChatHistory': 'ИИ-мен сөйлесу тарихының барлығы жойылады.',
+      'anonymous': 'Аноним',
+      'noAnnouncements': 'Хабарландырулар жоқ',
+      'expeditionAnnouncements': 'Экспедиция хабарландырулары',
+      'iAgreeWith': 'Мен келісемін',
+      'aiWelcome': 'Сәлеметсіз бе! Мен сіздің ИИ-археологыңызбын. Маған тарих, артефакттар немесе қазба жұмыстары туралы кез келген сұрақ қойыңыз. Бүгін сізге қалай көмектесе аламын?',
+      'aiGuestWelcome': 'Сәлеметсіз бе! Мен сіздің ИИ-археологыңызбын. Қонақ ретінде сіздің тарихыңыз сақталмайды. Сақтау үшін жүйеге кіріңіз.',
+      'historyCleared': 'Тарих тазартылды. Не туралы сөйлескіңіз келеді?',
+      'audio': 'Аудио',
+      'aiAudioGuide': 'ИИ Аудиогид',
+      'listenToHistory': 'Артефакт тарихын тыңдаңыз',
+      'aiVoicing': 'ИИ сипаттаманы оқып жатыр...',
+      'officialExpeditionLabel': 'Ресми экспедиция',
+      'threeDModel': '3D модель',
+      'onlineAssistant': 'Онлайн көмекші',
+      'scannerVersion': 'АРХЕОЛОГИЯЛЫҚ СКАНЕР V2.4',
+      'artifactIdLabel': 'Артефакт ID',
+      'fromLabel': 'Кімнен',
+      'statusLabel': 'Күйі',
+      'encyclopedia': 'Білгілер базасы',
+      'kurgan': 'Қорған',
+      'kurganDesc': 'Орталық Азия мен Шығыс Еуропада жиі кездесетін төбешік немесе зират түрі.',
+      'petroglyph': 'Петроглифтер',
+      'petroglyphDesc': 'Жартас бетіне қашап, кесіп немесе ойып салынған суреттер.',
+      'sakas': 'Сақтар',
+      'sakasDesc': 'Еуразия даласының солтүстігі мен шығысында тарихи мекендеген көшпелі үнді-иран халықтарының тобы.',
+      'animalStyle': 'Аң стилі',
+      'animalStyleDesc': 'Темір дәуірінде Қытайдан Орталық Еуропаға дейін таралған, жануарлар мотивтерімен сипатталатын безендіру тәсілі.',
+      'dromos': 'Дромос',
+      'dromosDesc': 'Ғимаратқа немесе қабірге апаратын кіреберіс өткел немесе даңғыл.',
+      'esp32Monitor': 'ESP32 климат мониторы',
+      'esp32Address': 'ESP32 мекенжайы',
+      'connect': 'Қосылу',
+      'disconnect': 'Ажырату',
+      'disconnected': 'Ажыратылған',
+      'temperature': 'Температура',
+      'humidity': 'Ылғалдылық',
+      'connected': 'Қосылды',
+      'connecting': 'Қосылуда...',
+      'scanQrCode': 'QR-кодты сканерлеу',
+      'simulatorScannerNote': 'Ескерту: Камерамен сканерлеу үшін нақты құрылғы қажет. Симуляторда қолмен енгізуді пайдаланыңыз.',
+      'exploreTreasures': 'Ежелгі қазыналарды зерттеңіз',
     },
   };
 
@@ -715,6 +973,7 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
   String get language => get('language');
   String get russian => get('russian');
   String get english => get('english');
+  String get kazakh => get('kazakh');
   String get museumArtifacts => get('museumArtifacts');
   String get history => get('history');
   String get details => get('details');
@@ -882,6 +1141,8 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
   String get scannerGenerating => get('scannerGenerating');
   String get scannerInstruction => get('scannerInstruction');
   String get scannerPolygon => get('scannerPolygon');
+  String get initSensors => get('initSensors');
+  String get cameraUnavailable => get('cameraUnavailable');
   String get addName => get('addName');
   String get saved => get('saved');
   String get nameLabel => get('nameLabel');
@@ -900,13 +1161,111 @@ By tapping "I agree" or by using the Application, you acknowledge that you have 
   String get reportContent => get('reportContent');
   String get contentReported => get('contentReported');
   String get userBlocked => get('userBlocked');
+  String get dailyQuests => get('dailyQuests');
+  String get quest3D => get('quest3D');
+  String get questAI => get('questAI');
+  String get announce => get('announce');
+  String get exploreTreasures => get('exploreTreasures');
+  String get myArtifacts => get('myArtifacts');
+  String get pendingPublication => get('pendingPublication');
+  String get pendingEdit => get('pendingEdit');
+  String get editRejected => get('editRejected');
+  String get requestEdit => get('requestEdit');
+  String get requestSent => get('requestSent');
+  String get noMyArtifacts => get('noMyArtifacts');
+  String get edit => get('edit');
+  String get notSpecified => get('notSpecified');
+  String get stoneAge => get('stoneAge');
+  String get bronzeAge => get('bronzeAge');
+  String get ironAge => get('ironAge');
+  String get antiquity => get('antiquity');
+  String get middleAges => get('middleAges');
+  String get modernEra => get('modernEra');
+  String get contemporary => get('contemporary');
+  String get excellentCondition => get('excellentCondition');
+  String get goodCondition => get('goodCondition');
+  String get fairCondition => get('fairCondition');
+  String get poorCondition => get('poorCondition');
+  String get gpsCoords => get('gpsCoords');
+  String get latitude => get('latitude');
+  String get longitude => get('longitude');
+  String get locationHint => get('locationHint');
+  String get canAddGps => get('canAddGps');
+  String get timeTravel => get('timeTravel');
+  String get past => get('past');
+  String get today => get('today');
+  String get photoRequired => get('photoRequired');
+  String get titleDescRequired => get('titleDescRequired');
+  String get artifactAdded => get('artifactAdded');
+  String get parsingError => get('parsingError');
+  String get requestModeration => get('requestModeration');
+  String get newInvitations => get('newInvitations');
+  String get inviteToProject => get('inviteToProject');
+  String get from => get('from');
+  String get startLabel => get('startLabel');
+  String get editLabel => get('editLabel');
+  String get deleteLabel => get('deleteLabel');
+  String get announcement => get('announcement');
+  String get chatLabel => get('chatLabel');
+  String deleteProjectConfirmMsg(String name) => get('deleteProjectConfirmMsg').replaceAll('{name}', name);
+  String get editExpedition => get('editExpedition');
+  String get searchArchaeologist => get('searchArchaeologist');
+  String get aiRecognition => get('aiRecognition');
+  String get comingSoon => get('comingSoon');
+  String get close => get('close');
+  String get achievementUnlocked => get('achievementUnlocked');
+  String get ok => get('ok');
+  String get aiArchaeologist => get('aiArchaeologist');
+  String get aiThanks => get('aiThanks');
+  String get archaeologistTyping => get('archaeologistTyping');
+  String get askHistory => get('askHistory');
+  String get clearChat => get('clearChat');
+  String get clearChatHistory => get('clearChatHistory');
+  String get anonymous => get('anonymous');
+  String get noAnnouncements => get('noAnnouncements');
+  String get expeditionAnnouncements => get('expeditionAnnouncements');
+  String get iAgreeWith => get('iAgreeWith');
+  String get audio => get('audio');
+  String get aiAudioGuide => get('aiAudioGuide');
+  String get listenToHistory => get('listenToHistory');
+  String get aiVoicing => get('aiVoicing');
+  String get officialExpeditionLabel => get('officialExpeditionLabel');
+  String get threeDModel => get('threeDModel');
+  String get onlineAssistant => get('onlineAssistant');
+  String get scannerVersion => get('scannerVersion');
+  String get artifactIdLabel => get('artifactIdLabel');
+  String get fromLabel => get('fromLabel');
+  String get statusLabel => get('statusLabel');
+  String get encyclopedia => get('encyclopedia');
+  String get kurgan => get('kurgan');
+  String get kurganDesc => get('kurganDesc');
+  String get petroglyph => get('petroglyph');
+  String get petroglyphDesc => get('petroglyphDesc');
+  String get sakas => get('sakas');
+  String get sakasDesc => get('sakasDesc');
+  String get animalStyle => get('animalStyle');
+  String get animalStyleDesc => get('animalStyleDesc');
+  String get dromos => get('dromos');
+  String get dromosDesc => get('dromosDesc');
+  String get esp32Monitor => get('esp32Monitor');
+  String get esp32Address => get('esp32Address');
+  String get connect => get('connect');
+  String get disconnect => get('disconnect');
+  String get disconnected => get('disconnected');
+  String get temperature => get('temperature');
+  String get humidity => get('humidity');
+  String get connected => get('connected');
+  String get connecting => get('connecting');
+  String get scanQrCode => get('scanQrCode');
+  String get simulatorScannerNote => get('simulatorScannerNote');
+  String get exploreTreasures => get('exploreTreasures');
 }
 
 class SDelegate extends LocalizationsDelegate<S> {
   const SDelegate();
 
   @override
-  bool isSupported(Locale locale) => ['en', 'ru'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => ['en', 'ru', 'kk'].contains(locale.languageCode);
 
   @override
   Future<S> load(Locale locale) => Future.value(S(locale));

@@ -8,7 +8,7 @@ class AuthProviders extends ChangeNotifier {
   final AuthService _authService = AuthService();
 
   User? _user;
-  String? _role; // visitor / archaeologist / admin
+  String? _role; // archaeologist / admin
 
   User? get user => _user;
   String? get role => _role;
@@ -23,7 +23,7 @@ class AuthProviders extends ChangeNotifier {
   Future<void> _init() async {
     // Загружаем роль из SharedPreferences
     final prefs = await SharedPreferences.getInstance();
-    _role = prefs.getString('role') ?? 'archaeologist';
+    _role = prefs.getString('role');
 
     // Firebase слушатель
     FirebaseAuth.instance.authStateChanges().listen((firebaseUser) {
@@ -34,7 +34,7 @@ class AuthProviders extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 🎭 Установить роль (visitor / archaeologist)
+  /// 🎭 Установить роль (archaeologist)
   Future<void> setRole(String role) async {
     _role = role;
 

@@ -51,7 +51,7 @@ class _ArtifactDetailScreenState extends State<ArtifactDetailScreen> with Ticker
     if (_show3dTab) tabCount++;
 
     _tabController = TabController(length: tabCount, vsync: this);
-    _initTts();
+    Future.microtask(() => _initTts());
   }
 
   void _initTts() async {
