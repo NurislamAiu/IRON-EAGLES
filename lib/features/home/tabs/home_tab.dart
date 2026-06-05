@@ -69,18 +69,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 60, 20, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                padding: const EdgeInsets.fromLTRB(20, 110, 20, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(s.welcome, style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 16)),
-                        const Text("ArcheoAI", style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    _buildAiAssistantButton(),
+                    Text(s.welcome, style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 16)),
+                    const Text("ArcheoAI", style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -166,21 +160,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
           const SizedBox(width: 10),
           Text(title, style: TextStyle(color: isDone ? Colors.white70 : Colors.white, fontSize: 14)),
         ],
-      ),
-    );
-  }
-
-  Widget _buildAiAssistantButton() {
-    return GestureDetector(
-      onTap: () => context.push('/ai-archaeologist'),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: [Colors.orangeAccent, Colors.deepOrangeAccent]),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.orangeAccent.withOpacity(0.3), blurRadius: 10)],
-        ),
-        child: const Icon(Icons.auto_awesome, color: Colors.black, size: 28),
       ),
     );
   }

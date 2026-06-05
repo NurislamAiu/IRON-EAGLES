@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../auth/provider/auth_provider.dart';
-import '../../auth/provider/safety_provider.dart';
+import '../../auth/provider/ugc_provider.dart';
 import '../provider/community_provider.dart';
 import '../domain/community_model.dart';
 import 'create_community_screen.dart';
@@ -171,7 +171,7 @@ class _CommunitiesTabState extends State<CommunitiesTab> {
   }
 
   Widget _buildCommunityCard(BuildContext context, Community community) {
-    final safety = context.watch<UserSafetyProvider>();
+    final safety = context.watch<UgcProvider>();
     if (safety.isBlocked(community.creatorEmail)) return const SizedBox.shrink();
 
     return GestureDetector(

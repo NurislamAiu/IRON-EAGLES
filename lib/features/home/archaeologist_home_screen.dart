@@ -9,6 +9,8 @@ import 'package:ArcheoAI/core/widgets/flash_message.dart';
 import 'package:ArcheoAI/features/home/tabs/expedition_tab.dart';
 import 'package:ArcheoAI/features/home/tabs/moderator_tab.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 import 'package:ArcheoAI/features/auth/provider/auth_provider.dart';
 import '../../core/localization/app_localizations.dart';
@@ -18,6 +20,7 @@ import 'tabs/home_tab.dart';
 import 'tabs/add_artifact_tab.dart';
 import 'tabs/profile_tab.dart';
 import '../communities/presentation/communities_tab.dart';
+import '../artifacts/presentation/ai_archaeologist_screen.dart';
 
 class ArchaeologistHomeScreen extends StatefulWidget {
   const ArchaeologistHomeScreen({super.key});
@@ -34,66 +37,39 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
   Widget build(BuildContext context) {
     final user = context.watch<AuthProviders>().user;
     final email = user?.email;
-
-    /// ====== РОЛИ ======
     final bool isAdmin = email == "admin@gmail.com";
+    final s = S.of(context);
 
-    /// ====== ФОРМИРУЕМ СПИСКИ ЭКРАНОВ ПО РОЛИ ======
+    // Dynamic screens list: Home, Clubs, AI, Create/Admin, Projects, QR, Profile
+    final List<Widget> screens = [
+      const HomeTab(),
+      const CommunitiesTab(),
+      const AiArchaeologistScreen(isTab: true),
+      isAdmin ? const ModeratorTab() : const AddArtifactTab(),
+      const ExpeditionTab(),
+      const QrScannerTab(),
+      const ProfileTab(),
+    ];
 
-    List<Widget> screens;
-    List<_NavItemData> items;
+    final List<_NavItemData> items = [
+      _NavItemData(Icons.home_filled, s.home),
+      _NavItemData(Icons.groups, s.clubs),
+      _NavItemData(Icons.auto_awesome, "AI"),
+      _NavItemData(isAdmin ? Icons.admin_panel_settings : Icons.add_circle, isAdmin ? s.admin : s.create),
+      _NavItemData(Icons.explore, s.projects),
+      _NavItemData(Icons.qr_code_scanner, "QR"),
+      _NavItemData(Icons.person, s.profile),
+    ];
 
-    if (isAdmin) {
-      // ----------- АДМИН -----------
-      screens = [
-        const HomeTab(),
-        const CommunitiesTab(),
-        const ModeratorTab(),
-        const ExpeditionTab(),
-        const ProfileTab(),
-      ];
-
-      items = [
-        _NavItemData(Icons.home_filled, S.of(context).home),
-        _NavItemData(Icons.groups, S.of(context).clubs),
-        _NavItemData(Icons.admin_panel_settings, S.of(context).admin),
-        _NavItemData(Icons.explore, S.of(context).projects),
-        _NavItemData(Icons.person, S.of(context).profile),
-      ];
-    } else {
-      // ----------- ОБЫЧНЫЙ ПОЛЬЗОВАТЕЛЬ (АРХЕОЛОГ) -----------
-      screens = [
-        const HomeTab(),
-        const CommunitiesTab(),
-        const AddArtifactTab(),
-        const ExpeditionTab(),
-        const ProfileTab(),
-      ];
-
-      items = [
-        _NavItemData(Icons.home_filled, S.of(context).home),
-        _NavItemData(Icons.groups, S.of(context).clubs),
-        _NavItemData(Icons.add_circle, S.of(context).create),
-        _NavItemData(Icons.explore, S.of(context).projects),
-        _NavItemData(Icons.person, S.of(context).profile),
-      ];
-    }
-
-    // 🔥 FIX: Ensure index is within bounds if role changes (e.g. logout)
     if (_index >= screens.length) {
       _index = screens.length - 1;
     }
 
     return Scaffold(
       extendBody: true,
-      floatingActionButton: _index == 0 ? FloatingActionButton(
-        onPressed: _scanArtifactQr,
-        backgroundColor: Colors.orangeAccent,
-        child: const Icon(Icons.qr_code_scanner, color: Colors.black),
-      ) : null,
       body: Stack(
         children: [
-          // 🌌 Фон с градиентом
+          // 🌌 Background
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -104,7 +80,7 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
             ),
           ),
           
-          // Контент экрана
+          // Content
           SafeArea(child: screens[_index]),
         ],
       ),
@@ -114,103 +90,12 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
     );
   }
 
-  Future<void> _scanArtifactQr() async {
-    final scannedValue = await Navigator.push<String>(
-      context,
-      MaterialPageRoute(builder: (context) => const QrScannerPage()),
-    );
-
-    if (scannedValue == null || scannedValue.isEmpty) return;
-    if (!mounted) return;
-
-    final value = scannedValue.trim();
-    final artifactProvider = context.read<ArtifactProvider>();
-    final artifacts = artifactProvider.artifacts;
-
-    // 1. Проверка на URL (ESP32 или Deep Link)
-    if (value.startsWith('http://') || value.startsWith('https://')) {
-      try {
-        final uri = Uri.parse(value);
-        final baseUrl = '${uri.scheme}://${uri.host}${uri.hasPort ? ':${uri.port}' : ''}';
-        final pathSegments = uri.pathSegments;
-
-        if (pathSegments.isEmpty) {
-          // Это просто ESP32 URL без артефакта, например http://172.18.100.4
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => Esp32MonitorScreen(initialUrl: baseUrl),
-            ),
-          );
-          return;
-        }
-
-        final artifactSlug = pathSegments.first;
-        Artifact? foundArtifact;
-
-        // Поиск по slug
-        for (final artifact in artifacts) {
-          if (artifact.slug == artifactSlug) {
-            foundArtifact = artifact;
-            break;
-          }
-        }
-
-        // Fallback: если slug не найден, попробовать искать по id
-        if (foundArtifact == null) {
-          for (final artifact in artifacts) {
-            if (artifact.id == artifactSlug) {
-              foundArtifact = artifact;
-              break;
-            }
-          }
-        }
-
-        if (foundArtifact != null) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ArtifactDetailScreen(
-                artifact: foundArtifact!.copyWith(esp32Url: baseUrl),
-              ),
-            ),
-          );
-        } else {
-          FlashMessage.error(context, "Артефакт не найден");
-        }
-        return;
-      } catch (e) {
-        debugPrint("QR Parse error: $e");
-      }
-    }
-
-    // 2. Fallback для старых QR (только ID или slug)
-    Artifact? foundArtifact;
-    for (final artifact in artifacts) {
-      if (artifact.id == value || artifact.slug == value) {
-        foundArtifact = artifact;
-        break;
-      }
-    }
-
-    if (foundArtifact != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ArtifactDetailScreen(artifact: foundArtifact!),
-        ),
-      );
-    } else {
-      FlashMessage.error(context, "Артефакт не найден");
-    }
-  }
-
   Widget _buildBottomNavBar(List<_NavItemData> items) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(12, 0, 12, 24),
+      margin: const EdgeInsets.fromLTRB(8, 0, 8, 20),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.4),
@@ -222,17 +107,16 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
         child: Container(
-          height: 75,
+          height: 70,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(24),
             border: Border.all(color: Colors.white.withOpacity(0.12)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: List.generate(items.length, (i) {
-              final item = items[i];
-              return Expanded(child: _navItem(item.icon, i, item.label));
+              return Expanded(child: _navItem(items[i].icon, i, items[i].label));
             }),
           ),
         ),
@@ -254,25 +138,25 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
         children: [
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
               color: selected ? Colors.orange.withOpacity(0.15) : Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
               icon,
-              size: 26,
-              color: selected ? Colors.orangeAccent : Colors.white60,
+              size: 20,
+              color: selected ? Colors.orangeAccent : Colors.white54,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 10,
-              color: selected ? Colors.orangeAccent : Colors.white38,
+              fontSize: 8,
+              color: selected ? Colors.orangeAccent : Colors.white30,
               fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             ),
           )
@@ -282,8 +166,132 @@ class _ArchaeologistHomeScreenState extends State<ArchaeologistHomeScreen> {
   }
 }
 
+class QrScannerTab extends StatefulWidget {
+  const QrScannerTab({super.key});
+
+  @override
+  State<QrScannerTab> createState() => _QrScannerTabState();
+}
+
+class _QrScannerTabState extends State<QrScannerTab> {
+  bool _isProcessing = false;
+
+  void _handleScan(String value, BuildContext context) async {
+    if (_isProcessing) return;
+    _isProcessing = true;
+
+    final val = value.trim();
+    final artifactProvider = context.read<ArtifactProvider>();
+    final artifacts = artifactProvider.artifacts;
+
+    if (val.startsWith('http://') || val.startsWith('https://')) {
+      try {
+        final uri = Uri.parse(val);
+        final baseUrl = '${uri.scheme}://${uri.host}${uri.hasPort ? ':${uri.port}' : ''}';
+        final pathSegments = uri.pathSegments;
+
+        if (pathSegments.isEmpty) {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => Esp32MonitorScreen(initialUrl: baseUrl)));
+        } else {
+          final artifactSlug = pathSegments.first;
+          final foundArtifact = artifacts.firstWhere(
+            (a) => a.slug == artifactSlug || a.id == artifactSlug,
+            orElse: () => throw 'NotFound',
+          );
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ArtifactDetailScreen(artifact: foundArtifact.copyWith(esp32Url: baseUrl))));
+        }
+      } catch (e) {
+        FlashMessage.error(context, "Артефакт не найден");
+      }
+    } else {
+      try {
+        final foundArtifact = artifacts.firstWhere((a) => a.id == val || a.slug == val);
+        Navigator.push(context, MaterialPageRoute(builder: (_) => ArtifactDetailScreen(artifact: foundArtifact)));
+      } catch (e) {
+        FlashMessage.error(context, "Артефакт не найден");
+      }
+    }
+
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) setState(() => _isProcessing = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        MobileScanner(
+          onDetect: (capture) {
+            final List<Barcode> barcodes = capture.barcodes;
+            for (final barcode in barcodes) {
+              if (barcode.rawValue != null) {
+                _handleScan(barcode.rawValue!, context);
+                break;
+              }
+            }
+          },
+        ),
+        // Overlay UI
+        CustomPaint(
+          size: Size.infinite,
+          painter: QrScannerPainter(),
+        ),
+        Positioned(
+          top: 40,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(20)),
+              child: const Text("Scan Artifact QR Code", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _NavItemData {
   final IconData icon;
   final String label;
   _NavItemData(this.icon, this.label);
+}
+
+class QrScannerPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cutOutSize = 250.0;
+    final rect = Rect.fromLTWH(
+      (size.width - cutOutSize) / 2,
+      (size.height - cutOutSize) / 2,
+      cutOutSize,
+      cutOutSize,
+    );
+
+    final paint = Paint()
+      ..color = Colors.black54
+      ..style = PaintingStyle.fill;
+
+    // Draw background with a hole
+    canvas.drawPath(
+      Path.combine(
+        PathOperation.difference,
+        Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height)),
+        Path()..addRRect(RRect.fromRectAndRadius(rect, const Radius.circular(20))),
+      ),
+      paint,
+    );
+
+    final borderPaint = Paint()
+      ..color = Colors.orangeAccent
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4;
+
+    canvas.drawRRect(RRect.fromRectAndRadius(rect, const Radius.circular(20)), borderPaint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

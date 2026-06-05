@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/date_symbol_data_local.dart'; // <-- 1. ИМПОРТ
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:ArcheoAI/features/artifacts/provider/favorite_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:ArcheoAI/router/app_router.dart';
@@ -10,8 +10,8 @@ import 'firebase_options.dart';
 
 // 🔹 Импортируем провайдеры
 import 'features/auth/provider/auth_provider.dart';
+import 'features/auth/provider/ugc_provider.dart';
 import 'features/artifacts/provider/artifact_provider.dart';
-
 import 'features/artifacts/provider/achievement_provider.dart';
 import 'features/artifacts/provider/expedition_provider.dart';
 import 'features/blogs/provider/blog_provider.dart';
@@ -26,8 +26,10 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // 2. ИНИЦИАЛИЗАЦИЯ ЛОКАЛИ ДЛЯ ДАТ
+  // ИНИЦИАЛИЗАЦИЯ ЛОКАЛЕЙ ДЛЯ ДАТ
   await initializeDateFormatting('ru', null);
+  await initializeDateFormatting('en', null);
+  await initializeDateFormatting('kk', null);
 
   print("INIT USER: ${FirebaseAuth.instance.currentUser?.email}");
 
@@ -64,6 +66,7 @@ class _MuseumAppState extends State<MuseumApp> {
         ChangeNotifierProvider(create: (_) => BlogProvider()),
         ChangeNotifierProvider(create: (_) => CommunityProvider()),
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider(create: (_) => UgcProvider()),
       ],
       child: Consumer<LanguageProvider>(
         builder: (context, langProvider, child) {
@@ -80,6 +83,7 @@ class _MuseumAppState extends State<MuseumApp> {
             supportedLocales: const [
               Locale('en'),
               Locale('ru'),
+              Locale('kk'),
             ],
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6B4F3A)),

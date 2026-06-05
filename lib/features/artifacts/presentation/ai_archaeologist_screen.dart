@@ -8,7 +8,8 @@ import '../../auth/provider/auth_provider.dart';
 import '../../../core/localization/app_localizations.dart';
 
 class AiArchaeologistScreen extends StatefulWidget {
-  const AiArchaeologistScreen({super.key});
+  final bool isTab;
+  const AiArchaeologistScreen({super.key, this.isTab = false});
 
   @override
   State<AiArchaeologistScreen> createState() => _AiArchaeologistScreenState();
@@ -199,10 +200,11 @@ class _AiArchaeologistScreenState extends State<AiArchaeologistScreen> {
               Text(s.onlineAssistant, style: const TextStyle(color: Colors.greenAccent, fontSize: 10, fontWeight: FontWeight.w500)),
             ],
           ),
-          leading: IconButton(
+          leading: widget.isTab ? null : IconButton(
             icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
             onPressed: () => Navigator.pop(context),
           ),
+          automaticallyImplyLeading: !widget.isTab,
           actions: [
             if (_isSpeaking)
               IconButton(

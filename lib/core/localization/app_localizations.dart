@@ -1222,6 +1222,9 @@ class S {
   String get noAnnouncements => get('noAnnouncements');
   String get expeditionAnnouncements => get('expeditionAnnouncements');
   String get iAgreeWith => get('iAgreeWith');
+  String get aiWelcome => get('aiWelcome');
+  String get aiGuestWelcome => get('aiGuestWelcome');
+  String get historyCleared => get('historyCleared');
   String get audio => get('audio');
   String get aiAudioGuide => get('aiAudioGuide');
   String get listenToHistory => get('listenToHistory');
